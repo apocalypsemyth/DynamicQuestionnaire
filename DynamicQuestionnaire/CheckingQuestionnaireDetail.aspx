@@ -46,28 +46,28 @@
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">姓名</label>
                         <div class="col-sm-10 align-self-center">
-                            <asp:Literal ID="ltlUserName" runat="server" />
+                            <asp:Literal ID="ltlUserName" runat="server"></asp:Literal>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">手機</label>
                         <div class="col-sm-10 align-self-center">
-                            <asp:Literal ID="ltlUserPhone" runat="server" />
+                            <asp:Literal ID="ltlUserPhone" runat="server"></asp:Literal>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10 align-self-center">
-                            <asp:Literal ID="ltlUserEmail" runat="server" />
+                            <asp:Literal ID="ltlUserEmail" runat="server"></asp:Literal>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">年齡</label>
                         <div class="col-sm-10 align-self-center">
-                            <asp:Literal ID="ltlUserAge" runat="server" />
+                            <asp:Literal ID="ltlUserAge" runat="server"></asp:Literal>
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,6 @@
                                     </h3>
 
                                     <asp:HiddenField ID="hfQuestionID" runat="server" Value='<%# Eval("QuestionID") %>' />
-                                    <asp:HiddenField ID="hfQuestionTyping" runat="server" Value='<%# Eval("QuestionTyping") %>' />
                                     <asp:Literal ID="ltlQuestionAnswer" runat="server" Text='<%# Eval("QuestionAnswer") %>' />
                                 </div>
                             </div>

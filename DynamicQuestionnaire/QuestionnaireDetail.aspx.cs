@@ -3,7 +3,6 @@ using DynamicQuestionnaire.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -139,85 +138,6 @@ namespace DynamicQuestionnaire
 
             return questionnaireID;
         }
-
-        //private bool CheckUserInputs()
-        //{
-        //    this.lblUserName.Text = "";
-        //    this.lblUserPhone.Text = "";
-        //    this.lblUserEmail.Text = "";
-        //    this.lblUserAge.Text = "";
-
-        //    bool resultChecked = true;
-        //    Regex phoneRx = new Regex(@"^[0]{1}\d{9}");
-        //    Regex emailRx = new Regex(@"^(([^<>()[\]\\.,;:\s@\""]+(\.[^<>()[\]\\.,;:\s@\""]+)*)|(\"".+\""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$");
-
-        //    if (string.IsNullOrWhiteSpace(this.txtUserName.Text))
-        //    {
-        //        resultChecked = false;
-        //        this.lblUserName.Text = "請填入您的姓名。";
-        //    }
-
-        //    if (string.IsNullOrWhiteSpace(this.txtUserPhone.Text))
-        //    {
-        //        resultChecked = false;
-        //        this.lblUserPhone.Text = "請填入您的手機。";
-        //    }
-        //    else
-        //    {
-        //        if (!phoneRx.IsMatch(this.txtUserPhone.Text.Trim()))
-        //        {
-        //            resultChecked = false;
-        //            this.lblUserPhone.Text = @"請以 ""0123456789"" 開頭零後九碼的格式填寫。";
-        //        }
-        //    }
-            
-        //    if (string.IsNullOrWhiteSpace(this.txtUserEmail.Text))
-        //    {
-        //        resultChecked = false;
-        //        this.lblUserEmail.Text = "請填入您的信箱。";
-        //    }
-        //    else
-        //    {
-        //        if (!emailRx.IsMatch(this.txtUserEmail.Text.Trim()))
-        //        {
-        //            resultChecked = false;
-        //            this.lblUserEmail.Text = "請填入合法的信箱格式。";
-        //        }
-        //    }
-            
-        //    if (string.IsNullOrWhiteSpace(this.txtUserAge.Text))
-        //    {
-        //        resultChecked = false;
-        //        this.lblUserAge.Text = "請填入您的年齡。";
-        //    }
-        //    else
-        //    {
-        //        if (!int.TryParse(this.txtUserAge.Text.Trim(), out int age))
-        //        {
-        //            resultChecked = false;
-        //            this.lblUserAge.Text = "請填數數字。";
-        //        }
-        //    }
-
-        //    return resultChecked;
-        //}
-
-        //private void CreateUserInSession()
-        //{
-        //    User newUser = new User()
-        //    {
-        //        UserID = Guid.NewGuid(),
-        //        UserName = this.txtUserName.Text.Trim(),
-        //        Phone = this.txtUserPhone.Text.Trim(),
-        //        Email = this.txtUserEmail.Text.Trim(),
-        //        AnswerDate = DateTime.Now,
-        //    };
-
-        //    if (int.TryParse(this.txtUserAge.Text.Trim(), out int age))
-        //        newUser.Age = age;
-
-        //    this.Session[_user] = newUser;
-        //}
 
         private void AlertMessage(string errorMsg)
         {

@@ -47,46 +47,34 @@
             <div class="col-md-10">
                 <div id="questionnaireUserForm">
                     <div class="row mb-3">
-                        <%--<label for='<%= this.txtUserName.ClientID %>' class="col-sm-2 col-form-label">姓名</label>--%>
                         <label for="txtUserName" class="col-sm-2 col-form-label">姓名</label>
                         <div class="col-sm-10">
-                            <%--<asp:TextBox ID="txtUserName" CssClass="form-control" runat="server" />--%>
-                            <input id="txtUserName" class="form-control" />
-                            <%--<asp:Label ID="lblUserName" runat="server" ForeColor="Red" />--%>
-                            <span id="lblUserName" class="danger" />
+                            <input id="txtUserName" class="form-control" aria-describedby="divValidateUserName" />
+                            <div id="divValidateUserName" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <%--<label for='<%= this.txtUserPhone.ClientID %>' class="col-sm-2 col-form-label">手機</label>--%>
                         <label for="txtUserPhone" class="col-sm-2 col-form-label">手機</label>
                         <div class="col-sm-10">
-                            <%--<asp:TextBox ID="txtUserPhone" CssClass="form-control" runat="server" />--%>
-                            <input id="txtUserPhone" class="form-control" />
-                            <%--<asp:Label ID="lblUserPhone" runat="server" ForeColor="Red" />--%>
-                            <span id="lblUserPhone" class="danger" />
+                            <input id="txtUserPhone" class="form-control" aria-describedby="divValidateUserPhone" />
+                            <div id="divValidateUserPhone" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <%--<label for='<%= this.txtUserEmail.ClientID %>' class="col-sm-2 col-form-label">Email</label>--%>
                         <label for="txtUserEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                            <%--<asp:TextBox ID="txtUserEmail" CssClass="form-control" runat="server" />--%>
-                            <input id="txtUserEmail" class="form-control" />
-                            <%--<asp:Label ID="lblUserEmail" runat="server" ForeColor="Red" />--%>
-                            <span id="lblUserEmail" class="danger" />
+                            <input id="txtUserEmail" class="form-control" aria-describedby="divValidateUserEmail" />
+                            <div id="divValidateUserEmail" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <%--<label for='<%= this.txtUserAge.ClientID %>' class="col-sm-2 col-form-label">年齡</label>--%>
                         <label for="txtUserAge" class="col-sm-2 col-form-label">年齡</label>
                         <div class="col-sm-10">
-                            <%--<asp:TextBox ID="txtUserAge" CssClass="form-control" runat="server" />--%>
-                            <input id="txtUserAge" class="form-control" />
-                            <%--<asp:Label ID="lblUserAge" runat="server" ForeColor="Red" />--%>
-                            <span id="lblUserAge" class="danger" />
+                            <input id="txtUserAge" class="form-control" aria-describedby="divValidateUserAge" />
+                            <div id="divValidateUserAge" class="invalid-feedback"></div>
                         </div>
                     </div>
                 </div>

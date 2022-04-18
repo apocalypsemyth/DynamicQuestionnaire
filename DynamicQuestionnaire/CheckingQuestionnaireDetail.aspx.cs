@@ -1,5 +1,6 @@
 ﻿using DynamicQuestionnaire.DynamicQuestionnaire.ORM;
 using DynamicQuestionnaire.Managers;
+using DynamicQuestionnaire.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace DynamicQuestionnaire
         private bool _isPostBack = false;
 
         // Session name
-        //private string _user = "User";
-        //private string _userQuestion = "UserQuestion";
+        private string _user = "User";
+        private string _userAnswer = "UserAnswer";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private QuestionManager _questionMgr = new QuestionManager();
+        private UserManager _userMgr = new UserManager();
+        private UserAnswerManager _userAnswerMgr = new UserAnswerManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,7 +31,7 @@ namespace DynamicQuestionnaire
             {
                 Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
                 var questionnaire = this._questionnaireMgr.GetQuestionnaire(questionnaireID);
-                //var user = this.Session[_user] as User;
+                var user = this.Session[_user] as User;
 
                 if (questionnaire == null)
                 {
@@ -36,11 +39,11 @@ namespace DynamicQuestionnaire
                     this.Response.Redirect("QuestionnaireList.aspx", true);
                 }
 
-                //if (user == null)
-                //{
-                //    this.AlertMessage("沒有您的填寫資料");
-                //    this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
-                //}
+                if (user == null)
+                {
+                    this.AlertMessage("沒有您的填寫資料");
+                    this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
+                }
 
                 // 為使用Repeater創建的List
                 List<Questionnaire> questionnaireList = new List<Questionnaire>();
@@ -50,7 +53,7 @@ namespace DynamicQuestionnaire
                 this.rptCheckingQuestionnaireDetail.DataSource = questionnaireList;
                 this.rptCheckingQuestionnaireDetail.DataBind();
 
-                //this.SetUserInfo(user);
+                this.SetUserInfo(user);
 
                 this.rptCheckingQuestionList.DataSource = questionList;
                 this.rptCheckingQuestionList.DataBind();
@@ -65,7 +68,99 @@ namespace DynamicQuestionnaire
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
+            User user = this.Session[_user] as User;
+            List<UserAnswerModel> userAnswerModelList = this.Session[_userAnswer] as List<UserAnswerModel>;
+            Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
 
+            if (user == null)
+            {
+                this.AlertMessage("沒有您的填寫資料");
+                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
+            }
+
+            if (userAnswerModelList == null || userAnswerModelList.Count == 0)
+            {
+                this.AlertMessage("沒有您的回答資料");
+                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
+            }
+
+            this._userMgr.CreateUser(user);
+            this._userAnswerMgr.CreateUserAnswerList(userAnswerModelList);
+            this.Session.Remove(_user);
+            this.Session.Remove(_userAnswer);
+
+            this.Response.Redirect("QuestionnaireList.aspx", true);
+        }
+        
+        protected void rptCheckingQuestionList_PreRender(object sender, EventArgs e)
+        {
+            if (_isPostBack) return;
+
+            List<UserAnswerModel> userAnswerModelList = this.Session[_userAnswer] as List<UserAnswerModel>;
+
+            foreach (RepeaterItem rptItem in this.rptCheckingQuestionList.Items)
+            {
+                if (rptItem.ItemType == ListItemType.Item || rptItem.ItemType == ListItemType.AlternatingItem)
+                {
+                    HiddenField hfQuestionID = rptItem.FindControl("hfQuestionID") as HiddenField;
+                    string questionIDStr = hfQuestionID.Value;
+                    Literal ltlQuestionAnswer = rptItem.FindControl("ltlQuestionAnswer") as Literal;
+                    string[] qaArr = ltlQuestionAnswer.Text.Split(';');
+                    ltlQuestionAnswer.Text = "<div class='d-flex flex-column gap-3'>";
+
+                    if (Guid.TryParse(questionIDStr, out Guid questionID))
+                    {
+                        var userAnswerByQuestionIDList = userAnswerModelList
+                            .Where(userAnswer => userAnswer.QuestionID == questionID)
+                            .OrderBy(item => item.AnswerNum)
+                            .ToList();
+
+                        ltlQuestionAnswer.Text += "<div class='d-flex flex-column gap-3'>";
+
+                        foreach (var userAnswer in userAnswerByQuestionIDList)
+                        {
+                            string userAnswerQuestionTyping = userAnswer.QuestionTyping;
+                            int userAnswerNum = userAnswer.AnswerNum;
+                            int userAnswerNumMinus1 = userAnswerNum - 1;
+
+                            if (userAnswerQuestionTyping == "單選方塊") 
+                            {
+                                ltlQuestionAnswer.Text +=
+                                $@"
+                                    <h5 id='rdoQuestionAnswer_{questionID}_{userAnswerNum}'>
+                                        {qaArr[userAnswerNumMinus1]}
+                                    </h5>
+                                ";
+                            }
+
+                            if (userAnswerQuestionTyping == "複選方塊")
+                            {
+                                ltlQuestionAnswer.Text += 
+                                $@"
+                                    <h5 id='ckbQuestionAnswer_{questionID}_{userAnswerNum}'>
+                                        {qaArr[userAnswerNumMinus1]}
+                                    </h5>
+                                ";
+                            }
+
+                            if (userAnswerQuestionTyping == "文字")
+                            {
+                                ltlQuestionAnswer.Text +=
+                                $@"
+                                    <h5 id='txtQuestionAnswer_{questionID}_{userAnswerNum}'>
+                                        {qaArr[userAnswerNumMinus1]}：
+                                        {userAnswer.Answer}
+                                    </h5>
+                                ";
+                            }
+                        }
+
+                        ltlQuestionAnswer.Text += "</div>";
+                    }
+
+                    ltlQuestionAnswer.Text += "</div>";
+                }
+            }
         }
 
         protected Guid GetQuestionnaireIDOrBackToList()
@@ -95,69 +190,6 @@ namespace DynamicQuestionnaire
                 "alert('" + errorMsg + "');",
                 true
             );
-        }
-
-        protected void rptCheckingQuestionList_PreRender(object sender, EventArgs e)
-        {
-            if (_isPostBack) return;
-
-            foreach (RepeaterItem rptItem in this.rptCheckingQuestionList.Items)
-            {
-                if (rptItem.ItemType == ListItemType.Item || rptItem.ItemType == ListItemType.AlternatingItem)
-                {
-                    HiddenField hfQuestionID = rptItem.FindControl("hfQuestionID") as HiddenField;
-                    string questionID = hfQuestionID.Value;
-                    HiddenField hfQuestionTyping = rptItem.FindControl("hfQuestionTyping") as HiddenField;
-                    string questionTyping = hfQuestionTyping.Value;
-
-                    Literal ltlQuestionAnswer = rptItem.FindControl("ltlQuestionAnswer") as Literal;
-                    string[] qaArr = ltlQuestionAnswer.Text.Split(';');
-                    ltlQuestionAnswer.Text = "<div class='d-flex flex-column gap-3'>";
-
-                    for (int i = 0; i < qaArr.Length; i++)
-                    {
-                        int anthorI = i;
-                        string iPlus1 = (anthorI + 1).ToString();
-
-                        if (questionTyping == "單選方塊")
-                            ltlQuestionAnswer.Text +=
-                                $@"
-                                    <div class='form-check'>
-                                        <input id='rdoQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='radio' name='rdoQuestionAnswer_{questionID}' />
-                                        <label class='form-check-label' for='rdoQuestionAnswer_{questionID}_{iPlus1}'>
-                                            {qaArr[i]}
-                                        </label>
-                                    </div>
-                                ";
-
-                        if (questionTyping == "複選方塊")
-                            ltlQuestionAnswer.Text +=
-                                $@"
-                                    <div class='form-check'>
-                                        <input id='ckbQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='checkbox' />
-                                        <label class='form-check-label' for='ckbQuestionAnswer_{questionID}_{iPlus1}'>
-                                            {qaArr[i]}
-                                        </label>
-                                    </div>
-                                ";
-
-                        if (questionTyping == "文字")
-                            ltlQuestionAnswer.Text +=
-                                $@"
-                                    <div class='row'>
-                                        <label class='col-sm-2 col-form-label' for='txtQuestionAnswer_{questionID}_{iPlus1}'>
-                                            {qaArr[i]}
-                                        </label>
-                                        <div class='col-sm-10'>
-                                            <input id='txtQuestionAnswer_{questionID}_{iPlus1}' class='form-control' type='text' />
-                                        </div>
-                                    </div>
-                                ";
-                    }
-
-                    ltlQuestionAnswer.Text += "</div>";
-                }
-            }
         }
     }
 }

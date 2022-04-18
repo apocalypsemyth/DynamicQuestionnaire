@@ -17,6 +17,7 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<Typing> Typings { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserAnswer> UserAnswers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
