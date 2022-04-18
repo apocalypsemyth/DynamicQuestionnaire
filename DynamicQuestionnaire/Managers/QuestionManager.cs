@@ -55,11 +55,7 @@ namespace DynamicQuestionnaire.Managers
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
-                    foreach (var question in questionList)
-                    {
-                        contextModel.Questions.Add(question);
-                    }
-
+                    contextModel.Questions.AddRange(questionList);
                     contextModel.SaveChanges();
                 }
             }
