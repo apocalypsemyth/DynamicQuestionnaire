@@ -1,0 +1,37 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Admin.master.cs" Inherits="DynamicQuestionnaire.BackAdmin.Admin" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title>後台 - 問卷管理</title>
+    <link rel="stylesheet" href="../Css/BackAdmin/Global.css" />
+    <link rel="stylesheet" href="../Content/bootstrap.min.css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="row align-items-center justify-content-center g-0 gy-3 p-3">
+            <div class="col-md-11">
+                <h1>後台 - 問卷管理</h1>
+            </div>
+
+            <div class="col-md-2">
+                <a href="QuestionnaireList.aspx">問卷管理</a><br />
+                <a href="QuestionList.aspx">常用問題管理</a><br />
+            </div>
+
+            <main class="col-md-8">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </main>
+        </div>
+    </form>
+
+    <script src="../Scripts/bootstrap.min.js"></script>
+    <script src="../Scripts/jquery.min.js"></script>
+    <script src="../JavaScript/BackAdmin/QuestionnaireDetail.js"></script>
+    <script src="../JavaScript/BackAdmin/Modules/QuestionnaireDetailModule.js"></script>
+</body>
+</html>

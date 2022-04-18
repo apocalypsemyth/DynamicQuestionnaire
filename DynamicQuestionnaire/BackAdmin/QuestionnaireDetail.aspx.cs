@@ -1,0 +1,216 @@
+﻿using DynamicQuestionnaire.DynamicQuestionnaire.ORM;
+using DynamicQuestionnaire.Managers;
+using DynamicQuestionnaire.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace DynamicQuestionnaire.BackAdmin
+{
+    public partial class QuestionnaireDetail : System.Web.UI.Page
+    {
+        private bool _isEditMode = false;
+
+        // Session name
+        private string _isUpdateMode = "IsUpdateMode";
+        private string _questionnaire = "Questionnaire";
+        private string _questionList = "QuestionList";
+
+        private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
+        private CategoryManager _categoryMgr = new CategoryManager();
+        private TypingManager _typingMgr = new TypingManager();
+        private QuestionManager _questionMgr = new QuestionManager();
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
+            {
+                _isEditMode = true;
+                this.Session[_isUpdateMode] = _isEditMode;
+            }
+            else
+            {
+                _isEditMode = false;
+                this.Session[_isUpdateMode] = _isEditMode;
+            }
+
+            if (_isEditMode)
+            {
+                Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
+                this.InitEditMode(questionnaireID);
+            }
+            else
+                this.InitCreateMode();
+        }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Session.Remove(_questionnaire);
+            this.Session.Remove(_questionList);
+
+            this.Response.Redirect("QuestionnaireList.aspx", true);
+        }
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            if (!this.CheckQuestionnaireInputs(out List<string> errorMsgList))
+            {
+                string errorMsg = string.Join("\\n", errorMsgList);
+                this.AlertMessage(errorMsg);
+
+                return;
+            }
+
+            if (this.Session[_questionList] == null)
+            {
+                this.AlertMessage("請填寫問題後，按下加入按鈕。");
+                return;
+            }
+
+            Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
+
+            if (_isEditMode)
+            {
+                List<QuestionModel> toUpdateQuestionModelList = this.Session[_questionList] as List<QuestionModel>;
+                if (toUpdateQuestionModelList == null || toUpdateQuestionModelList.Count == 0)
+                {
+                    this.AlertMessage("請填寫至少一個問題。");
+                    return;
+                }
+
+                this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
+                this._questionMgr.UpdateQuestionList(toUpdateQuestionModelList);
+            }
+            else
+            {
+                List<Question> newQuestionList = this.Session[_questionList] as List<Question>;
+                if (newQuestionList.Count == 0)
+                {
+                    this.AlertMessage("請填寫至少一個問題。");
+                    return;
+                }
+
+                this._questionnaireMgr.CreateQuestionnaire(newOrToUpdateQuestionnaire);
+                this._questionMgr.CreateQuestionList(newQuestionList);
+            }
+
+            this.Session.Remove(_questionnaire);
+            this.Session.Remove(_questionList);
+            this.Response.Redirect("QuestionnaireList.aspx", true);
+        }
+
+        protected Guid GetQuestionnaireIDOrBackToList()
+        {
+            string questionnaireIDStr = this.Request.QueryString["ID"];
+
+            bool isValidQuestionnaireID = Guid.TryParse(questionnaireIDStr, out Guid questionnaireID);
+            if (!isValidQuestionnaireID)
+                this.Response.Redirect("QuestionnaireList.aspx", true);
+
+            return questionnaireID;
+        }
+
+        private void InitCreateMode()
+        {
+            var categoryList = this._categoryMgr.GetCategoryList();
+            var typingList = this._typingMgr.GetTypingList();
+
+            // 問卷控制項繫結
+            this.txtStartDate.Text = DateTime.Now.ToShortDateString();
+            this.ckbIsEnable.Checked = true;
+
+            // 問題控制項繫結
+            this.ddlCategoryList.DataTextField = "CategoryName";
+            this.ddlCategoryList.DataValueField = "CategoryName";
+            this.ddlCategoryList.DataSource = categoryList;
+            this.ddlCategoryList.DataBind();
+            this.ddlCategoryList.ClearSelection();
+            this.ddlCategoryList.Items.FindByValue("自訂問題").Selected = true;
+
+            this.ddlTypingList.DataTextField = "TypingName";
+            this.ddlTypingList.DataValueField = "TypingName";
+            this.ddlTypingList.DataSource = typingList;
+            this.ddlTypingList.DataBind();
+            this.ddlTypingList.ClearSelection();
+            this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
+
+            this.ckbQuestionRequired.Checked = false;
+        }
+
+        private void InitEditMode(Guid questionnaireID)
+        {
+            var questionnaire = this._questionnaireMgr.GetQuestionnaire(questionnaireID);
+
+            if (questionnaire == null)
+            {
+                this.AlertMessage("查無此問卷");
+                this.Response.Redirect("QuestionnaireList.aspx", true);
+            }
+            else
+            {
+                var categoryList = this._categoryMgr.GetCategoryList();
+                var typingList = this._typingMgr.GetTypingList();
+                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
+                var firstQuestion = questionList.FirstOrDefault();
+
+                // 問卷控制項繫結
+                this.txtCaption.Text = questionnaire.Caption;
+                this.txtDescription.Text = questionnaire.Description;
+                this.ckbIsEnable.Checked = questionnaire.IsEnable;
+                this.txtStartDate.Text = questionnaire.StartDate.ToShortDateString();
+
+                if (questionnaire.EndDate == null)
+                    this.txtEndDate.Text = "";
+                else
+                    this.txtEndDate.Text = questionnaire.EndDate?.ToShortDateString();
+
+                // 問題控制項繫結
+                this.ddlCategoryList.DataTextField = "CategoryName";
+                this.ddlCategoryList.DataValueField = "CategoryName";
+                this.ddlCategoryList.DataSource = categoryList;
+                this.ddlCategoryList.DataBind();
+                this.ddlCategoryList.ClearSelection();
+                this.ddlCategoryList.Items.FindByValue(firstQuestion.QuestionCategory).Selected = true;
+
+                this.ddlTypingList.DataTextField = "TypingName";
+                this.ddlTypingList.DataValueField = "TypingName";
+                this.ddlTypingList.DataSource = typingList;
+                this.ddlTypingList.DataBind();
+                this.ddlTypingList.ClearSelection();
+                this.ddlTypingList.Items.FindByValue(firstQuestion.QuestionTyping).Selected = true;
+            }
+        }
+
+        private bool CheckQuestionnaireInputs(out List<string> errorMsgList)
+        {
+            errorMsgList = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(this.txtCaption.Text))
+                errorMsgList.Add("請填入問卷名稱。");
+
+            if (string.IsNullOrWhiteSpace(this.txtDescription.Text))
+                errorMsgList.Add("請填入描述內容。");
+
+            if (string.IsNullOrWhiteSpace(this.txtStartDate.Text))
+                errorMsgList.Add("請填入開始時間。");
+
+            if (errorMsgList.Count > 0)
+                return false;
+            else
+                return true;
+        }
+
+        private void AlertMessage(string errorMsg)
+        {
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "alert",
+                "alert('" + errorMsg + "');",
+                true
+            );
+        }
+    }
+}

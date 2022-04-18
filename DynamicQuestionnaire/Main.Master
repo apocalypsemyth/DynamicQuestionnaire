@@ -1,0 +1,32 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="DynamicQuestionnaire.Main" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title>前台</title>
+    <link rel="stylesheet" href="Css/Global.css" />
+    <link rel="stylesheet" href="Content/bootstrap.min.css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="row align-items-center justify-content-center g-0 gy-3 p-3">
+            <div class="col-md-11">
+                <h1>前台</h1>
+            </div>
+
+            <main class="col-md-10">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </main>
+        </div>
+    </form>
+
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/jquery.min.js"></script>
+    <script src="JavaScript/QuestionnaireDetail.js"></script>
+    <script src="JavaScript/Modules/QuestionnaireDetailModule.js"></script>
+</body>
+</html>
