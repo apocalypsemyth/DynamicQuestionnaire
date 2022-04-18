@@ -1,6 +1,79 @@
+USE [master]
+GO
+/****** Object:  Database [DynamicQuestionnaire]    Script Date: 2022/04/19 4:54:17 ******/
+CREATE DATABASE [DynamicQuestionnaire]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'DynamicQuestionnaire', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\DynamicQuestionnaire.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'DynamicQuestionnaire_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\DynamicQuestionnaire_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [DynamicQuestionnaire].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET RECOVERY FULL 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET  MULTI_USER 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'DynamicQuestionnaire', N'ON'
+GO
 USE [DynamicQuestionnaire]
 GO
-/****** Object:  Table [dbo].[Categories]    Script Date: 2022/04/18 11:31:00 ******/
+/****** Object:  Table [dbo].[Categories]    Script Date: 2022/04/19 4:54:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -14,7 +87,7 @@ CREATE TABLE [dbo].[Categories](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/04/18 11:31:00 ******/
+/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/04/19 4:54:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -34,7 +107,7 @@ CREATE TABLE [dbo].[Questionnaires](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 2022/04/18 11:31:00 ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 2022/04/19 4:54:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +128,7 @@ CREATE TABLE [dbo].[Questions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Typings]    Script Date: 2022/04/18 11:31:00 ******/
+/****** Object:  Table [dbo].[Typings]    Script Date: 2022/04/19 4:54:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -69,7 +142,20 @@ CREATE TABLE [dbo].[Typings](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 2022/04/18 11:31:00 ******/
+/****** Object:  Table [dbo].[UserAnswers]    Script Date: 2022/04/19 4:54:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserAnswers](
+	[UserID] [uniqueidentifier] NOT NULL,
+	[QuestionID] [uniqueidentifier] NOT NULL,
+	[QuestionTyping] [nvarchar](50) NOT NULL,
+	[AnswerNum] [int] NOT NULL,
+	[Answer] [nvarchar](500) NOT NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 2022/04/19 4:54:17 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -178,6 +264,32 @@ INSERT [dbo].[Typings] ([TypingID], [TypingName]) VALUES (N'0fd9d755-1ca3-4b5f-a
 GO
 INSERT [dbo].[Typings] ([TypingID], [TypingName]) VALUES (N'b6f43a7b-962d-4d07-af59-bfea056beee5', N'單選方塊')
 GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'0432fdd9-dfd8-4f3e-8a7c-dd7995aadae9', N'複選方塊', 2, N'on')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'0432fdd9-dfd8-4f3e-8a7c-dd7995aadae9', N'複選方塊', 3, N'on')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'837a291b-980b-4c9d-9512-067fa443a464', N'文字', 1, N't61')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'837a291b-980b-4c9d-9512-067fa443a464', N'文字', 2, N't62')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'837a291b-980b-4c9d-9512-067fa443a464', N'文字', 3, N't63')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'865f4317-cfd8-4fba-97f0-b13e28140dd5', N'複選方塊', 1, N'on')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'865f4317-cfd8-4fba-97f0-b13e28140dd5', N'複選方塊', 2, N'on')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'986cec09-0d92-49cd-8f55-7b50aaab2198', N'單選方塊', 3, N'on')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'ab7a8240-aaa6-43de-a2a0-a3f54128b8b6', N'文字', 1, N't31')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'ab7a8240-aaa6-43de-a2a0-a3f54128b8b6', N'文字', 2, N't32')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'ab7a8240-aaa6-43de-a2a0-a3f54128b8b6', N'文字', 3, N't33')
+GO
+INSERT [dbo].[UserAnswers] ([UserID], [QuestionID], [QuestionTyping], [AnswerNum], [Answer]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'c8a18cca-6d5f-4f18-88ad-d50f49ae49df', N'單選方塊', 2, N'on')
+GO
+INSERT [dbo].[Users] ([UserID], [QuestionnaireID], [UserName], [Phone], [Email], [Age], [AnswerDate]) VALUES (N'e8ef7abe-8908-44e6-b93b-a4e3fc237995', N'2fcc62d5-7d7a-4a00-9149-b18e97853a71', N'tt', N'0123456789', N'tt@tt.com', 11, CAST(N'2022-04-19T04:37:31.283' AS DateTime))
+GO
 ALTER TABLE [dbo].[Categories] ADD  CONSTRAINT [DF_Categories_CategoryID]  DEFAULT (newid()) FOR [CategoryID]
 GO
 ALTER TABLE [dbo].[Typings] ADD  CONSTRAINT [DF_Types_TypeID]  DEFAULT (newid()) FOR [TypingID]
@@ -191,4 +303,8 @@ ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_Questionnaires_Q
 REFERENCES [dbo].[Questionnaires] ([QuestionnaireID])
 GO
 ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Questionnaires_QuestionnaireID]
+GO
+USE [master]
+GO
+ALTER DATABASE [DynamicQuestionnaire] SET  READ_WRITE 
 GO
