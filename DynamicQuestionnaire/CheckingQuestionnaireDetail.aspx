@@ -94,7 +94,7 @@
 
             <div class="col-md-10">
                 <div class="d-flex align-item-center justify-content-end">
-                    <asp:Button ID="btnEdit" runat="server" Text="修改" OnClick="btnEdit_Click" />
+                    <asp:Button ID="btnEdit" runat="server" Text="修改" />
                     <asp:Button ID="btnSubmit" runat="server" Text="送出" OnClick="btnSubmit_Click" />
                 </div>
             </div>

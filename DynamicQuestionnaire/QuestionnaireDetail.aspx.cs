@@ -13,9 +13,6 @@ namespace DynamicQuestionnaire
     {
         private bool _isPostBack = false;
 
-        // Session name
-        //private string _user = "User";
-
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private QuestionManager _questionMgr = new QuestionManager();
 
@@ -61,6 +58,8 @@ namespace DynamicQuestionnaire
                     string questionID = hfQuestionID.Value;
                     HiddenField hfQuestionTyping = rptItem.FindControl("hfQuestionTyping") as HiddenField;
                     string questionTyping = hfQuestionTyping.Value;
+                    Literal ltlQuestionName = rptItem.FindControl("ltlQuestionName") as Literal;
+                    bool isRequired = ltlQuestionName.Text.Contains("必填") ? true : false;
 
                     Literal ltlQuestionAnswer = rptItem.FindControl("ltlQuestionAnswer") as Literal;
                     string[] qaArr = ltlQuestionAnswer.Text.Split(';');
@@ -75,7 +74,7 @@ namespace DynamicQuestionnaire
                             ltlQuestionAnswer.Text += 
                                 $@"
                                     <div class='form-check'>
-                                        <input id='rdoQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='radio' name='rdoQuestionAnswer_{questionID}' />
+                                        <input id='rdoQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='radio' name='rdoQuestionAnswer_{questionID}' required='{isRequired}' />
                                         <label class='form-check-label' for='rdoQuestionAnswer_{questionID}_{iPlus1}'>
                                             {qaArr[i]}
                                         </label>
@@ -86,7 +85,7 @@ namespace DynamicQuestionnaire
                             ltlQuestionAnswer.Text +=
                                 $@"
                                     <div class='form-check'>
-                                        <input id='ckbQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='checkbox' />
+                                        <input id='ckbQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='checkbox' required='{isRequired}' />
                                         <label class='form-check-label' for='ckbQuestionAnswer_{questionID}_{iPlus1}'>
                                             {qaArr[i]}
                                         </label>
@@ -101,7 +100,7 @@ namespace DynamicQuestionnaire
                                             {qaArr[i]}
                                         </label>
                                         <div class='col-sm-10'>
-                                            <input id='txtQuestionAnswer_{questionID}_{iPlus1}' class='form-control' type='text' />
+                                            <input id='txtQuestionAnswer_{questionID}_{iPlus1}' class='form-control' type='text' required='{isRequired}' />
                                         </div>
                                     </div>
                                 ";
@@ -115,17 +114,6 @@ namespace DynamicQuestionnaire
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             this.Response.Redirect("QuestionnaireList.aspx", true);
-        }
-
-        protected void btnSubmit_Click(object sender, EventArgs e)
-        {
-
-            //bool isValidUser = this.CheckUserInputs();
-            //if (!isValidUser) return;
-            //this.Response.Write("after testFn");
-            //this.CreateUserInSession();
-            //Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
-            //this.Response.Redirect("CheckingQuestionnaireDetail.aspx?ID=" + questionnaireID, true);
         }
 
         protected Guid GetQuestionnaireIDOrBackToList()

@@ -25,6 +25,7 @@ namespace DynamicQuestionnaire
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.btnEdit.Attributes.Add("onClick", "javascript:history.back(); return false;");
             _isPostBack = this.IsPostBack;
 
             if (!this.IsPostBack)
@@ -32,18 +33,14 @@ namespace DynamicQuestionnaire
                 Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
                 var questionnaire = this._questionnaireMgr.GetQuestionnaire(questionnaireID);
                 var user = this.Session[_user] as User;
+                var userAnswerModelList = this.Session[_userAnswer] as List<UserAnswerModel>;
 
                 if (questionnaire == null)
                 {
                     this.AlertMessage("查無此問卷");
                     this.Response.Redirect("QuestionnaireList.aspx", true);
                 }
-
-                if (user == null)
-                {
-                    this.AlertMessage("沒有您的填寫資料");
-                    this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
-                }
+                this.CheckUserInfoInSession(user, userAnswerModelList, questionnaireID);
 
                 // 為使用Repeater創建的List
                 List<Questionnaire> questionnaireList = new List<Questionnaire>();
@@ -55,15 +52,18 @@ namespace DynamicQuestionnaire
 
                 this.SetUserInfo(user);
 
-                this.rptCheckingQuestionList.DataSource = questionList;
+                var filteredQuestionList = userAnswerModelList
+                    .GroupBy(item => item.QuestionID)
+                    .Select(item2 => item2.FirstOrDefault())
+                    .Select(userAnswerModel => questionList
+                    .Where(question => question.QuestionID 
+                    == userAnswerModel.QuestionID)
+                    .FirstOrDefault())
+                    .ToList();
+
+                this.rptCheckingQuestionList.DataSource = filteredQuestionList;
                 this.rptCheckingQuestionList.DataBind();
             }
-        }
-
-        protected void btnEdit_Click(object sender, EventArgs e)
-        {
-            Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
-            this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
         }
 
         protected void btnSubmit_Click(object sender, EventArgs e)
@@ -72,17 +72,7 @@ namespace DynamicQuestionnaire
             List<UserAnswerModel> userAnswerModelList = this.Session[_userAnswer] as List<UserAnswerModel>;
             Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
 
-            if (user == null)
-            {
-                this.AlertMessage("沒有您的填寫資料");
-                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
-            }
-
-            if (userAnswerModelList == null || userAnswerModelList.Count == 0)
-            {
-                this.AlertMessage("沒有您的回答資料");
-                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
-            }
+            this.CheckUserInfoInSession(user, userAnswerModelList, questionnaireID);
 
             this._userMgr.CreateUser(user);
             this._userAnswerMgr.CreateUserAnswerList(userAnswerModelList);
@@ -123,33 +113,22 @@ namespace DynamicQuestionnaire
                             int userAnswerNum = userAnswer.AnswerNum;
                             int userAnswerNumMinus1 = userAnswerNum - 1;
 
-                            if (userAnswerQuestionTyping == "單選方塊") 
+                            if (userAnswerQuestionTyping == "文字") 
                             {
                                 ltlQuestionAnswer.Text +=
                                 $@"
-                                    <h5 id='rdoQuestionAnswer_{questionID}_{userAnswerNum}'>
-                                        {qaArr[userAnswerNumMinus1]}
-                                    </h5>
-                                ";
-                            }
-
-                            if (userAnswerQuestionTyping == "複選方塊")
-                            {
-                                ltlQuestionAnswer.Text += 
-                                $@"
-                                    <h5 id='ckbQuestionAnswer_{questionID}_{userAnswerNum}'>
-                                        {qaArr[userAnswerNumMinus1]}
-                                    </h5>
-                                ";
-                            }
-
-                            if (userAnswerQuestionTyping == "文字")
-                            {
-                                ltlQuestionAnswer.Text +=
-                                $@"
-                                    <h5 id='txtQuestionAnswer_{questionID}_{userAnswerNum}'>
+                                    <h5 id='questionAnswer_{questionID}_{userAnswerNum}'>
                                         {qaArr[userAnswerNumMinus1]}：
                                         {userAnswer.Answer}
+                                    </h5>
+                                ";
+                            }
+                            else
+                            {
+                                ltlQuestionAnswer.Text +=
+                                $@"
+                                    <h5 id='questionAnswer_{questionID}_{userAnswerNum}'>
+                                        {qaArr[userAnswerNumMinus1]}
                                     </h5>
                                 ";
                             }
@@ -180,6 +159,25 @@ namespace DynamicQuestionnaire
             this.ltlUserPhone.Text = user.Phone;
             this.ltlUserEmail.Text = user.Email;
             this.ltlUserAge.Text = user.Age.ToString();
+        }
+
+        private void CheckUserInfoInSession(
+            User user, 
+            List<UserAnswerModel> userAnswerModelList, 
+            Guid questionnaireID
+            )
+        {
+            if (user == null)
+            {
+                this.AlertMessage("沒有您的填寫資料");
+                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
+            }
+
+            if (userAnswerModelList == null || userAnswerModelList.Count == 0)
+            {
+                this.AlertMessage("沒有您的回答資料");
+                this.Response.Redirect("QuestionnaireDetail.aspx?ID=" + questionnaireID, true);
+            }
         }
 
         private void AlertMessage(string errorMsg)

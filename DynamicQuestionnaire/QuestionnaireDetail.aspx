@@ -47,33 +47,33 @@
             <div class="col-md-10">
                 <div id="questionnaireUserForm">
                     <div class="row mb-3">
-                        <label for="txtUserName" class="col-sm-2 col-form-label">姓名</label>
+                        <label for='<%= this.txtUserName.ClientID %>' class="col-sm-2 col-form-label">姓名</label>
                         <div class="col-sm-10">
-                            <input id="txtUserName" class="form-control" aria-describedby="divValidateUserName" />
+                            <asp:TextBox ID="txtUserName" CssClass="form-control" aria-describedby="divValidateUserName" runat="server" />
                             <div id="divValidateUserName" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label for="txtUserPhone" class="col-sm-2 col-form-label">手機</label>
+                        <label for='<%= this.txtUserPhone.ClientID %>' class="col-sm-2 col-form-label">手機</label>
                         <div class="col-sm-10">
-                            <input id="txtUserPhone" class="form-control" aria-describedby="divValidateUserPhone" />
+                            <asp:TextBox ID="txtUserPhone" CssClass="form-control" aria-describedby="divValidateUserPhone" runat="server" />
                             <div id="divValidateUserPhone" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label for="txtUserEmail" class="col-sm-2 col-form-label">Email</label>
+                        <label for='<%= this.txtUserEmail.ClientID %>' class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                            <input id="txtUserEmail" class="form-control" aria-describedby="divValidateUserEmail" />
+                            <asp:TextBox ID="txtUserEmail" CssClass="form-control" aria-describedby="divValidateUserEmail" runat="server" />
                             <div id="divValidateUserEmail" class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label for="txtUserAge" class="col-sm-2 col-form-label">年齡</label>
+                        <label for='<%= this.txtUserAge.ClientID %>' class="col-sm-2 col-form-label">年齡</label>
                         <div class="col-sm-10">
-                            <input id="txtUserAge" class="form-control" aria-describedby="divValidateUserAge" />
+                            <asp:TextBox ID="txtUserAge" CssClass="form-control" aria-describedby="divValidateUserAge" runat="server" />
                             <div id="divValidateUserAge" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                             <div class="col-11 col-md-10">
                                 <div class="d-flex flex-column">
                                     <h3>
-                                        <asp:Literal ID="ltlQuestionName" runat="server" Text='<%#(Container.ItemIndex + 1).ToString() + ". " + Eval("QuestionName") %>' />
+                                        <asp:Literal ID="ltlQuestionName" runat="server" Text='<%#(Container.ItemIndex + 1).ToString() + ". " + Eval("QuestionName") + ((bool)Eval("QuestionRequired") ? " (必填)" : null) %>' />
                                     </h3>
 
                                     <asp:HiddenField ID="hfQuestionID" runat="server" Value='<%# Eval("QuestionID") %>' />

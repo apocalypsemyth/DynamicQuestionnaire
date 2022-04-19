@@ -1,5 +1,4 @@
 ﻿using DynamicQuestionnaire.DynamicQuestionnaire.ORM;
-using DynamicQuestionnaire.Managers;
 using DynamicQuestionnaire.Models;
 using System;
 using System.Collections.Generic;
@@ -14,11 +13,6 @@ namespace DynamicQuestionnaire.API
     /// </summary>
     public class QuestionnaireDetailDataHandler1 : IHttpHandler, IRequiresSessionState
     {
-        //private string _textResponse = "text/plain";
-        private string _jsonResponse = "application/json";
-        //private string _nullResponse = "NULL";
-        //private string _successedResponse = "SUCCESSED";
-        //private string _failedResponse = "FAILED";
         private const string SINGLE_SELECT = "單選方塊";
         private const string MULTIPLE_SELECT = "複選方塊";
         private const string TEXT = "文字";
@@ -26,9 +20,6 @@ namespace DynamicQuestionnaire.API
         // Session name
         private string _user = "User";
         private string _userAnswer = "UserAnswer";
-
-        //private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
-        //private QuestionManager _questionMgr = new QuestionManager();
 
         public void ProcessRequest(HttpContext context)
         {
@@ -39,31 +30,19 @@ namespace DynamicQuestionnaire.API
                 if (isFirstCreate)
                 {
                     this.CreateUserInSession(isFirstCreate, context);
-                    string jsonTextFirst = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_user]);
-
-                    context.Response.ContentType = _jsonResponse;
-                    context.Response.Write(jsonTextFirst);
                     return;
                 }
 
                 this.CreateUserInSession(isFirstCreate, context);
-                string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_user]);
-
-                context.Response.ContentType = _jsonResponse;
-                context.Response.Write(jsonText);
                 return;
             }
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("CREATE_USERANSWER", context.Request.QueryString["Action"], true) == 0)
             {
                 string userAnswerStr = context.Request.Form["userAnswer"];
-
                 List<string> userAnswerList = userAnswerStr.Split(';').ToList();
                 CreateUserAnswerInSession(userAnswerList, context);
-                string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_userAnswer]);
 
-                context.Response.ContentType = _jsonResponse;
-                context.Response.Write(jsonText);
                 return;
             }
         }
@@ -124,6 +103,7 @@ namespace DynamicQuestionnaire.API
             foreach (var userQuestion in userAnswerList)
             {
                 List<string> questionID_AnswerNum_Answer_QuestionTypingList = userQuestion.Split('_').ToList();
+
                 UserAnswerModel newUserAnswerModel = new UserAnswerModel();
                 newUserAnswerModel.UserID = user.UserID;
 
