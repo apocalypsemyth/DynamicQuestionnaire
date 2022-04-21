@@ -10,24 +10,28 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
     {
         [Key]
         [Column(Order = 0)]
-        public Guid UserID { get; set; }
+        public Guid QuestionnaireID { get; set; }
 
         [Key]
         [Column(Order = 1)]
-        public Guid QuestionID { get; set; }
+        public Guid UserID { get; set; }
 
         [Key]
         [Column(Order = 2)]
+        public Guid QuestionID { get; set; }
+
+        [Key]
+        [Column(Order = 3)]
         [StringLength(50)]
         public string QuestionTyping { get; set; }
 
         [Key]
-        [Column(Order = 3)]
+        [Column(Order = 4)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int AnswerNum { get; set; }
 
         [Key]
-        [Column(Order = 4)]
+        [Column(Order = 5)]
         [StringLength(500)]
         public string Answer { get; set; }
     }
