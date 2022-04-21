@@ -104,8 +104,11 @@ namespace DynamicQuestionnaire.API
             {
                 List<string> questionID_AnswerNum_Answer_QuestionTypingList = userQuestion.Split('_').ToList();
 
-                UserAnswerModel newUserAnswerModel = new UserAnswerModel();
-                newUserAnswerModel.UserID = user.UserID;
+                UserAnswerModel newUserAnswerModel = new UserAnswerModel() 
+                {
+                    QuestionnaireID = user.QuestionnaireID,
+                    UserID = user.UserID,
+                };
 
                 string questionIDStr = questionID_AnswerNum_Answer_QuestionTypingList
                     .SingleOrDefault(item => Guid.TryParse(item, out Guid questionID));

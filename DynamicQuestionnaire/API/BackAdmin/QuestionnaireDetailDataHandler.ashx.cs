@@ -15,6 +15,8 @@ namespace DynamicQuestionnaire.API
     /// </summary>
     public class QuestionnaireDetailDataHandler : IHttpHandler, IRequiresSessionState
     {
+        private int _pageSize = 2;
+
         private string _textResponse = "text/plain";
         private string _jsonResponse = "application/json";
         private string _nullResponse = "NULL";
@@ -25,9 +27,12 @@ namespace DynamicQuestionnaire.API
         private string _isUpdateMode = "IsUpdateMode";
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
+        private string _currentPagerIndex = "CurrentPagerIndex";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private QuestionManager _questionMgr = new QuestionManager();
+        private UserManager _userMgr = new UserManager();
+        private UserAnswerManager _userAnswerMgr = new UserAnswerManager();
 
         public void ProcessRequest(HttpContext context)
         {
@@ -99,7 +104,7 @@ namespace DynamicQuestionnaire.API
                     var questionListInUpdateMode = this._questionMgr
                         .GetQuestionListOfQuestionnaire(questionnaireID);
                     var questionModelListInUpdateMode = this
-                        .CreateQuestionModelListForShowTheyInUpdateMode(questionListInUpdateMode);
+                        .BuildQuestionModelList(questionListInUpdateMode);
                     context.Session[_questionList] = questionModelListInUpdateMode.ToList();
                     string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(questionModelListInUpdateMode);
 
@@ -260,6 +265,109 @@ namespace DynamicQuestionnaire.API
 
                 this.UpdateQuestionInSession(questionID, context);
                 string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_questionList]);
+
+                context.Response.ContentType = _jsonResponse;
+                context.Response.Write(jsonText);
+                return;
+            }
+
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_USERLIST", context.Request.QueryString["Action"], true) == 0)
+            {
+                string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                if (context.Session[_currentPagerIndex] == null)
+                    context.Session[_currentPagerIndex] = 1;
+
+                this.UpdateUserListPager(questionnaireID, context);
+                return;
+            }
+            
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("UPDATE_USERLIST", context.Request.QueryString["Action"], true) == 0)
+            {
+                string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                string indexStr = context.Request.Form["index"];
+
+                if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                if (context.Session[_currentPagerIndex] == null)
+                    context.Session[_currentPagerIndex] = 1;
+
+                if (indexStr == "First")
+                {
+                    context.Session[_currentPagerIndex] = 1;
+                    this.UpdateUserListPager(questionnaireID, context);
+                    return;
+                }
+
+                if (indexStr == "Prev")
+                {
+                    int currentPagerIndex = int.Parse(context.Session[_currentPagerIndex].ToString());
+                    if (currentPagerIndex <= 1)
+                        context.Session[_currentPagerIndex] = 1;
+                    else
+                        context.Session[_currentPagerIndex] = currentPagerIndex - 1;
+                    this.UpdateUserListPager(questionnaireID, context);
+                    return;
+                }
+
+                var totalRowsForPrepare = this._userMgr.GetUserList(questionnaireID).Count();
+                if (indexStr == "Next" || indexStr == "Last")
+                {
+                    if (totalRowsForPrepare < _pageSize)
+                        context.Session[_currentPagerIndex] = 1;
+                    else if ((totalRowsForPrepare % _pageSize) == 0)
+                        context.Session[_currentPagerIndex] = totalRowsForPrepare / _pageSize;
+                    else
+                        context.Session[_currentPagerIndex] = totalRowsForPrepare / _pageSize + 1;
+                    this.UpdateUserListPager(questionnaireID, context);
+                    return;
+                }
+
+                if (!int.TryParse(indexStr, out int index))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+                else
+                    context.Session[_currentPagerIndex] = index;
+
+                this.UpdateUserListPager(questionnaireID, context);
+                return;
+            }
+
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_USERANSWER", context.Request.QueryString["Action"], true) == 0)
+            {
+                string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                string userIDStr = context.Request.Form["userID"];
+
+                if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID)
+                    || !Guid.TryParse(userIDStr, out Guid userID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                var user = this._userMgr.GetUser(questionnaireID, userID);
+                var userModel = this.BuildUserModel(user);
+                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
+                var questionModelList = this.BuildQuestionModelList(questionList);
+                var userAnswerList = this._userAnswerMgr.GetUserAnswerList(questionnaireID, userID);
+                var userAnswerModelList = this.BuildUserAnswerModelList(userAnswerList);
+                object[] userAnswerDetailArr = { userModel, questionModelList, userAnswerModelList };
+                string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(userAnswerDetailArr);
 
                 context.Response.ContentType = _jsonResponse;
                 context.Response.Write(jsonText);
@@ -486,7 +594,21 @@ namespace DynamicQuestionnaire.API
                 .ToList();
         }
 
-        private List<QuestionModel> CreateQuestionModelListForShowTheyInUpdateMode(List<Question> questionList)
+        private UserModel BuildUserModel(User user)
+        {
+            return new UserModel()
+            {
+                UserID = user.UserID,
+                QuestionnaireID = user.QuestionnaireID,
+                UserName = user.UserName,
+                Phone = user.Phone,
+                Email = user.Email,
+                Age = user.Age,
+                AnswerDate = user.AnswerDate,
+            };
+        }
+
+        private List<QuestionModel> BuildQuestionModelList(List<Question> questionList)
         {
             List<QuestionModel> questionModelList = new List<QuestionModel>();
 
@@ -512,6 +634,50 @@ namespace DynamicQuestionnaire.API
             }
 
             return questionModelList;
+        }
+
+        private List<UserAnswerModel> BuildUserAnswerModelList(List<UserAnswer> userAnswerList)
+        {
+            List<UserAnswerModel> userAnswerModelList = new List<UserAnswerModel>();
+
+            foreach (var userAnswer in userAnswerList)
+            {
+                UserAnswerModel userAnswerModel = new UserAnswerModel()
+                {
+                    QuestionnaireID = userAnswer.QuestionnaireID,
+                    UserID = userAnswer.UserID,
+                    QuestionID = userAnswer.QuestionID,
+                    QuestionTyping = userAnswer.QuestionTyping,
+                    AnswerNum = userAnswer.AnswerNum,
+                    Answer = userAnswer.Answer,
+                };
+
+                userAnswerModelList.Add(userAnswerModel);
+            }
+
+            return userAnswerModelList;
+        }
+        
+        private void UpdateUserListPager(Guid questionnaireID, HttpContext context)
+        {
+            var userList = this._userMgr.GetUserList(
+                    questionnaireID,
+                    _pageSize,
+                    int.Parse(context.Session[_currentPagerIndex].ToString()),
+                    out int totalRows
+                    );
+            List<UserModel> userModelList = new List<UserModel>();
+            foreach (var user in userList)
+            {
+                var newUserModel = this.BuildUserModel(user);
+                userModelList.Add(newUserModel);
+            }
+            object[] userModelListAndTotalRowsArr = { userModelList, totalRows };
+            string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(userModelListAndTotalRowsArr);
+
+            context.Response.ContentType = _jsonResponse;
+            context.Response.Write(jsonText);
+            return;
         }
 
         public bool IsReusable
