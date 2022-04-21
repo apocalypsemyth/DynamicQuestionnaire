@@ -11,7 +11,7 @@ namespace DynamicQuestionnaire.BackAdmin
 {
 
 
-    public partial class QuestionnaireDetail
+    public partial class QuestionnaireDetail1
     {
 
         /// <summary>
@@ -60,6 +60,24 @@ namespace DynamicQuestionnaire.BackAdmin
         protected global::System.Web.UI.WebControls.CheckBox ckbIsEnable;
 
         /// <summary>
+        /// ucCancelButtonInQuestionnaireTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DynamicQuestionnaire.Components.ucCancelButton ucCancelButtonInQuestionnaireTab;
+
+        /// <summary>
+        /// ucSubmitButtonInQuestionnaireTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::DynamicQuestionnaire.Components.ucSubmitButton ucSubmitButtonInQuestionnaireTab;
+
+        /// <summary>
         /// ddlCategoryList control.
         /// </summary>
         /// <remarks>
@@ -105,21 +123,21 @@ namespace DynamicQuestionnaire.BackAdmin
         protected global::System.Web.UI.WebControls.TextBox txtQuestionAnswer;
 
         /// <summary>
-        /// btnCancel control.
+        /// ucCancelButtonInQuestionTab control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancel;
+        protected global::DynamicQuestionnaire.Components.ucCancelButton ucCancelButtonInQuestionTab;
 
         /// <summary>
-        /// btnSubmit control.
+        /// ucSubmitButtonInQuestionTab control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmit;
+        protected global::DynamicQuestionnaire.Components.ucSubmitButton ucSubmitButtonInQuestionTab;
     }
 }

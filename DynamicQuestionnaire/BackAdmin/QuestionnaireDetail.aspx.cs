@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 
 namespace DynamicQuestionnaire.BackAdmin
 {
-    public partial class QuestionnaireDetail : System.Web.UI.Page
+    public partial class QuestionnaireDetail1 : System.Web.UI.Page
     {
         private bool _isEditMode = false;
 
@@ -44,9 +44,27 @@ namespace DynamicQuestionnaire.BackAdmin
             }
             else
                 this.InitCreateMode();
+
+            this.ucSubmitButtonInQuestionnaireTab.OnSubmitClick += UcInQuestionnaireTab_OnSubmitClick;
+            this.ucSubmitButtonInQuestionTab.OnSubmitClick += UcInQuestionTab_OnSubmitClick;
+            this.ucCancelButtonInQuestionnaireTab.OnCancelClick += UcInQuestionnaireTab_OnCancelClick;
+            this.ucCancelButtonInQuestionTab.OnCancelClick += UcInQuestionTab_OnCancelClick;
         }
 
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void UcInQuestionnaireTab_OnCancelClick(
+            object sender,
+            EventArgs e
+            )
+        {
+            this.SameLogicOfBtnCancel_Click(sender, e);
+        }
+
+        protected void UcInQuestionTab_OnCancelClick(object sender, EventArgs e)
+        {
+            this.SameLogicOfBtnCancel_Click(sender, e);
+        }
+
+        private void SameLogicOfBtnCancel_Click(object sender, EventArgs e)
         {
             this.Session.Remove(_questionnaire);
             this.Session.Remove(_questionList);
@@ -54,7 +72,26 @@ namespace DynamicQuestionnaire.BackAdmin
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
 
-        protected void btnSubmit_Click(object sender, EventArgs e)
+        protected void UcInQuestionnaireTab_OnSubmitClick(
+            object sender,
+            EventArgs e
+            )
+        {
+            this.SameLogicOfBtnSubmit_Click(sender, e);
+        }
+
+        protected void UcInQuestionTab_OnSubmitClick(
+            object sender,
+            EventArgs e
+            )
+        {
+            this.SameLogicOfBtnSubmit_Click(sender, e);
+        }
+
+        private void SameLogicOfBtnSubmit_Click(
+            object sender,
+            EventArgs e
+            )
         {
             if (!this.CheckQuestionnaireInputs(out List<string> errorMsgList))
             {
