@@ -10,6 +10,25 @@ namespace DynamicQuestionnaire.Managers
 {
     public class UserAnswerManager
     {
+        public List<UserAnswer> GetUserAnswerList(Guid questionnaireID, Guid userID)
+        {
+            try
+            {
+                using (ContextModel context = new ContextModel())
+                {
+                    return context.UserAnswers
+                        .Where(userAnswer => userAnswer.QuestionnaireID == questionnaireID 
+                        && userAnswer.UserID == userID)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("UserAnswerManager.GetUserAnswerList", ex);
+                throw;
+            }
+        }
+
         public void CreateUserAnswerList(List<UserAnswerModel> userAnswerModelList)
         {
             try
@@ -22,6 +41,7 @@ namespace DynamicQuestionnaire.Managers
                     {
                         UserAnswer newUserAnswer = new UserAnswer()
                         {
+                            QuestionnaireID = userAnswerModel.QuestionnaireID,
                             UserID = userAnswerModel.UserID,
                             QuestionID = userAnswerModel.QuestionID,
                             QuestionTyping = userAnswerModel.QuestionTyping,

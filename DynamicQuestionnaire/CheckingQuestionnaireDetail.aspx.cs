@@ -59,6 +59,7 @@ namespace DynamicQuestionnaire
                     .Where(question => question.QuestionID 
                     == userAnswerModel.QuestionID)
                     .FirstOrDefault())
+                    .OrderByDescending(item3 => item3.UpdateDate)
                     .ToList();
 
                 this.rptCheckingQuestionList.DataSource = filteredQuestionList;

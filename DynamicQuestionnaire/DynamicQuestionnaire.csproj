@@ -82,7 +82,9 @@
     <Content Include="BackAdmin\QuestionnaireDetail.aspx" />
     <Content Include="BackAdmin\QuestionnaireList.aspx" />
     <Content Include="CheckingQuestionnaireDetail.aspx" />
+    <Content Include="Components\ucCancelButton.ascx" />
     <Content Include="Components\ucPager.ascx" />
+    <Content Include="Components\ucSubmitButton.ascx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -119,6 +121,7 @@
     <Content Include="Main.Master" />
     <Content Include="API\QuestionnaireDetailDataHandler.ashx" />
     <Content Include="DB\DynamicQuestionnaire.bak" />
+    <Content Include="BackAdmin\QuestionnaireDetailMaster.master" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.min.js" />
@@ -155,6 +158,13 @@
     <Compile Include="BackAdmin\QuestionnaireDetail.aspx.designer.cs">
       <DependentUpon>QuestionnaireDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="BackAdmin\QuestionnaireDetailMaster.master.cs">
+      <DependentUpon>QuestionnaireDetailMaster.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BackAdmin\QuestionnaireDetailMaster.master.designer.cs">
+      <DependentUpon>QuestionnaireDetailMaster.master</DependentUpon>
+    </Compile>
     <Compile Include="BackAdmin\QuestionnaireList.aspx.cs">
       <DependentUpon>QuestionnaireList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -169,12 +179,26 @@
     <Compile Include="CheckingQuestionnaireDetail.aspx.designer.cs">
       <DependentUpon>CheckingQuestionnaireDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Components\ucCancelButton.ascx.cs">
+      <DependentUpon>ucCancelButton.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\ucCancelButton.ascx.designer.cs">
+      <DependentUpon>ucCancelButton.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Components\ucPager.ascx.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Components\ucPager.ascx.designer.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ucSubmitButton.ascx.cs">
+      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\ucSubmitButton.ascx.designer.cs">
+      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
     </Compile>
     <Compile Include="DynamicQuestionnaire.ORM\Category.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\ContextModel.cs" />
@@ -202,6 +226,7 @@
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Models\QuestionModel.cs" />
     <Compile Include="Models\UserAnswerModel.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuestionnaireDetail.aspx.cs">
       <DependentUpon>QuestionnaireDetail.aspx</DependentUpon>
