@@ -44,6 +44,8 @@
     </div>
 
     <div id="question-info" class="tab-pane">
+        <asp:Button ID="btnExportAndDownloadDataToCSV" runat="server" Text="匯出" OnClick="btnExportAndDownloadDataToCSV_Click" />
+
         <div id="divUserListContainer"></div>
 
         <div id="divUserListPagerContainer"></div>

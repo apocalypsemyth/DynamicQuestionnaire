@@ -4,6 +4,7 @@ using DynamicQuestionnaire.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -18,11 +19,13 @@ namespace DynamicQuestionnaire.BackAdmin
         private string _isUpdateMode = "IsUpdateMode";
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
+        private string _currentPagerIndex = "CurrentPagerIndex";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private CategoryManager _categoryMgr = new CategoryManager();
         private TypingManager _typingMgr = new TypingManager();
         private QuestionManager _questionMgr = new QuestionManager();
+        private UserManager _userMgr = new UserManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -41,9 +44,13 @@ namespace DynamicQuestionnaire.BackAdmin
             {
                 Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
                 this.InitEditMode(questionnaireID);
+                this.btnExportAndDownloadDataToCSV.Visible = true;
             }
             else
+            {
                 this.InitCreateMode();
+                this.btnExportAndDownloadDataToCSV.Visible = false;
+            }
 
             this.ucSubmitButtonInQuestionnaireTab.OnSubmitClick += UcInQuestionnaireTab_OnSubmitClick;
             this.ucSubmitButtonInQuestionTab.OnSubmitClick += UcInQuestionTab_OnSubmitClick;
@@ -56,20 +63,12 @@ namespace DynamicQuestionnaire.BackAdmin
             EventArgs e
             )
         {
-            this.SameLogicOfBtnCancel_Click(sender, e);
+            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
         }
 
         protected void UcInQuestionTab_OnCancelClick(object sender, EventArgs e)
         {
-            this.SameLogicOfBtnCancel_Click(sender, e);
-        }
-
-        private void SameLogicOfBtnCancel_Click(object sender, EventArgs e)
-        {
-            this.Session.Remove(_questionnaire);
-            this.Session.Remove(_questionList);
-
-            this.Response.Redirect("QuestionnaireList.aspx", true);
+            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
         }
 
         protected void UcInQuestionnaireTab_OnSubmitClick(
@@ -134,9 +133,37 @@ namespace DynamicQuestionnaire.BackAdmin
                 this._questionMgr.CreateQuestionList(newQuestionList);
             }
 
+            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+        }
+
+        private void SameLogicOfRemoveSessionAndBackToList(
+            object sender,
+            EventArgs e
+            )
+        {
+            this.Session.Remove(_isUpdateMode);
             this.Session.Remove(_questionnaire);
             this.Session.Remove(_questionList);
+            this.Session.Remove(_currentPagerIndex);
+
             this.Response.Redirect("QuestionnaireList.aspx", true);
+        }
+
+        protected void btnExportAndDownloadDataToCSV_Click(object sender, EventArgs e)
+        {
+            Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
+            var csv = this._userMgr.ExportDataToCSV(questionnaireID);
+
+            this.Response.Clear();
+            this.Response.Buffer = true;
+            this.Response.AddHeader("content-disposition", "attachment;filename=UserList.csv");
+            this.Response.Charset = "";
+            this.Response.ContentType = "application/csv";
+            this.Response.ContentEncoding = Encoding.UTF8;
+            this.Response.BinaryWrite(Encoding.UTF8.GetPreamble());
+            this.Response.Output.Write(csv);
+            this.Response.Flush();
+            this.Response.End();
         }
 
         protected Guid GetQuestionnaireIDOrBackToList()
