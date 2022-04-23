@@ -78,7 +78,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BackAdmin\QuestionList.aspx" />
+    <Content Include="BackAdmin\CommonQuestionDetail.aspx" />
+    <Content Include="BackAdmin\CommonQuestionList.aspx" />
     <Content Include="BackAdmin\QuestionnaireDetail.aspx" />
     <Content Include="BackAdmin\QuestionnaireList.aspx" />
     <Content Include="CheckingQuestionnaireDetail.aspx" />
@@ -105,8 +106,10 @@
     <Content Include="Css\Global.css" />
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
+    <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
+    <Content Include="JavaScript\BackAdmin\CommonQuestionDetail.js" />
     <Content Include="JavaScript\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\QuestionnaireDetail.js" />
     <Content Include="QuestionnaireDetail.aspx" />
@@ -121,6 +124,7 @@
     <Content Include="Main.Master" />
     <Content Include="API\QuestionnaireDetailDataHandler.ashx" />
     <Content Include="BackAdmin\QuestionnaireDetailMaster.master" />
+    <Content Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx" />
     <Content Include="DB\DynamicQuestionnaire.bak" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
@@ -131,6 +135,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx.cs">
+      <DependentUpon>CommonQuestionDetailDataHandler.ashx</DependentUpon>
+    </Compile>
     <Compile Include="API\BackAdmin\QuestionnaireDetailDataHandler.ashx.cs">
       <DependentUpon>QuestionnaireDetailDataHandler.ashx</DependentUpon>
     </Compile>
@@ -144,12 +151,19 @@
     <Compile Include="BackAdmin\Admin.Master.designer.cs">
       <DependentUpon>Admin.Master</DependentUpon>
     </Compile>
-    <Compile Include="BackAdmin\QuestionList.aspx.cs">
-      <DependentUpon>QuestionList.aspx</DependentUpon>
+    <Compile Include="BackAdmin\CommonQuestionDetail.aspx.cs">
+      <DependentUpon>CommonQuestionDetail.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="BackAdmin\QuestionList.aspx.designer.cs">
-      <DependentUpon>QuestionList.aspx</DependentUpon>
+    <Compile Include="BackAdmin\CommonQuestionDetail.aspx.designer.cs">
+      <DependentUpon>CommonQuestionDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BackAdmin\CommonQuestionList.aspx.cs">
+      <DependentUpon>CommonQuestionList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BackAdmin\CommonQuestionList.aspx.designer.cs">
+      <DependentUpon>CommonQuestionList.aspx</DependentUpon>
     </Compile>
     <Compile Include="BackAdmin\QuestionnaireDetail.aspx.cs">
       <DependentUpon>QuestionnaireDetail.aspx</DependentUpon>
@@ -201,6 +215,7 @@
       <DependentUpon>ucSubmitButton.ascx</DependentUpon>
     </Compile>
     <Compile Include="DynamicQuestionnaire.ORM\Category.cs" />
+    <Compile Include="DynamicQuestionnaire.ORM\CommonQuestion.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\ContextModel.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\Question.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\Questionnaire.cs" />
@@ -220,6 +235,7 @@
       <DependentUpon>Main.Master</DependentUpon>
     </Compile>
     <Compile Include="Managers\CategoryManager.cs" />
+    <Compile Include="Managers\CommonQuestionManager.cs" />
     <Compile Include="Managers\QuestionManager.cs" />
     <Compile Include="Managers\QuestionnaireManager.cs" />
     <Compile Include="Managers\TypingManager.cs" />

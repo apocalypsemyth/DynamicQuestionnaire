@@ -127,9 +127,10 @@
             e.preventDefault();
 
             let arrCheckedQuestionID = [];
-            $("#divGvQuestionListContainer table tbody tr td input[type='checkbox']:checked").each(function () {
-                arrCheckedQuestionID.push($(this).attr("id"));
-            })
+            $("#divGvQuestionListContainer table tbody tr td input[type='checkbox']:checked")
+                .each(function () {
+                    arrCheckedQuestionID.push($(this).attr("id"));
+                });
 
             DeleteQuestionList(arrCheckedQuestionID.join());
         });

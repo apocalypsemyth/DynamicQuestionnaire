@@ -19,7 +19,7 @@
 
             <div class="col-md-2">
                 <a href="QuestionnaireList.aspx">問卷管理</a><br />
-                <a href="QuestionList.aspx">常用問題管理</a><br />
+                <a href="CommonQuestionList.aspx">常用問題管理</a><br />
             </div>
 
             <main class="col-md-8">
@@ -33,5 +33,7 @@
     <script src="../Scripts/jquery.min.js"></script>
     <script src="../JavaScript/BackAdmin/QuestionnaireDetail.js"></script>
     <script src="../JavaScript/BackAdmin/Modules/QuestionnaireDetailModule.js"></script>
+    <script src="../JavaScript/BackAdmin/CommonQuestionDetail.js"></script>
+    <script src="../JavaScript/BackAdmin/Modules/CommonQuestionDetailModule.js"></script>
 </body>
 </html>

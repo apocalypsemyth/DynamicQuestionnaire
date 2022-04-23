@@ -207,9 +207,10 @@ namespace DynamicQuestionnaire.API
                     return;
                 }
 
-                string[] checkedBookIDStrArr = checkedQuestionIDList.Split(',');
-                Guid[] checkedBookIDGuidArr = checkedBookIDStrArr.Select(item => Guid.Parse(item)).ToArray();
-                this.DeleteQuestionListInSession(isUpdateMode, checkedBookIDGuidArr, context);
+                string[] checkedQuestionIDStrArr = checkedQuestionIDList.Split(',');
+                Guid[] checkedQuestionIDGuidArr = 
+                    checkedQuestionIDStrArr.Select(item => Guid.Parse(item)).ToArray();
+                this.DeleteQuestionListInSession(isUpdateMode, checkedQuestionIDGuidArr, context);
                 string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_questionList]);
 
                 context.Response.ContentType = _jsonResponse;
