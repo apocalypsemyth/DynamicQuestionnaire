@@ -28,6 +28,25 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
+        public Question GetQuestionOfCommonQuestion(Guid commonQuestionID)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    return contextModel.Questions
+                        .Where(question => question.CommonQuestionID 
+                        == commonQuestionID)
+                        .FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetQuestionOfCommonQuestion", ex);
+                throw;
+            }
+        }
+
         public List<Question> GetQuestionListOfQuestionnaire(Guid questionnaireID)
         {
             try
@@ -45,6 +64,27 @@ namespace DynamicQuestionnaire.Managers
             catch (Exception ex)
             {
                 Logger.WriteLog("QuestionManager.GetQuestionListOfQuestionnaire", ex);
+                throw;
+            }
+        }
+
+        public List<Question> GetQuestionListOfCommonQuestion(Guid commonQuestionID)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    var questionList = contextModel.Questions
+                        .Where(question => question.CommonQuestionID == commonQuestionID)
+                        .OrderByDescending(item => item.UpdateDate)
+                        .ToList();
+
+                    return questionList;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.GetQuestionListOfCommonQuestion", ex);
                 throw;
             }
         }

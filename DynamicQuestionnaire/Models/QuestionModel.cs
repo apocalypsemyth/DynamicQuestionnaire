@@ -16,6 +16,7 @@ namespace DynamicQuestionnaire.Models
         public string QuestionAnswer { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public Guid? CommonQuestionID { get; set; }
         public bool IsCreated { get; set; }
         public bool IsUpdated { get; set; }
         public bool IsDeleted { get; set; }
