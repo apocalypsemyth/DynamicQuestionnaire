@@ -13,6 +13,7 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
         }
 
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<CommonQuestion> CommonQuestions { get; set; }
         public virtual DbSet<Questionnaire> Questionnaires { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<Typing> Typings { get; set; }
@@ -21,11 +22,6 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Questionnaire>()
-                .HasMany(e => e.Questions)
-                .WithRequired(e => e.Questionnaire)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<Questionnaire>()
                 .HasMany(e => e.Users)
                 .WithRequired(e => e.Questionnaire)

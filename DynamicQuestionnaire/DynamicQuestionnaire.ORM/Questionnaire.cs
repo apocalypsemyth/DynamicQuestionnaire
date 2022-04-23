@@ -11,7 +11,6 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Questionnaire()
         {
-            Questions = new HashSet<Question>();
             Users = new HashSet<User>();
         }
 
@@ -34,9 +33,6 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
         public DateTime CreateDate { get; set; }
 
         public DateTime UpdateDate { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Question> Questions { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User> Users { get; set; }

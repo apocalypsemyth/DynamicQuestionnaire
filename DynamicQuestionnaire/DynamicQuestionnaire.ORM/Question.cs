@@ -34,6 +34,6 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
 
         public DateTime UpdateDate { get; set; }
 
-        public virtual Questionnaire Questionnaire { get; set; }
+        public Guid? CommonQuestionID { get; set; }
     }
 }
