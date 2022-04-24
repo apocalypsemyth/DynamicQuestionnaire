@@ -87,7 +87,7 @@ var CreateCommonQuestion = function (objCommonQuestion) {
 }
 
 var ResetQuestionOfCommonQuestionInputs = function () {
-    $("select[id*=ddlCategoryList]").val("自訂問題").change();
+    $("select[id*=ddlCategoryList]").val("常用問題").change();
     $("select[id*=ddlTypingList]").val("單選方塊").change();
     $("input[id*=txtQuestionNameOfCommonQuestion]").val("");
     $("input[id*=txtQuestionAnswerOfCommonQuestion]").val("");

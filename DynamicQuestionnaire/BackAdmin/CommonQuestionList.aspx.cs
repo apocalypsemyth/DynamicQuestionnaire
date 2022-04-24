@@ -12,6 +12,8 @@ namespace DynamicQuestionnaire.BackAdmin
     {
         private const int _pageSize = 10;
         private CommonQuestionManager _commonQuestionMgr = new CommonQuestionManager();
+        private QuestionManager _questionMgr = new QuestionManager();
+        private CategoryManager _categoryMgr = new CategoryManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -83,7 +85,9 @@ namespace DynamicQuestionnaire.BackAdmin
 
             if (commonQuestionIDList.Count > 0)
             {
-                this._commonQuestionMgr.DeleteQuestionListOfCommonQuestionList(commonQuestionIDList);
+                this._questionMgr.DeleteQuestionListOfCommonQuestionList(commonQuestionIDList);
+                this._categoryMgr.DeleteCategoryListOfCommonQuestionList(commonQuestionIDList);
+                this._commonQuestionMgr.DeleteCommonQuestionList(commonQuestionIDList);
                 this.Response.Redirect(this.Request.RawUrl);
             }
         }

@@ -77,6 +77,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
             this._commonQuestionMgr.CreateCommonQuestion(commonQuestion);
             this._questionMgr.CreateQuestionList(questionListOfCommonQuestion);
+            this._categoryMgr.CreateCategoryOfCommonQuestion(commonQuestion);
 
             this.Session.Remove(_commonQuestion);
             this.Session.Remove(_questionListOfCommonQuestion);
@@ -97,12 +98,15 @@ namespace DynamicQuestionnaire.BackAdmin
         private void InitCreateMode()
         {
             var categoryList = this._categoryMgr.GetCategoryList();
+            var onlyCommonQuestionCategoryList = categoryList
+                    .Where(category => category.CategoryName == "常用問題" 
+                    && category.CommonQuestionID == null);
             var typingList = this._typingMgr.GetTypingList();
 
             // 問題控制項繫結
             this.ddlCategoryList.DataTextField = "CategoryName";
             this.ddlCategoryList.DataValueField = "CategoryName";
-            this.ddlCategoryList.DataSource = categoryList;
+            this.ddlCategoryList.DataSource = onlyCommonQuestionCategoryList;
             this.ddlCategoryList.DataBind();
             this.ddlCategoryList.ClearSelection();
             this.ddlCategoryList.Items.FindByValue("常用問題").Selected = true;
@@ -129,6 +133,8 @@ namespace DynamicQuestionnaire.BackAdmin
             else
             {
                 var categoryList = this._categoryMgr.GetCategoryList();
+                var excludeCustomizedQuestionCategoryList = categoryList
+                    .Where(category => category.CategoryName != "自訂問題");
                 var typingList = this._typingMgr.GetTypingList();
                 var questionList = this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
                 var firstQuestion = questionList.FirstOrDefault();
@@ -136,7 +142,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 // 問題控制項繫結
                 this.ddlCategoryList.DataTextField = "CategoryName";
                 this.ddlCategoryList.DataValueField = "CategoryName";
-                this.ddlCategoryList.DataSource = categoryList;
+                this.ddlCategoryList.DataSource = excludeCustomizedQuestionCategoryList;
                 this.ddlCategoryList.DataBind();
                 this.ddlCategoryList.ClearSelection();
                 this.ddlCategoryList.Items.FindByValue(firstQuestion.QuestionCategory).Selected = true;

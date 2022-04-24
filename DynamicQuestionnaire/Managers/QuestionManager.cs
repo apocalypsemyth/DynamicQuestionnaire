@@ -129,6 +129,30 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
+        public void DeleteQuestionListOfCommonQuestionList(List<Guid> commonQuestionIDList)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    var toDeleteQuestionListOfCommonQuestionList = commonQuestionIDList
+                        .Select(commonQuestionID => contextModel.Questions
+                        .Where(question => question.CommonQuestionID
+                        == commonQuestionID)
+                        .FirstOrDefault())
+                        .ToList();
+
+                    contextModel.Questions.RemoveRange(toDeleteQuestionListOfCommonQuestionList);
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.DeleteQuestionListOfCommonQuestionList", ex);
+                throw;
+            }
+        }
+
         public void UpdateQuestionList(List<QuestionModel> questionModelList)
         {
             try
