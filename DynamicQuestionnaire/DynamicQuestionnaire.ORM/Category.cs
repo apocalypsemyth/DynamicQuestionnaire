@@ -13,5 +13,7 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
         [Required]
         [StringLength(50)]
         public string CategoryName { get; set; }
+
+        public Guid? CommonQuestionID { get; set; }
     }
 }
