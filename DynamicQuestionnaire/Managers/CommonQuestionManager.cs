@@ -9,6 +9,24 @@ namespace DynamicQuestionnaire.Managers
 {
     public class CommonQuestionManager
     {
+        public CommonQuestion GetCommonQuestion(Guid commonQuestionID)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    return contextModel.CommonQuestions
+                        .SingleOrDefault(commonQuestion => commonQuestion.CommonQuestionID 
+                        == commonQuestionID);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("CommonQuestionManager.GetCommonQuestion", ex);
+                throw;
+            }
+        }
+
         public List<CommonQuestion> GetCommonQuestionList(
             string keyword,
             int pageSize,
@@ -25,8 +43,10 @@ namespace DynamicQuestionnaire.Managers
                 {
                     if (!string.IsNullOrWhiteSpace(keyword))
                     {
-                        var filteredCommonQuestionList = contextModel.CommonQuestions
-                            .Where(commonQuestion => commonQuestion.CommonQuestionName.Contains(keyword));
+                        var filteredCommonQuestionList = 
+                            contextModel.CommonQuestions
+                            .Where(commonQuestion => commonQuestion.CommonQuestionName
+                            .Contains(keyword));
 
                         var commonQuestionList = filteredCommonQuestionList
                             .OrderByDescending(item2 => item2.UpdateDate)
@@ -96,6 +116,34 @@ namespace DynamicQuestionnaire.Managers
             catch (Exception ex)
             {
                 Logger.WriteLog("CommonQuestionManager.DeleteCommonQuestionList", ex);
+                throw;
+            }
+        }
+
+        public void UpdateCommonQuestion(CommonQuestion commonQuestion)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    var toUpdateCommonQuestion = 
+                        contextModel.CommonQuestions
+                        .SingleOrDefault(item => item.CommonQuestionID
+                        == commonQuestion.CommonQuestionID);
+
+                    if (toUpdateCommonQuestion.UpdateDate != commonQuestion.UpdateDate)
+                    {
+                        toUpdateCommonQuestion.CommonQuestionName = commonQuestion.CommonQuestionName;
+                        toUpdateCommonQuestion.CreateDate = commonQuestion.CreateDate;
+                        toUpdateCommonQuestion.UpdateDate = commonQuestion.UpdateDate;
+
+                        contextModel.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("CommonQuestionManager.UpdateCommonQuestion", ex);
                 throw;
             }
         }

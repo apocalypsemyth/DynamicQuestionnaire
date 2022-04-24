@@ -106,6 +106,7 @@
     <Content Include="Css\Global.css" />
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
+    <Content Include="JavaScript\BackAdmin\Funcs\CommonQuestionDetailFunc.js" />
     <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />

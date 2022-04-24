@@ -100,30 +100,49 @@ namespace DynamicQuestionnaire.BackAdmin
                 return;
             }
 
-            if (this.Session[_questionList] == null)
+            Questionnaire newOrToUpdateQuestionnaire = 
+                this.Session[_questionList] as Questionnaire;
+            if (newOrToUpdateQuestionnaire == null)
             {
-                this.AlertMessage("請填寫問題後，按下加入按鈕。");
+                this.AlertMessage("請填寫問題後，先按下加入按鈕。");
                 return;
             }
 
-            Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
+            var newOrUpdatedQuestionnaire = 
+                this.FinalUpdateQuestionnaire(newOrToUpdateQuestionnaire);
 
             if (_isEditMode)
             {
-                List<QuestionModel> toUpdateQuestionModelList = this.Session[_questionList] as List<QuestionModel>;
-                if (toUpdateQuestionModelList == null || toUpdateQuestionModelList.Count == 0)
+                List<QuestionModel> toUpdateQuestionModelList = 
+                    this.Session[_questionList] as List<QuestionModel>;
+                if (toUpdateQuestionModelList == null 
+                    || toUpdateQuestionModelList.Count == 0)
                 {
                     this.AlertMessage("請填寫至少一個問題。");
                     return;
                 }
 
-                this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
-                this._questionMgr.UpdateQuestionList(toUpdateQuestionModelList);
+                if (toUpdateQuestionModelList.All(item => item.IsDeleted))
+                {
+                    this.AlertMessage("問題不能全空，請填寫或留下至少一個問題。");
+                    return;
+                }
+
+                this._questionMgr.UpdateQuestionList(
+                    toUpdateQuestionModelList, 
+                    out bool hasAnyUpdated
+                    );
+
+                if (hasAnyUpdated)
+                    newOrUpdatedQuestionnaire.UpdateDate = DateTime.Now;
+
+                this._questionnaireMgr.UpdateQuestionnaire(newOrUpdatedQuestionnaire);
             }
             else
             {
-                List<Question> newQuestionList = this.Session[_questionList] as List<Question>;
-                if (newQuestionList.Count == 0)
+                List<Question> newQuestionList = 
+                    this.Session[_questionList] as List<Question>;
+                if (newQuestionList == null || newQuestionList.Count == 0)
                 {
                     this.AlertMessage("請填寫至少一個問題。");
                     return;
@@ -265,6 +284,23 @@ namespace DynamicQuestionnaire.BackAdmin
                 return false;
             else
                 return true;
+        }
+
+        private Questionnaire FinalUpdateQuestionnaire(Questionnaire questionnaire)
+        {
+            Questionnaire newOrUpdatedQuestionnaire = new Questionnaire()
+            {
+                QuestionnaireID = questionnaire.QuestionnaireID,
+                Caption = questionnaire.Caption,
+                Description = questionnaire.Description,
+                IsEnable = questionnaire.IsEnable,
+                StartDate = questionnaire.StartDate,
+                EndDate = questionnaire.EndDate,
+                CreateDate = questionnaire.CreateDate,
+                UpdateDate = questionnaire.UpdateDate,
+            };
+
+            return newOrUpdatedQuestionnaire;
         }
 
         private void AlertMessage(string errorMsg)

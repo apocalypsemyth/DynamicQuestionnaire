@@ -103,8 +103,8 @@ namespace DynamicQuestionnaire.API
 
                     var questionListInUpdateMode = this._questionMgr
                         .GetQuestionListOfQuestionnaire(questionnaireID);
-                    var questionModelListInUpdateMode = this
-                        .BuildQuestionModelList(questionListInUpdateMode);
+                    var questionModelListInUpdateMode = 
+                        this._questionMgr.BuildQuestionModelList(questionListInUpdateMode);
                     context.Session[_questionList] = questionModelListInUpdateMode.ToList();
                     string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(questionModelListInUpdateMode);
 
@@ -364,7 +364,7 @@ namespace DynamicQuestionnaire.API
                 var user = this._userMgr.GetUser(questionnaireID, userID);
                 var userModel = this.BuildUserModel(user);
                 var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
-                var questionModelList = this.BuildQuestionModelList(questionList);
+                var questionModelList = this._questionMgr.BuildQuestionModelList(questionList);
                 var userAnswerList = this._userAnswerMgr.GetUserAnswerList(questionnaireID, userID);
                 var userAnswerModelList = this.BuildUserAnswerModelList(userAnswerList);
                 object[] userAnswerDetailArr = { userModel, questionModelList, userAnswerModelList };
@@ -607,34 +607,6 @@ namespace DynamicQuestionnaire.API
                 Age = user.Age,
                 AnswerDate = user.AnswerDate,
             };
-        }
-
-        private List<QuestionModel> BuildQuestionModelList(List<Question> questionList)
-        {
-            List<QuestionModel> questionModelList = new List<QuestionModel>();
-
-            foreach (var question in questionList)
-            {
-                QuestionModel questionModel = new QuestionModel()
-                {
-                    QuestionID = question.QuestionID,
-                    QuestionnaireID = question.QuestionnaireID,
-                    QuestionCategory = question.QuestionCategory,
-                    QuestionTyping = question.QuestionTyping,
-                    QuestionName = question.QuestionName,
-                    QuestionRequired = question.QuestionRequired,
-                    QuestionAnswer = question.QuestionAnswer,
-                    CreateDate = question.CreateDate,
-                    UpdateDate = question.UpdateDate,
-                    IsCreated = false,
-                    IsUpdated = false,
-                    IsDeleted = false,
-                };
-
-                questionModelList.Add(questionModel);
-            }
-
-            return questionModelList;
         }
 
         private List<UserAnswerModel> BuildUserAnswerModelList(List<UserAnswer> userAnswerList)

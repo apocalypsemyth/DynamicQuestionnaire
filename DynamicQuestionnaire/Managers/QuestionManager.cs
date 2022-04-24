@@ -10,43 +10,6 @@ namespace DynamicQuestionnaire.Managers
 {
     public class QuestionManager
     {
-        public Question GetQuestion(Guid questionID)
-        {
-            try
-            {
-                using (ContextModel contextModel = new ContextModel())
-                {
-                    return contextModel.Questions
-                        .Where(question => question.QuestionID == questionID)
-                        .FirstOrDefault();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("QuestionManager.GetQuestion", ex);
-                throw;
-            }
-        }
-
-        public Question GetQuestionOfCommonQuestion(Guid commonQuestionID)
-        {
-            try
-            {
-                using (ContextModel contextModel = new ContextModel())
-                {
-                    return contextModel.Questions
-                        .Where(question => question.CommonQuestionID 
-                        == commonQuestionID)
-                        .FirstOrDefault();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("QuestionManager.GetQuestionOfCommonQuestion", ex);
-                throw;
-            }
-        }
-
         public List<Question> GetQuestionListOfQuestionnaire(Guid questionnaireID)
         {
             try
@@ -106,29 +69,6 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
-        public void DeleteQuestionList(List<Guid> questionIDList)
-        {
-            try
-            {
-                using (ContextModel contextModel = new ContextModel())
-                {
-                    var toDeleteQuestionList = questionIDList
-                        .Select(questionID => contextModel.Questions
-                        .Where(question => question.QuestionID == questionID)
-                        .FirstOrDefault())
-                        .ToList();
-
-                    contextModel.Questions.RemoveRange(toDeleteQuestionList);
-                    contextModel.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("QuestionManager.DeleteQuestionList", ex);
-                throw;
-            }
-        }
-
         public void DeleteQuestionListOfCommonQuestionList(List<Guid> commonQuestionIDList)
         {
             try
@@ -153,12 +93,14 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
-        public void UpdateQuestionList(List<QuestionModel> questionModelList)
+        public void UpdateQuestionList(List<QuestionModel> questionModelList, out bool hasAnyUpdated)
         {
             try
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
+                    hasAnyUpdated = false;
+
                     foreach (var questionModel in questionModelList)
                     {
                         if (!questionModel.IsCreated)
@@ -171,6 +113,8 @@ namespace DynamicQuestionnaire.Managers
 
                                 if (toDeleteQuestion != null)
                                     contextModel.Questions.Remove(toDeleteQuestion);
+
+                                hasAnyUpdated = true;
                             }
                             else if (questionModel.IsUpdated)
                             {
@@ -187,6 +131,8 @@ namespace DynamicQuestionnaire.Managers
                                     toUpdateQuestion.QuestionRequired = questionModel.QuestionRequired;
                                     toUpdateQuestion.UpdateDate = questionModel.UpdateDate;
                                 }
+
+                                hasAnyUpdated = true;
                             }
                         }
                         else if (!questionModel.IsDeleted)
@@ -202,9 +148,11 @@ namespace DynamicQuestionnaire.Managers
                                 QuestionRequired = questionModel.QuestionRequired,
                                 CreateDate = questionModel.CreateDate,
                                 UpdateDate = questionModel.UpdateDate,
+                                CommonQuestionID = questionModel.CommonQuestionID,
                             };
 
                             contextModel.Questions.Add(newQuestion);
+                            hasAnyUpdated = true;
                         }
                         else
                             continue;
@@ -218,6 +166,35 @@ namespace DynamicQuestionnaire.Managers
                 Logger.WriteLog("QuestionManager.UpdateQuestionList", ex);
                 throw;
             }
+        }
+
+        public List<QuestionModel> BuildQuestionModelList(List<Question> questionList)
+        {
+            List<QuestionModel> questionModelList = new List<QuestionModel>();
+
+            foreach (var question in questionList)
+            {
+                QuestionModel questionModel = new QuestionModel()
+                {
+                    QuestionID = question.QuestionID,
+                    QuestionnaireID = question.QuestionnaireID,
+                    QuestionCategory = question.QuestionCategory,
+                    QuestionTyping = question.QuestionTyping,
+                    QuestionName = question.QuestionName,
+                    QuestionRequired = question.QuestionRequired,
+                    QuestionAnswer = question.QuestionAnswer,
+                    CreateDate = question.CreateDate,
+                    UpdateDate = question.UpdateDate,
+                    CommonQuestionID = question.CommonQuestionID,
+                    IsCreated = false,
+                    IsUpdated = false,
+                    IsDeleted = false,
+                };
+
+                questionModelList.Add(questionModel);
+            }
+
+            return questionModelList;
         }
     }
 }

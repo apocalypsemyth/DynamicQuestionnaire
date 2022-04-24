@@ -71,5 +71,36 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
+
+        public void UpdateCategoryByCommonQuestion(CommonQuestion commonQuestion)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    var toUpdateCommonQuestion =
+                        contextModel.CommonQuestions
+                        .SingleOrDefault(item => item.CommonQuestionID
+                        == commonQuestion.CommonQuestionID);
+
+                    var toUpdateCategory = 
+                        contextModel.Categories
+                        .SingleOrDefault(item2 => item2.CommonQuestionID 
+                        == commonQuestion.CommonQuestionID);
+
+                    if (toUpdateCommonQuestion.UpdateDate != commonQuestion.UpdateDate)
+                    {
+                        toUpdateCategory.CategoryName = commonQuestion.CommonQuestionName;
+                        contextModel.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("CategoryManager.UpdateCategoryOfCommonQuestion", ex);
+                throw;
+            }
+        }
+
     }
 }

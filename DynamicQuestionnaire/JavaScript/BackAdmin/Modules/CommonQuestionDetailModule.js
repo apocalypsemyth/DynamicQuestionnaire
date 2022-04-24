@@ -63,6 +63,21 @@ var CheckQuestionOfCommonQuestionInputs = function (objQuestionOfCommonQuestion)
         return true;
 }
 
+var GetCommonQuestion = function (strCommonQuestionID) {
+    $.ajax({
+        url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=GET_COMMONQUESTION",
+        method: "POST",
+        data: { "commonQuestionID": strCommonQuestionID },
+        success: function (strErrorMsg) {
+            if (strErrorMsg === FAILED)
+                alert("發生錯誤，請再嘗試");
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+}
 var CreateCommonQuestion = function (objCommonQuestion) {
     $.ajax({
         url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=CREATE_COMMONQUESTION",
@@ -78,6 +93,21 @@ var CreateCommonQuestion = function (objCommonQuestion) {
             }
 
             CreateQuestionOfCommonQuestion(objQuestionOfCommonQuestion);
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+}
+var UpdateCommonQuestion = function (objCommonQuestion) {
+    $.ajax({
+        url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=UPDATE_COMMONQUESTION",
+        method: "POST",
+        data: objCommonQuestion,
+        success: function (notUpdatedOrUpdatedObjCommonQuestion) {
+            $("input[id*=txtCommonQuestionName]")
+                .val(notUpdatedOrUpdatedObjCommonQuestion.CommonQuestionName);
         },
         error: function (msg) {
             console.log(msg);
@@ -144,8 +174,8 @@ var CreateQuestionListOfCommonQuestionTable = function (objArrQuestionOfCommonQu
                     </td>
                     <td>
                         <a
-                            id="aLinkEditQuestion-${objArrQuestionOfCommonQuestion[i].QuestionID}"
-                            href="QuestionnaireDetail.aspx?QuestionID=${objArrQuestionOfCommonQuestion[i].QuestionID}"
+                            id="aLinkEditQuestionOfCommonQuestion-${objArrQuestionOfCommonQuestion[i].QuestionID}"
+                            href="CommonQuestionDetail.aspx?QuestionIDOfCommonQuestion=${objArrQuestionOfCommonQuestion[i].QuestionID}"
                         >
                             編輯
                         </a>
@@ -205,7 +235,9 @@ var DeleteQuestionListOfCommonQuestion = function (strQuestionIDListOfCommonQues
         url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=DELETE_QUESTIONLIST_OF_COMMONQUESTION",
         method: "POST",
         data: { "checkedQuestionIDListOfCommonQuestion": strQuestionIDListOfCommonQuestion, },
-        success: function (strOrObjArrQuestionOfCommonQuestion) {
+        success: function (strOrObjArrQuestionOfCommonQuestionAndIsUpdateMode) {
+            let [strOrObjArrQuestionOfCommonQuestion, isUpdateMode] = strOrObjArrQuestionOfCommonQuestionAndIsUpdateMode;
+
             if (strOrObjArrQuestionOfCommonQuestion === NULL)
                 alert("沒有可以刪除的問題");
             else if (strOrObjArrQuestionOfCommonQuestion === FAILED)
@@ -213,19 +245,85 @@ var DeleteQuestionListOfCommonQuestion = function (strQuestionIDListOfCommonQues
             else {
                 $("#divQuestionListOfCommonQuestionContainer").empty();
 
-                if (strOrObjArrQuestionOfCommonQuestion.length === 0)
-                    $("#divQuestionListOfCommonQuestionContainer").append("<p>尚未有資料</p>");
-                else {
-                    //if (strOrObjArrQuestionOfCommonQuestion.some(item => item.IsDeleted)) {
-                    //    let filteredObjArrQuestion = strOrObjArrQuestionOfCommonQuestion.filter(item2 => !item2.IsDeleted);
-                    //    CreateQuestionListOfCommonQuestionTable(filteredObjArrQuestion);
-                    //    SetQuestionListOfCommonQuestionTableSession();
-                    //    return;
-                    //}
+                if (isUpdateMode) {
+                    if (strOrObjArrQuestionOfCommonQuestion.some(item => item.IsDeleted)) {
+                        let filteredObjArrQuestionOfCommonQuestion =
+                            strOrObjArrQuestionOfCommonQuestion.filter(item2 => !item2.IsDeleted);
 
+                        if (filteredObjArrQuestionOfCommonQuestion.length === 0) {
+                            $("#divQuestionListOfCommonQuestionContainer").append("<p>尚未有資料</p>");
+                            sessionStorage.setItem("currentQuestionListOfCommonQuestionTable", "");
+                        }
+                        else {
+                            CreateQuestionListOfCommonQuestionTable(filteredObjArrQuestionOfCommonQuestion);
+                            SetQuestionListOfCommonQuestionTableSession();
+                        }
+                    }
+
+                    return false;
+                }
+
+                if (strOrObjArrQuestionOfCommonQuestion.length === 0) {
+                    $("#divQuestionListOfCommonQuestionContainer").append("<p>尚未有資料</p>");
+                    sessionStorage.setItem("currentQuestionListOfCommonQuestionTable", "");
+                }
+                else {
                     CreateQuestionListOfCommonQuestionTable(strOrObjArrQuestionOfCommonQuestion);
                     SetQuestionListOfCommonQuestionTableSession();
                 }
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+}
+var ShowToUpdateQuestionOfCommonQuestion = function (strQuestionIDOfCommonQuestion) {
+    $.ajax({
+        url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=SHOW_TO_UPDATE_QUESTION_OF_COMMONQUESTION",
+        method: "POST",
+        data: { "clickedQuestionIDOfCommonQuestion": strQuestionIDOfCommonQuestion },
+        success: function (strOrObjQuestionOfCommonQuestion) {
+            if (strOrObjQuestionOfCommonQuestion === FAILED
+                || strOrObjQuestionOfCommonQuestion === NULL)
+                alert("發生錯誤，請再嘗試。");
+            else {
+                $("select[id*=ddlCategoryList]")
+                    .val(strOrObjQuestionOfCommonQuestion.QuestionCategory)
+                    .change();
+                $("select[id*=ddlTypingList]")
+                    .val(strOrObjQuestionOfCommonQuestion.QuestionTyping)
+                    .change();
+                $("input[id*=txtQuestionNameOfCommonQuestion]")
+                    .val(strOrObjQuestionOfCommonQuestion.QuestionName);
+                $("input[id*=txtQuestionAnswerOfCommonQuestion]")
+                    .val(strOrObjQuestionOfCommonQuestion.QuestionAnswer);
+                $("input[id*=ckbQuestionRequiredOfCommonQuestion]")
+                    .prop("checked", strOrObjQuestionOfCommonQuestion.QuestionRequired);
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+
+}
+var UpdateQuestionOfCommonQuestion = function (objQuestionOfCommonQuestion) {
+    $.ajax({
+        url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=UPDATE_QUESTION_OF_COMMONQUESTION",
+        method: "POST",
+        data: objQuestionOfCommonQuestion,
+        success: function (strOrObjArrQuestionOfCommonQuestion) {
+            if (strOrObjArrQuestionOfCommonQuestion === FAILED)
+                alert("發生錯誤，請再嘗試。");
+            else {
+                $("#divQuestionListOfCommonQuestionContainer").empty();
+                ResetQuestionOfCommonQuestionInputs(strOrObjArrQuestionOfCommonQuestion);
+
+                CreateQuestionListOfCommonQuestionTable(strOrObjArrQuestionOfCommonQuestion);
+                SetQuestionListOfCommonQuestionTableSession();
             }
         },
         error: function (msg) {
