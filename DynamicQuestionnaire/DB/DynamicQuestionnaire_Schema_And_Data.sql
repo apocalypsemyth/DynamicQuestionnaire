@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [DynamicQuestionnaire]    Script Date: 2022/04/24 5:28:13 ******/
+/****** Object:  Database [DynamicQuestionnaire]    Script Date: 2022/04/24 8:43:42 ******/
 CREATE DATABASE [DynamicQuestionnaire]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -73,7 +73,7 @@ EXEC sys.sp_db_vardecimal_storage_format N'DynamicQuestionnaire', N'ON'
 GO
 USE [DynamicQuestionnaire]
 GO
-/****** Object:  Table [dbo].[Categories]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[Categories]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -81,13 +81,14 @@ GO
 CREATE TABLE [dbo].[Categories](
 	[CategoryID] [uniqueidentifier] NOT NULL,
 	[CategoryName] [nvarchar](50) NOT NULL,
+	[CommonQuestionID] [uniqueidentifier] NULL,
  CONSTRAINT [PK_Categories] PRIMARY KEY CLUSTERED 
 (
 	[CategoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CommonQuestions]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[CommonQuestions]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -103,7 +104,7 @@ CREATE TABLE [dbo].[CommonQuestions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -123,7 +124,7 @@ CREATE TABLE [dbo].[Questionnaires](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -145,7 +146,7 @@ CREATE TABLE [dbo].[Questions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Typings]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[Typings]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -159,7 +160,7 @@ CREATE TABLE [dbo].[Typings](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserAnswers]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[UserAnswers]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -173,7 +174,7 @@ CREATE TABLE [dbo].[UserAnswers](
 	[Answer] [nvarchar](500) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 2022/04/24 5:28:14 ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 2022/04/24 8:43:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -192,9 +193,9 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-INSERT [dbo].[Categories] ([CategoryID], [CategoryName]) VALUES (N'b25a79c7-1b96-4ec6-9887-4f215b61c675', N'常用問題')
+INSERT [dbo].[Categories] ([CategoryID], [CategoryName], [CommonQuestionID]) VALUES (N'b25a79c7-1b96-4ec6-9887-4f215b61c675', N'常用問題', NULL)
 GO
-INSERT [dbo].[Categories] ([CategoryID], [CategoryName]) VALUES (N'2a4bd007-7dac-404f-9cd0-60a5d46c63af', N'自訂問題')
+INSERT [dbo].[Categories] ([CategoryID], [CategoryName], [CommonQuestionID]) VALUES (N'2a4bd007-7dac-404f-9cd0-60a5d46c63af', N'自訂問題', NULL)
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'a5bc4d84-1b1f-47c2-8bfc-10999e82b453', N'questionnaire3', N'questionnaire3Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T20:26:58.547' AS DateTime), CAST(N'2022-04-12T20:26:58.547' AS DateTime))
 GO
