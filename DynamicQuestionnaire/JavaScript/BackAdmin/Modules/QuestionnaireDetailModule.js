@@ -18,7 +18,7 @@
 var GetQuestionInputs = function () {
     let strQuestionName = $("input[id*=txtQuestionName]").val();
     let strQuestionAnswer = $("input[id*=txtQuestionAnswer]").val();
-    let strCategoryName = $("select[id*=ddlCategoryList]").val();
+    let strCategoryName = $("select[id*=ddlCategoryList]").find(":selected").text();
     let strTypingName = $("select[id*=ddlTypingList]").val();
     let boolQuestionRequired = $("input[id*=ckbQuestionRequired]").is(":checked");
 
@@ -142,14 +142,16 @@ var UpdateQuestionnaire = function (objQuestionnaire) {
 }
 
 var ResetQuestionInputs = function () {
-    $("select[id*=ddlCategoryList]").val("自訂問題").change();
+    $("select[id*=ddlCategoryList] option").filter(function () {
+        return $(this).text() == "自訂問題";
+    }).prop('selected', true);
     $("select[id*=ddlTypingList]").val("單選方塊").change();
     $("input[id*=txtQuestionName]").val("");
     $("input[id*=txtQuestionAnswer]").val("");
     $("input[id*=ckbQuestionRequired]").prop("checked", false);
 }
 var CreateQuestionListTable = function (objArrQuestion) {
-    $("#divGvQuestionListContainer").append(
+    $("#divQuestionListContainer").append(
         `
             <table class="table table-bordered w-auto">
                 <thead>
@@ -179,7 +181,7 @@ var CreateQuestionListTable = function (objArrQuestion) {
     );
 
     for (let i = 0; i < objArrQuestion.length; i++) {
-        $("#divGvQuestionListContainer table tbody").append(
+        $("#divQuestionListContainer table tbody").append(
             `
                 <tr>
                     <td>
@@ -211,7 +213,7 @@ var CreateQuestionListTable = function (objArrQuestion) {
     }
 }
 var SetQuestionListTableSession = function () {
-    let strHtml = $("#divGvQuestionListContainer").html();
+    let strHtml = $("#divQuestionListContainer").html();
     sessionStorage.setItem("currentQuestionListTable", strHtml);
 }
 var GetQuestionList = function (strQuestionnaireID) {
@@ -220,12 +222,12 @@ var GetQuestionList = function (strQuestionnaireID) {
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrQuestion) {
-            $("#divGvQuestionListContainer").empty();
+            $("#divQuestionListContainer").empty();
 
             if (strOrObjArrQuestion === FAILED) 
                 alert("發生錯誤，請刷新重試");
             else if (strOrObjArrQuestion === NULL)
-                $("#divGvQuestionListContainer").append("<p>尚未有資料</p>");
+                $("#divQuestionListContainer").append("<p>尚未有資料</p>");
             else {
                 CreateQuestionListTable(strOrObjArrQuestion);
                 SetQuestionListTableSession();
@@ -244,7 +246,7 @@ var CreateQuestion = function (objQuestion) {
         data: objQuestion,
         success: function (objArrQuestion) {
             ResetQuestionInputs();
-            $("#divGvQuestionListContainer").empty();
+            $("#divQuestionListContainer").empty();
 
             CreateQuestionListTable(objArrQuestion);
             SetQuestionListTableSession();
@@ -266,10 +268,10 @@ var DeleteQuestionList = function (strQuestionIDList) {
             else if (strOrObjArrQuestion === FAILED) 
                 alert("請選擇要刪除的問題");
             else {
-                $("#divGvQuestionListContainer").empty();
+                $("#divQuestionListContainer").empty();
 
                 if (strOrObjArrQuestion.length === 0) 
-                    $("#divGvQuestionListContainer").append("<p>尚未有資料</p>");
+                    $("#divQuestionListContainer").append("<p>尚未有資料</p>");
                 else {
                     if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
                         let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
@@ -298,7 +300,9 @@ var ShowToUpdateQuestion = function (strQuestionID) {
             if (objQuestion === FAILED || objQuestion === NULL) 
                 alert("發生錯誤，請再嘗試。");
             else {
-                $("select[id*=ddlCategoryList]").val(objQuestion.QuestionCategory).change();
+                $("select[id*=ddlCategoryList] option").filter(function () {
+                    return $(this).text() == objQuestion.QuestionCategory;
+                }).prop('selected', true);
                 $("select[id*=ddlTypingList]").val(objQuestion.QuestionTyping).change();
                 $("input[id*=txtQuestionName]").val(objQuestion.QuestionName);
                 $("input[id*=txtQuestionAnswer]").val(objQuestion.QuestionAnswer);
@@ -321,10 +325,32 @@ var UpdateQuestion = function (objQuestion) {
             if (objQuestion === FAILED) 
                 alert("發生錯誤，請再嘗試。");
             else {
-                $("#divGvQuestionListContainer").empty();
+                $("#divQuestionListContainer").empty();
                 ResetQuestionInputs();
 
                 CreateQuestionListTable(objArrQuestion);
+                SetQuestionListTableSession();
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+}
+var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCategoryID) {
+    $.ajax({
+        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE",
+        method: "POST",
+        data: { "selectedCategoryID": strSelectedCategoryID },
+        success: function (strOrObjArrQuestionOfCommonQuestion) {
+            if (strOrObjArrQuestionOfCommonQuestion === FAILED)
+                alert("發生錯誤，請再嘗試。");
+            else {
+                ResetQuestionInputs();
+                $("#divQuestionListContainer").empty();
+
+                CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
                 SetQuestionListTableSession();
             }
         },

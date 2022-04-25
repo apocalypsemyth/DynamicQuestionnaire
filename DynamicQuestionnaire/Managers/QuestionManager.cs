@@ -168,6 +168,43 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
+        public void UpdateQuestionListInIsUpdateModeOfCommonQuestion(
+            Guid questionnaireID,
+            List<QuestionModel> questionModelList
+            )
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    foreach (var questionModel in questionModelList)
+                    {
+                        Question newQuestion = new Question()
+                        {
+                            QuestionID = Guid.NewGuid(),
+                            QuestionnaireID = questionnaireID,
+                            QuestionCategory = questionModel.QuestionCategory,
+                            QuestionTyping = questionModel.QuestionTyping,
+                            QuestionName = questionModel.QuestionName,
+                            QuestionRequired = questionModel.QuestionRequired,
+                            QuestionAnswer = questionModel.QuestionAnswer,
+                            CreateDate = DateTime.Now,
+                            UpdateDate = DateTime.Now,
+                        };
+
+                        contextModel.Questions.Add(newQuestion);
+                    }
+
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionManager.UpdateQuestionListInIsUpdateModeOfCommonQuestion", ex);
+                throw;
+            }
+        }
+
         public List<QuestionModel> BuildQuestionModelList(List<Question> questionList)
         {
             List<QuestionModel> questionModelList = new List<QuestionModel>();

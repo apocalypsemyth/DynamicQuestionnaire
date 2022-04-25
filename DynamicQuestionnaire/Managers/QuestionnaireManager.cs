@@ -171,5 +171,22 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
+
+        public void UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(Questionnaire questionnaire)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    contextModel.Questionnaires.Add(questionnaire);
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionnaireManager.UpdateQuestionnaireInIsUpdateModeOfCommonQuestion", ex);
+                throw;
+            }
+        }
     }
 }

@@ -38,7 +38,7 @@
 
         <button id="btnDeleteQuestion">刪除</button>
 
-        <div id="divGvQuestionListContainer"></div>
+        <div id="divQuestionListContainer"></div>
         <uc1:ucCancelButton runat="server" ID="ucCancelButtonInQuestionTab" />
         <uc1:ucSubmitButton runat="server" ID="ucSubmitButtonInQuestionTab" />
     </div>

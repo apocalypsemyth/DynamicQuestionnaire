@@ -20,6 +20,7 @@ namespace DynamicQuestionnaire.BackAdmin
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
         private string _currentPagerIndex = "CurrentPagerIndex";
+        private string _isUpdateModeOfCommonQuestion = "IsUpdateModeOfCommonQuestion";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private CategoryManager _categoryMgr = new CategoryManager();
@@ -51,6 +52,9 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.InitCreateMode();
                 this.btnExportAndDownloadDataToCSV.Visible = false;
             }
+
+            if (!this.IsPostBack)
+                this.Session[_isUpdateModeOfCommonQuestion] = false;
 
             this.ucSubmitButtonInQuestionnaireTab.OnSubmitClick += UcInQuestionnaireTab_OnSubmitClick;
             this.ucSubmitButtonInQuestionTab.OnSubmitClick += UcInQuestionTab_OnSubmitClick;
@@ -100,18 +104,25 @@ namespace DynamicQuestionnaire.BackAdmin
                 return;
             }
 
+            bool isUpdateModeOfCommonQuestion = (bool)(this.Session[_isUpdateModeOfCommonQuestion]);
+
+            if (isUpdateModeOfCommonQuestion)
+            {
+                this.CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion();
+            }
+
             Questionnaire newOrToUpdateQuestionnaire = 
-                this.Session[_questionList] as Questionnaire;
+                this.Session[_questionnaire] as Questionnaire;
             if (newOrToUpdateQuestionnaire == null)
             {
                 this.AlertMessage("請填寫問題後，先按下加入按鈕。");
                 return;
             }
 
-            var newOrUpdatedQuestionnaire = 
-                this.FinalUpdateQuestionnaire(newOrToUpdateQuestionnaire);
+            this.FinalUpdateQuestionnaireInSession(newOrToUpdateQuestionnaire);
+            Questionnaire finalUpdatedQuestionnaire = this.Session[_questionnaire] as Questionnaire;
 
-            if (_isEditMode)
+            if (_isEditMode || isUpdateModeOfCommonQuestion)
             {
                 List<QuestionModel> toUpdateQuestionModelList = 
                     this.Session[_questionList] as List<QuestionModel>;
@@ -128,17 +139,33 @@ namespace DynamicQuestionnaire.BackAdmin
                     return;
                 }
 
-                this._questionMgr.UpdateQuestionList(
-                    toUpdateQuestionModelList, 
-                    out bool hasAnyUpdated
-                    );
+                if (isUpdateModeOfCommonQuestion)
+                {
+                    Guid questionnaireID = finalUpdatedQuestionnaire.QuestionnaireID;
+                    
+                    this._questionMgr
+                        .UpdateQuestionListInIsUpdateModeOfCommonQuestion(
+                        questionnaireID, 
+                        toUpdateQuestionModelList
+                        );
 
-                if (hasAnyUpdated)
-                    newOrUpdatedQuestionnaire.UpdateDate = DateTime.Now;
+                    this._questionnaireMgr
+                        .UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(finalUpdatedQuestionnaire);
+                }
+                else
+                {
+                    this._questionMgr.UpdateQuestionList(
+                        toUpdateQuestionModelList, 
+                        out bool hasAnyUpdated
+                        );
 
-                this._questionnaireMgr.UpdateQuestionnaire(newOrUpdatedQuestionnaire);
+                    if (hasAnyUpdated)
+                        finalUpdatedQuestionnaire.UpdateDate = DateTime.Now;
+
+                    this._questionnaireMgr.UpdateQuestionnaire(finalUpdatedQuestionnaire);
+                }
             }
-            else
+            else if (!(_isEditMode && isUpdateModeOfCommonQuestion))
             {
                 List<Question> newQuestionList = 
                     this.Session[_questionList] as List<Question>;
@@ -199,6 +226,9 @@ namespace DynamicQuestionnaire.BackAdmin
         private void InitCreateMode()
         {
             var categoryList = this._categoryMgr.GetCategoryList();
+            var excludeCommonQuestionCategoryList = 
+                categoryList
+                .Where(item => item.CategoryName != "常用問題");
             var typingList = this._typingMgr.GetTypingList();
 
             // 問卷控制項繫結
@@ -207,11 +237,11 @@ namespace DynamicQuestionnaire.BackAdmin
 
             // 問題控制項繫結
             this.ddlCategoryList.DataTextField = "CategoryName";
-            this.ddlCategoryList.DataValueField = "CategoryName";
-            this.ddlCategoryList.DataSource = categoryList;
+            this.ddlCategoryList.DataValueField = "CategoryID";
+            this.ddlCategoryList.DataSource = excludeCommonQuestionCategoryList;
             this.ddlCategoryList.DataBind();
             this.ddlCategoryList.ClearSelection();
-            this.ddlCategoryList.Items.FindByValue("自訂問題").Selected = true;
+            this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
 
             this.ddlTypingList.DataTextField = "TypingName";
             this.ddlTypingList.DataValueField = "TypingName";
@@ -235,6 +265,9 @@ namespace DynamicQuestionnaire.BackAdmin
             else
             {
                 var categoryList = this._categoryMgr.GetCategoryList();
+                var excludeCommonQuestionCategoryList =
+                    categoryList
+                    .Where(item => item.CategoryName != "常用問題");
                 var typingList = this._typingMgr.GetTypingList();
                 var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
                 var firstQuestion = questionList.FirstOrDefault();
@@ -252,18 +285,18 @@ namespace DynamicQuestionnaire.BackAdmin
 
                 // 問題控制項繫結
                 this.ddlCategoryList.DataTextField = "CategoryName";
-                this.ddlCategoryList.DataValueField = "CategoryName";
-                this.ddlCategoryList.DataSource = categoryList;
+                this.ddlCategoryList.DataValueField = "CategoryID";
+                this.ddlCategoryList.DataSource = excludeCommonQuestionCategoryList;
                 this.ddlCategoryList.DataBind();
                 this.ddlCategoryList.ClearSelection();
-                this.ddlCategoryList.Items.FindByValue(firstQuestion.QuestionCategory).Selected = true;
+                this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
 
                 this.ddlTypingList.DataTextField = "TypingName";
                 this.ddlTypingList.DataValueField = "TypingName";
                 this.ddlTypingList.DataSource = typingList;
                 this.ddlTypingList.DataBind();
                 this.ddlTypingList.ClearSelection();
-                this.ddlTypingList.Items.FindByValue(firstQuestion.QuestionTyping).Selected = true;
+                this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
             }
         }
 
@@ -286,7 +319,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 return true;
         }
 
-        private Questionnaire FinalUpdateQuestionnaire(Questionnaire questionnaire)
+        private void FinalUpdateQuestionnaireInSession(Questionnaire questionnaire)
         {
             Questionnaire newOrUpdatedQuestionnaire = new Questionnaire()
             {
@@ -300,7 +333,31 @@ namespace DynamicQuestionnaire.BackAdmin
                 UpdateDate = questionnaire.UpdateDate,
             };
 
-            return newOrUpdatedQuestionnaire;
+            this.Session[_questionnaire] = newOrUpdatedQuestionnaire;
+        }
+
+        private void CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion()
+        {
+            Questionnaire newQuestionnaire = new Questionnaire()
+            {
+                QuestionnaireID = Guid.NewGuid(),
+                Caption = this.txtCaption.Text.Trim(),
+                Description = this.txtDescription.Text.Trim(),
+                IsEnable = this.ckbIsEnable.Checked,
+                CreateDate = DateTime.Now,
+                UpdateDate = DateTime.Now,
+            };
+
+            if (DateTime.TryParse(this.txtStartDate.Text, out DateTime startDate))
+                newQuestionnaire.StartDate = startDate;
+
+            if (!string.IsNullOrWhiteSpace(this.txtEndDate.Text))
+            {
+                if (DateTime.TryParse(this.txtEndDate.Text, out DateTime endDate))
+                    newQuestionnaire.EndDate = endDate;
+            }
+
+            this.Session[_questionnaire] = newQuestionnaire;
         }
 
         private void AlertMessage(string errorMsg)

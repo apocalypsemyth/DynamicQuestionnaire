@@ -9,6 +9,23 @@ namespace DynamicQuestionnaire.Managers
 {
     public class CategoryManager
     {
+        public Category GetCategory(Guid categoryID)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    return contextModel.Categories
+                        .SingleOrDefault(category => category.CategoryID == categoryID);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("CategoryManager.GetCategory", ex);
+                throw;
+            }
+        }
+
         public List<Category> GetCategoryList()
         {
             try
@@ -101,6 +118,5 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
-
     }
 }

@@ -28,7 +28,10 @@ namespace DynamicQuestionnaire.API
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
         private string _currentPagerIndex = "CurrentPagerIndex";
+        private string _isUpdateModeOfCommonQuestion = "IsUpdateModeOfCommonQuestion";
 
+        private CategoryManager _categoryMgr = new CategoryManager();
+        private CommonQuestionManager _commonQuestionMgr = new CommonQuestionManager();
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private QuestionManager _questionMgr = new QuestionManager();
         private UserManager _userMgr = new UserManager();
@@ -266,6 +269,46 @@ namespace DynamicQuestionnaire.API
 
                 this.UpdateQuestionInSession(questionID, context);
                 string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_questionList]);
+
+                context.Response.ContentType = _jsonResponse;
+                context.Response.Write(jsonText);
+                return;
+            }
+
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE", 
+                context.Request.QueryString["Action"], true) == 0)
+            {
+                string selectedCategoryID = context.Request.Form["selectedCategoryID"];
+                if (!Guid.TryParse(selectedCategoryID, out Guid categoryID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                var toFindCommonQuestionOfCategory = this._categoryMgr.GetCategory(categoryID);
+                if (toFindCommonQuestionOfCategory.CommonQuestionID == null)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                context.Session[_isUpdateModeOfCommonQuestion] = true;
+                Guid toFindCommonQuestionID = (Guid)toFindCommonQuestionOfCategory.CommonQuestionID;
+                var commonQuestion = this._commonQuestionMgr.GetCommonQuestion(toFindCommonQuestionID);
+                var questionListOfCommonQuestion = 
+                    this._questionMgr
+                    .GetQuestionListOfCommonQuestion(commonQuestion.CommonQuestionID);
+                var questionModelListOfCommonQuestion = 
+                    this._questionMgr
+                    .BuildQuestionModelList(questionListOfCommonQuestion);
+                context.Session[_questionList] = questionModelListOfCommonQuestion;
+                string jsonText = 
+                    Newtonsoft
+                    .Json
+                    .JsonConvert
+                    .SerializeObject(context.Session[_questionList]);
 
                 context.Response.ContentType = _jsonResponse;
                 context.Response.Write(jsonText);

@@ -25,14 +25,13 @@
         let currentActiveTab = sessionStorage.getItem("activeTab");
 
         let strQuestionListHtml = sessionStorage.getItem("currentQuestionListTable");
-        if (strQuestionListHtml) {
-            $("#divGvQuestionListContainer").html(strQuestionListHtml);
-        }
+        if (strQuestionListHtml) 
+            $("#divQuestionListContainer").html(strQuestionListHtml);
         let strUserListHtml = sessionStorage.getItem("currentUserList");
         let strUserListShowState = sessionStorage.getItem("currentUserListShowState")
         let strUserListPagerHtml = sessionStorage.getItem("currentUserListPager");
         if (strUserListHtml && currentActiveTab === "#question-info") {
-            $("#divGvQuestionListContainer").empty();
+            $("#divQuestionListContainer").empty();
 
             if (strUserListShowState === "true") {
                 $("#divUserListContainer").html(strUserListHtml);
@@ -56,7 +55,7 @@
         let strUserAnswerHtml = sessionStorage.getItem("currentUserAnswer");
         let strUserAnswerHtmlShowState = sessionStorage.getItem("currentUserAnswerShowState");
         if (strUserAnswerHtml && currentActiveTab === "#question-info") {
-            $("#divGvQuestionListContainer").empty();
+            $("#divQuestionListContainer").empty();
 
             if (strUserAnswerHtmlShowState === "true") 
                 $("#divUserAnswerContainer").html(strUserAnswerHtml);
@@ -95,9 +94,19 @@
             $("#ulQuestionnaireDetailTabs a[href='" + activeTab + "']").tab("show");
         }
         if (activeTab === "#question") {
-            $("#divGvQuestionListContainer").html(strQuestionListHtml);
+            $("#divQuestionListContainer").html(strQuestionListHtml);
         }
 
+        $("select[id*=ddlCategoryList]").click(function (e) {
+            e.preventDefault();
+            let strSelectedCategoryText = $(this).find(":selected").text();
+
+            if (strSelectedCategoryText == "自訂問題")
+                return;
+
+            let strSelectedCategoryID = $(this).val();
+            SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+        });
         $("button[id=btnAddQuestion]").click(function (e) {
             e.preventDefault();
 
@@ -127,7 +136,7 @@
             e.preventDefault();
 
             let arrCheckedQuestionID = [];
-            $("#divGvQuestionListContainer table tbody tr td input[type='checkbox']:checked")
+            $("#divQuestionListContainer table tbody tr td input[type='checkbox']:checked")
                 .each(function () {
                     arrCheckedQuestionID.push($(this).attr("id"));
                 });
@@ -165,7 +174,7 @@
                 return;
             }
 
-            $("#divGvQuestionListContainer table tbody tr td a.currentEditQuestion[id*=aLinkEditQuestion]").removeClass("currentEditQuestion");
+            $("#divQuestionListContainer table tbody tr td a.currentEditQuestion[id*=aLinkEditQuestion]").removeClass("currentEditQuestion");
             $(this).toggleClass("currentEditQuestion");
 
             let aLinkHref = $(this).attr("href");
