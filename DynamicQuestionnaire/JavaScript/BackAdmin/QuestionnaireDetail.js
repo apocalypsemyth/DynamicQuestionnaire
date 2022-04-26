@@ -1,73 +1,86 @@
 ﻿$(document).ready(function () {
     if (window.location.href.indexOf("QuestionnaireDetail.aspx") === -1) {
-        if (sessionStorage.getItem("activeTab") != null)
-            sessionStorage.removeItem("activeTab");
+        if (sessionStorage.getItem(activeTab) != null)
+            sessionStorage.removeItem(activeTab);
 
-        if (sessionStorage.getItem("currentQuestionListTable") != null)
-            sessionStorage.removeItem("currentQuestionListTable");
+        if (sessionStorage.getItem(currentQuestionListTable) != null)
+            sessionStorage.removeItem(currentQuestionListTable);
 
-        if (sessionStorage.getItem("currentUserList") != null);
-            sessionStorage.removeItem("currentUserList");
+        if (sessionStorage.getItem(currentUserList) != null);
+            sessionStorage.removeItem(currentUserList);
 
-        if (sessionStorage.getItem("currentUserListShowState") != null)
-            sessionStorage.removeItem("currentUserListShowState");
+        if (sessionStorage.getItem(currentUserListShowState) != null)
+            sessionStorage.removeItem(currentUserListShowState);
 
-        if (sessionStorage.getItem("currentUserAnswer") != null);
-            sessionStorage.removeItem("currentUserAnswer");
+        if (sessionStorage.getItem(currentUserAnswer) != null);
+            sessionStorage.removeItem(currentUserAnswer);
 
-        if (sessionStorage.getItem("currentUserAnswerShowState") != null);
-            sessionStorage.removeItem("currentUserAnswerShowState");
+        if (sessionStorage.getItem(currentUserAnswerShowState) != null);
+            sessionStorage.removeItem(currentUserAnswerShowState);
 
-        if (sessionStorage.getItem("currentUserListPager") != null);
-            sessionStorage.removeItem("currentUserListPager");
+        if (sessionStorage.getItem(currentUserListPager) != null);
+            sessionStorage.removeItem(currentUserListPager);
+
+        if (sessionStorage.getItem(currentStatistics) != null);
+            sessionStorage.removeItem(currentStatistics);
     }
     else {
-        let currentActiveTab = sessionStorage.getItem("activeTab");
-
-        let strQuestionListHtml = sessionStorage.getItem("currentQuestionListTable");
+        let currentActiveTab = sessionStorage.getItem(activeTab);
+        // question
+        let strQuestionListHtml = sessionStorage.getItem(currentQuestionListTable);
         if (strQuestionListHtml) 
-            $("#divQuestionListContainer").html(strQuestionListHtml);
-        let strUserListHtml = sessionStorage.getItem("currentUserList");
-        let strUserListShowState = sessionStorage.getItem("currentUserListShowState")
-        let strUserListPagerHtml = sessionStorage.getItem("currentUserListPager");
+            $(divQuestionListContainer).html(strQuestionListHtml);
+        // question-info userList
+        let strUserListHtml = sessionStorage.getItem(currentUserList);
+        let strUserListShowState = sessionStorage.getItem(currentUserListShowState)
+        let strUserListPagerHtml = sessionStorage.getItem(currentUserListPager);
         if (strUserListHtml && currentActiveTab === "#question-info") {
-            $("#divQuestionListContainer").empty();
+            $(divQuestionListContainer).empty();
 
-            if (strUserListShowState === "true") {
-                $("#divUserListContainer").html(strUserListHtml);
-                $("#divUserListPagerContainer").html(strUserListPagerHtml);
+            if (strUserListShowState === showState) {
+                $(btnExportAndDownloadDataToCSV).show();
+                $(divUserListContainer).html(strUserListHtml);
+                $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $("#divUserListContainer").empty();
-                $("#divUserListPagerContainer").empty();
+                $(btnExportAndDownloadDataToCSV).hide();
+                $(divUserListContainer).empty();
+                $(divUserListPagerContainer).empty();
             }
         }
         else if (strUserListHtml) {
-            if (strUserListShowState === "true") {
-                $("#divUserListContainer").html(strUserListHtml);
-                $("#divUserListPagerContainer").html(strUserListPagerHtml);
+            if (strUserListShowState === showState) {
+                $(btnExportAndDownloadDataToCSV).show();
+                $(divUserListContainer).html(strUserListHtml);
+                $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $("#divUserListContainer").empty();
-                $("#divUserListPagerContainer").empty();
+                $(btnExportAndDownloadDataToCSV).hide();
+                $(divUserListContainer).empty();
+                $(divUserListPagerContainer).empty();
             }
         }
-        let strUserAnswerHtml = sessionStorage.getItem("currentUserAnswer");
-        let strUserAnswerHtmlShowState = sessionStorage.getItem("currentUserAnswerShowState");
+        // question-info userAnswer
+        let strUserAnswerHtml = sessionStorage.getItem(currentUserAnswer);
+        let strUserAnswerHtmlShowState = sessionStorage.getItem(currentUserAnswerShowState);
         if (strUserAnswerHtml && currentActiveTab === "#question-info") {
-            $("#divQuestionListContainer").empty();
+            $(divQuestionListContainer).empty();
 
-            if (strUserAnswerHtmlShowState === "true") 
-                $("#divUserAnswerContainer").html(strUserAnswerHtml);
+            if (strUserAnswerHtmlShowState === showState) 
+                $(divUserAnswerContainer).html(strUserAnswerHtml);
             else
-                $("#divUserAnswerContainer").empty();
+                $(divUserAnswerContainer).empty();
         }
         else if (strUserAnswerHtml) {
-            if (strUserAnswerHtmlShowState === "true") 
-                $("#divUserAnswerContainer").html(strUserAnswerHtml);
+            if (strUserAnswerHtmlShowState === showState) 
+                $(divUserAnswerContainer).html(strUserAnswerHtml);
             else
-                $("#divUserAnswerContainer").empty();
+                $(divUserAnswerContainer).empty();
         }
+        // statistics
+        let strStatisticsHtml = sessionStorage.getItem(currentStatistics);
+        if (strStatisticsHtml)
+            $(divStatisticsContainer).html(strStatisticsHtml);
 
         let currentQueryString = window.location.search;
         let isExistQueryString = currentQueryString.indexOf("?ID=") !== -1;
@@ -78,24 +91,25 @@
 
             if (!strUserListHtml)
                 GetUserList(strQuestionnaireID);
-            else if (strUserListHtml && strUserListHtml === "true")
+            else if (strUserListHtml && strUserListHtml === showState)
                 GetUserList(strQuestionnaireID);
         }
         else {
-            $("#divUserListContainer").html("<p>還未有使用者的回答</p>");
-            $("#divUserListPager").empty();
+            $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
+            $(divUserListPagerContainer).empty();
+            $(divStatisticsContainer).html(emptyMessageOfUserListOrStatistics);
         }
         GetQuestionList(strQuestionnaireID);
 
         $("#ulQuestionnaireDetailTabs li a[data-bs-toggle='tab']").on("show.bs.tab", function () {
-            sessionStorage.setItem("activeTab", $(this).attr("href"));
+            sessionStorage.setItem(activeTab, $(this).attr("href"));
         });
-        let activeTab = sessionStorage.getItem("activeTab");
-        if (activeTab) {
-            $("#ulQuestionnaireDetailTabs a[href='" + activeTab + "']").tab("show");
+        let strActiveTab = sessionStorage.getItem(activeTab);
+        if (strActiveTab) {
+            $("#ulQuestionnaireDetailTabs a[href='" + strActiveTab + "']").tab("show");
         }
-        if (activeTab === "#question") {
-            $("#divQuestionListContainer").html(strQuestionListHtml);
+        if (strActiveTab === "#question") {
+            $(divQuestionListContainer).html(strQuestionListHtml);
         }
 
         $("select[id*=ddlCategoryList]").click(function (e) {
@@ -208,11 +222,12 @@
         $(document).on("click", "button[id=btnBackToUserList]", function (e) {
             e.preventDefault();
 
-            $("#divUserAnswerContainer").empty();
-            $("#divUserListContainer").html(strUserListHtml);
-            $("#divUserListPagerContainer").html(strUserListPagerHtml);
-            SetUserAnswerShowStateSession("false");
-            SetUserListShowStateSession("true");
+            $(btnExportAndDownloadDataToCSV).show();
+            $(divUserAnswerContainer).empty();
+            $(divUserListContainer).html(strUserListHtml);
+            $(divUserListPagerContainer).html(strUserListPagerHtml);
+            SetUserAnswerShowStateSession(hideState);
+            SetUserListShowStateSession(showState);
         });
     }
 });

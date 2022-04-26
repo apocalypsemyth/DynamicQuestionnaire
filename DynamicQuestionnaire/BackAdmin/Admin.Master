@@ -32,6 +32,7 @@
     </form>
 
     <script src="../Scripts/bootstrap.min.js"></script>
+    <script src="../JavaScript/BackAdmin/Variables/QuestionnaireDetailVariable.js"></script>
     <script src="../JavaScript/BackAdmin/QuestionnaireDetail.js"></script>
     <script src="../JavaScript/BackAdmin/Modules/QuestionnaireDetailModule.js"></script>
     <script src="../JavaScript/BackAdmin/CommonQuestionDetail.js"></script>

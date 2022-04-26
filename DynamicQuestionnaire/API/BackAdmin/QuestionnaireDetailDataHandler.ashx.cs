@@ -328,6 +328,14 @@ namespace DynamicQuestionnaire.API
                     return;
                 }
 
+                var userList = this._userMgr.GetUserList(questionnaireID);
+                if (userList == null || userList.Count == 0)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse);
+                    return;
+                }
+
                 if (context.Session[_currentPagerIndex] == null)
                     context.Session[_currentPagerIndex] = 1;
 

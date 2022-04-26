@@ -1,19 +1,4 @@
-﻿const FAILED = "FAILED";
-const NULL = "NULL";
-const PAGESIZE = 2;
-
-let divQuestionListContainer = "#divQuestionListContainer";
-let currentQuestionListTable = "currentQuestionListTable";
-let divUserListContainer = "#divUserListContainer";
-let currentUserList = "currentUserList";
-let divUserListPagerContainer = "#divUserListPagerContainer";
-let currentUserListPager = "currentUserListPager";
-let divUserAnswerContainer = "#divUserAnswerContainer";
-let currentUserAnswer = "currentUserAnswer";
-let divStatisticsContainer = "#divStatisticsContainer";
-let currentStatistics = "currentStatistics";
-
-var SetContainerSession = function (strSelector, strSessionName) {
+﻿var SetContainerSession = function (strSelector, strSessionName) {
     let strHtml = $(strSelector).html();
     sessionStorage.setItem(strSessionName, strHtml);
 }
@@ -427,10 +412,10 @@ var CreateUserListTable = function (objArrUserModel) {
     }
 }
 var SetUserListShowStateSession = function (strShowState) {
-    sessionStorage.setItem("currentUserListShowState", strShowState);
+    sessionStorage.setItem(currentUserListShowState, strShowState);
 }
 var CreateUserListPager = function (intPageSize) {
-    $(divUserListContainer).append(
+    $(divUserListPagerContainer).append(
         `
             <a id="aLinkUserListPager-First"class="text-decoration-none"  href="QuestionnaireDetail.aspx?Index=First">
                 首頁
@@ -442,7 +427,7 @@ var CreateUserListPager = function (intPageSize) {
     );
 
     for (let i = 1; i <= intPageSize; i++) {
-        $(divUserListContainer).append(
+        $(divUserListPagerContainer).append(
             `
                 <a id="aLinkUserListPager-${i}" class="text-decoration-none" href="QuestionnaireDetail.aspx?Index=${i}">
                     ${i}
@@ -452,7 +437,7 @@ var CreateUserListPager = function (intPageSize) {
     }
 
 
-    $(divUserListContainer).append(
+    $(divUserListPagerContainer).append(
         `
             <a id="aLinkUserListPager-Next" class="text-decoration-none" href="QuestionnaireDetail.aspx?Index=Next">
                 下一頁
@@ -471,14 +456,16 @@ var GetUserList = function (strQuestionnaireID) {
         success: function (strOrObjArrUserModel) {
             if (strOrObjArrUserModel === FAILED)
                 alert("發生錯誤，請再嘗試。");
+            else if (strOrObjArrUserModel === NULL)
+                $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
             else {
                 let [objArrUserModel, totalRows] = strOrObjArrUserModel;
 
                 $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
                 SetContainerSession(divUserListContainer, currentUserList);
-                SetUserListShowStateSession("true");
-                SetUserAnswerShowStateSession("false");
+                SetUserListShowStateSession(showState);
+                SetUserAnswerShowStateSession(hideState);
 
                 $(divUserListPagerContainer).empty();
                 let pageSize = 1;
@@ -512,8 +499,8 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
                 $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
                 SetContainerSession(divUserListContainer, currentUserList);
-                SetUserListShowStateSession("true");
-                SetUserAnswerShowStateSession("false");
+                SetUserListShowStateSession(showState);
+                SetUserAnswerShowStateSession(hideState);
 
                 $(divUserListPagerContainer).empty();
                 let pageSize = 1;
@@ -710,7 +697,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
     // <div class="row align-items-center justify-content-center">之結尾標籤
 }
 var SetUserAnswerShowStateSession = function (strShowState) {
-    sessionStorage.setItem("currentUserAnswerShowState", strShowState);
+    sessionStorage.setItem(currentUserAnswerShowState, strShowState);
 }
 var GetUserAnswer = function (objQuestionnaireAndUserID) {
     $.ajax({
@@ -724,6 +711,7 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
                 let [objUserModel, objArrQuestionModel, objArrUserAnswerModel] =
                     strOrObjArrUserAnswerDetail;
 
+                $(btnExportAndDownloadDataToCSV).hide();
                 $(divUserListContainer).empty();
                 $(divUserListPagerContainer).empty();
                 $(divUserAnswerContainer).empty();
@@ -731,8 +719,8 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
                 CreateUserDetail(objUserModel);
                 CreateUserAnswerDetail(objArrQuestionModel, objArrUserAnswerModel);
                 SetContainerSession(divUserAnswerContainer, currentUserAnswer);
-                SetUserAnswerShowStateSession("true");
-                SetUserListShowStateSession("false");
+                SetUserAnswerShowStateSession(showState);
+                SetUserListShowStateSession(hideState);
             }
         },
         error: function (msg) {
@@ -767,7 +755,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
             arrUserAnswerNum = arrQuestionItsUserAnswer.map(item2 => item2.AnswerNum);
         else 
             arrUserAnswerNum.push(-1);
-        console.log("arrUserAnswerNum: " + arrUserAnswerNum);
+        
         let arrEachUserAnswerNum = [];
         if (arrUserAnswerNum.indexOf(-1) === -1) {
             arrEachUserAnswerNum = arrUserAnswerNum.reduce((acc, val) => {
@@ -777,7 +765,6 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
         }
         else 
             arrEachUserAnswerNum = new Array(arrQuestionAnswer.length + 1).fill(null);
-        console.log("arrEachUserAnswerNum: " + arrEachUserAnswerNum);
 
         $(divStatisticsContainer).append(
             `
@@ -873,7 +860,7 @@ var GetStatistics = function (strQuestionnaireID) {
             if (strOrObjArrStatistics === FAILED)
                 alert("發生錯誤，請再嘗試。");
             else if (strOrObjArrStatistics === NULL)
-                $(divStatisticsContainer).html("<p>目前尚未有使用者的回答</p>");
+                $(divStatisticsContainer).html(emptyMessageOfUserListOrStatistics);
             else {
                 let [objArrQuestionModel, objArrUserAnswerModel] = strOrObjArrStatistics;
                 

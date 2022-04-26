@@ -45,13 +45,9 @@ namespace DynamicQuestionnaire.BackAdmin
             {
                 Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
                 this.InitEditMode(questionnaireID);
-                this.btnExportAndDownloadDataToCSV.Visible = true;
             }
             else
-            {
                 this.InitCreateMode();
-                this.btnExportAndDownloadDataToCSV.Visible = false;
-            }
 
             if (!this.IsPostBack)
                 this.Session[_isUpdateModeOfCommonQuestion] = false;
@@ -251,6 +247,7 @@ namespace DynamicQuestionnaire.BackAdmin
             this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
 
             this.ckbQuestionRequired.Checked = false;
+            this.btnExportAndDownloadDataToCSV.Visible = false;
         }
 
         private void InitEditMode(Guid questionnaireID)
@@ -269,8 +266,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     categoryList
                     .Where(item => item.CategoryName != "常用問題");
                 var typingList = this._typingMgr.GetTypingList();
-                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
-                var firstQuestion = questionList.FirstOrDefault();
+                var userList = this._userMgr.GetUserList(questionnaireID);
 
                 // 問卷控制項繫結
                 this.txtCaption.Text = questionnaire.Caption;
@@ -297,6 +293,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.ddlTypingList.DataBind();
                 this.ddlTypingList.ClearSelection();
                 this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
+
+                if (userList == null || userList.Count == 0)
+                    this.btnExportAndDownloadDataToCSV.Visible = false;
+                else
+                    this.btnExportAndDownloadDataToCSV.Visible = true;
             }
         }
 
