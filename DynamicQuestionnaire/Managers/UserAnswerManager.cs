@@ -29,6 +29,24 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
+        public List<UserAnswer> GetUserAnswerList(Guid questionnaireID)
+        {
+            try
+            {
+                using (ContextModel context = new ContextModel())
+                {
+                    return context.UserAnswers
+                        .Where(userAnswer => userAnswer.QuestionnaireID == questionnaireID)
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("UserAnswerManager.GetUserAnswerList", ex);
+                throw;
+            }
+        }
+
         public void CreateUserAnswerList(List<UserAnswerModel> userAnswerModelList)
         {
             try
@@ -61,6 +79,28 @@ namespace DynamicQuestionnaire.Managers
                 Logger.WriteLog("UserAnswerManager.CreateUserAnswerList", ex);
                 throw;
             }
+        }
+
+        public List<UserAnswerModel> BuildUserAnswerModelList(List<UserAnswer> userAnswerList)
+        {
+            List<UserAnswerModel> userAnswerModelList = new List<UserAnswerModel>();
+
+            foreach (var userAnswer in userAnswerList)
+            {
+                UserAnswerModel userAnswerModel = new UserAnswerModel()
+                {
+                    QuestionnaireID = userAnswer.QuestionnaireID,
+                    UserID = userAnswer.UserID,
+                    QuestionID = userAnswer.QuestionID,
+                    QuestionTyping = userAnswer.QuestionTyping,
+                    AnswerNum = userAnswer.AnswerNum,
+                    Answer = userAnswer.Answer,
+                };
+
+                userAnswerModelList.Add(userAnswerModel);
+            }
+
+            return userAnswerModelList;
         }
     }
 }

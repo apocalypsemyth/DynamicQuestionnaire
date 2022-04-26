@@ -275,7 +275,8 @@ namespace DynamicQuestionnaire.API
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE", 
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE", 
                 context.Request.QueryString["Action"], true) == 0)
             {
                 string selectedCategoryID = context.Request.Form["selectedCategoryID"];
@@ -315,7 +316,9 @@ namespace DynamicQuestionnaire.API
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_USERLIST", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("GET_USERLIST", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 string questionnaireIDStr = context.Request.Form["questionnaireID"];
                 if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
@@ -405,13 +408,43 @@ namespace DynamicQuestionnaire.API
                 }
 
                 var user = this._userMgr.GetUser(questionnaireID, userID);
-                var userModel = this.BuildUserModel(user);
+                var userModel = this._userMgr.BuildUserModel(user);
                 var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
                 var questionModelList = this._questionMgr.BuildQuestionModelList(questionList);
                 var userAnswerList = this._userAnswerMgr.GetUserAnswerList(questionnaireID, userID);
-                var userAnswerModelList = this.BuildUserAnswerModelList(userAnswerList);
+                var userAnswerModelList = this._userAnswerMgr.BuildUserAnswerModelList(userAnswerList);
                 object[] userAnswerDetailArr = { userModel, questionModelList, userAnswerModelList };
                 string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(userAnswerDetailArr);
+
+                context.Response.ContentType = _jsonResponse;
+                context.Response.Write(jsonText);
+                return;
+            }
+
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_STATISTICS", context.Request.QueryString["Action"], true) == 0)
+            {
+                string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                var userList = this._userMgr.GetUserList(questionnaireID);
+                if (userList == null || userList.Count == 0)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse);
+                    return;
+                }
+
+                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
+                var questionModelList = this._questionMgr.BuildQuestionModelList(questionList);
+                var userAnswerList = this._userAnswerMgr.GetUserAnswerList(questionnaireID);
+                var userAnswerModelList = this._userAnswerMgr.BuildUserAnswerModelList(userAnswerList);
+                object[] statisticsArr = { questionModelList, userAnswerModelList };
+                string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(statisticsArr);
 
                 context.Response.ContentType = _jsonResponse;
                 context.Response.Write(jsonText);
@@ -638,42 +671,6 @@ namespace DynamicQuestionnaire.API
                 .ToList();
         }
 
-        private UserModel BuildUserModel(User user)
-        {
-            return new UserModel()
-            {
-                UserID = user.UserID,
-                QuestionnaireID = user.QuestionnaireID,
-                UserName = user.UserName,
-                Phone = user.Phone,
-                Email = user.Email,
-                Age = user.Age,
-                AnswerDate = user.AnswerDate,
-            };
-        }
-
-        private List<UserAnswerModel> BuildUserAnswerModelList(List<UserAnswer> userAnswerList)
-        {
-            List<UserAnswerModel> userAnswerModelList = new List<UserAnswerModel>();
-
-            foreach (var userAnswer in userAnswerList)
-            {
-                UserAnswerModel userAnswerModel = new UserAnswerModel()
-                {
-                    QuestionnaireID = userAnswer.QuestionnaireID,
-                    UserID = userAnswer.UserID,
-                    QuestionID = userAnswer.QuestionID,
-                    QuestionTyping = userAnswer.QuestionTyping,
-                    AnswerNum = userAnswer.AnswerNum,
-                    Answer = userAnswer.Answer,
-                };
-
-                userAnswerModelList.Add(userAnswerModel);
-            }
-
-            return userAnswerModelList;
-        }
-        
         private void UpdateUserListPager(Guid questionnaireID, HttpContext context)
         {
             var userList = this._userMgr.GetUserList(
@@ -685,7 +682,7 @@ namespace DynamicQuestionnaire.API
             List<UserModel> userModelList = new List<UserModel>();
             foreach (var user in userList)
             {
-                var newUserModel = this.BuildUserModel(user);
+                var newUserModel = this._userMgr.BuildUserModel(user);
                 userModelList.Add(newUserModel);
             }
             object[] userModelListAndTotalRowsArr = { userModelList, totalRows };

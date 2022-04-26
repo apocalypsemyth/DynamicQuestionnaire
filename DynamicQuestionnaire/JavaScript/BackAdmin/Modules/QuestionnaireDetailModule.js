@@ -1,4 +1,24 @@
-﻿var GetQuestionnaireInputs = function () {
+﻿const FAILED = "FAILED";
+const NULL = "NULL";
+const PAGESIZE = 2;
+
+let divQuestionListContainer = "#divQuestionListContainer";
+let currentQuestionListTable = "currentQuestionListTable";
+let divUserListContainer = "#divUserListContainer";
+let currentUserList = "currentUserList";
+let divUserListPagerContainer = "#divUserListPagerContainer";
+let currentUserListPager = "currentUserListPager";
+let divUserAnswerContainer = "#divUserAnswerContainer";
+let currentUserAnswer = "currentUserAnswer";
+let divStatisticsContainer = "#divStatisticsContainer";
+let currentStatistics = "currentStatistics";
+
+var SetContainerSession = function (strSelector, strSessionName) {
+    let strHtml = $(strSelector).html();
+    sessionStorage.setItem(strSessionName, strHtml);
+}
+
+var GetQuestionnaireInputs = function () {
     let strCaption = $("input[id*=txtCaption]").val();
     let strDescription = $("textarea[id*=txtDescription]").val();
     let strStartDate = $("input[id*=txtStartDate]").val();
@@ -86,9 +106,6 @@ var CheckQuestionInputs = function (objQuestion) {
         return true;
 }
 
-const FAILED = "FAILED";
-const NULL = "NULL";
-const PAGESIZE = 2;
 var GetQuestionnaire = function (strQuestionnaireID) {
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_QUESTIONNAIRE",
@@ -151,7 +168,7 @@ var ResetQuestionInputs = function () {
     $("input[id*=ckbQuestionRequired]").prop("checked", false);
 }
 var CreateQuestionListTable = function (objArrQuestion) {
-    $("#divQuestionListContainer").append(
+    $(divQuestionListContainer).append(
         `
             <table class="table table-bordered w-auto">
                 <thead>
@@ -181,7 +198,7 @@ var CreateQuestionListTable = function (objArrQuestion) {
     );
 
     for (let i = 0; i < objArrQuestion.length; i++) {
-        $("#divQuestionListContainer table tbody").append(
+        $(divQuestionListContainer + " table tbody").append(
             `
                 <tr>
                     <td>
@@ -212,25 +229,21 @@ var CreateQuestionListTable = function (objArrQuestion) {
         );
     }
 }
-var SetQuestionListTableSession = function () {
-    let strHtml = $("#divQuestionListContainer").html();
-    sessionStorage.setItem("currentQuestionListTable", strHtml);
-}
 var GetQuestionList = function (strQuestionnaireID) {
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_QUESTIONLIST",
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrQuestion) {
-            $("#divQuestionListContainer").empty();
+            $(divQuestionListContainer).empty();
 
             if (strOrObjArrQuestion === FAILED) 
                 alert("發生錯誤，請刷新重試");
             else if (strOrObjArrQuestion === NULL)
-                $("#divQuestionListContainer").append("<p>尚未有資料</p>");
+                $(divQuestionListContainer).append("<p>尚未有資料</p>");
             else {
                 CreateQuestionListTable(strOrObjArrQuestion);
-                SetQuestionListTableSession();
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
         error: function (msg) {
@@ -246,10 +259,10 @@ var CreateQuestion = function (objQuestion) {
         data: objQuestion,
         success: function (objArrQuestion) {
             ResetQuestionInputs();
-            $("#divQuestionListContainer").empty();
+            $(divQuestionListContainer).empty();
 
             CreateQuestionListTable(objArrQuestion);
-            SetQuestionListTableSession();
+            SetContainerSession(divQuestionListContainer, currentQuestionListTable);
         },
         error: function (msg) {
             console.log(msg);
@@ -268,20 +281,20 @@ var DeleteQuestionList = function (strQuestionIDList) {
             else if (strOrObjArrQuestion === FAILED) 
                 alert("請選擇要刪除的問題");
             else {
-                $("#divQuestionListContainer").empty();
+                $(divQuestionListContainer).empty();
 
                 if (strOrObjArrQuestion.length === 0) 
-                    $("#divQuestionListContainer").append("<p>尚未有資料</p>");
+                    $(divQuestionListContainer).append("<p>尚未有資料</p>");
                 else {
                     if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
                         let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
                         CreateQuestionListTable(filteredObjArrQuestion);
-                        SetQuestionListTableSession();
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
                         return;
                     }
 
                     CreateQuestionListTable(strOrObjArrQuestion);
-                    SetQuestionListTableSession();
+                    SetContainerSession(divQuestionListContainer, currentQuestionListTable);
                 }
             }
         },
@@ -325,11 +338,11 @@ var UpdateQuestion = function (objQuestion) {
             if (objQuestion === FAILED) 
                 alert("發生錯誤，請再嘗試。");
             else {
-                $("#divQuestionListContainer").empty();
+                $(divQuestionListContainer).empty();
                 ResetQuestionInputs();
 
                 CreateQuestionListTable(objArrQuestion);
-                SetQuestionListTableSession();
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
         error: function (msg) {
@@ -348,10 +361,10 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
                 alert("發生錯誤，請再嘗試。");
             else {
                 ResetQuestionInputs();
-                $("#divQuestionListContainer").empty();
+                $(divQuestionListContainer).empty();
 
                 CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
-                SetQuestionListTableSession();
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
         error: function (msg) {
@@ -362,7 +375,7 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
 }
 
 var CreateUserListTable = function (objArrUserModel) {
-    $("#divUserListContainer").append(
+    $(divUserListContainer).append(
         `
             <table class="table table-bordered w-auto">
                 <thead>
@@ -388,7 +401,7 @@ var CreateUserListTable = function (objArrUserModel) {
     );
 
     for (let i = 0; i < objArrUserModel.length; i++) {
-        $("#divUserListContainer table tbody").append(
+        $(divUserListContainer + " table tbody").append(
             `
                 <tr>
                     <td>
@@ -413,15 +426,11 @@ var CreateUserListTable = function (objArrUserModel) {
         );
     }
 }
-var SetUserListSession = function () {
-    let strHtml = $("#divUserListContainer").html();
-    sessionStorage.setItem("currentUserList", strHtml);
-}
 var SetUserListShowStateSession = function (strShowState) {
     sessionStorage.setItem("currentUserListShowState", strShowState);
 }
 var CreateUserListPager = function (intPageSize) {
-    $("#divUserListPagerContainer").append(
+    $(divUserListContainer).append(
         `
             <a id="aLinkUserListPager-First"class="text-decoration-none"  href="QuestionnaireDetail.aspx?Index=First">
                 首頁
@@ -433,7 +442,7 @@ var CreateUserListPager = function (intPageSize) {
     );
 
     for (let i = 1; i <= intPageSize; i++) {
-        $("#divUserListPagerContainer").append(
+        $(divUserListContainer).append(
             `
                 <a id="aLinkUserListPager-${i}" class="text-decoration-none" href="QuestionnaireDetail.aspx?Index=${i}">
                     ${i}
@@ -443,7 +452,7 @@ var CreateUserListPager = function (intPageSize) {
     }
 
 
-    $("#divUserListPagerContainer").append(
+    $(divUserListContainer).append(
         `
             <a id="aLinkUserListPager-Next" class="text-decoration-none" href="QuestionnaireDetail.aspx?Index=Next">
                 下一頁
@@ -453,10 +462,6 @@ var CreateUserListPager = function (intPageSize) {
             </a>
         `
     );
-}
-var SetUserListPagerSession = function () {
-    let strHtml = $("#divUserListPagerContainer").html();
-    sessionStorage.setItem("currentUserListPager", strHtml);
 }
 var GetUserList = function (strQuestionnaireID) {
     $.ajax({
@@ -469,13 +474,13 @@ var GetUserList = function (strQuestionnaireID) {
             else {
                 let [objArrUserModel, totalRows] = strOrObjArrUserModel;
 
-                $("#divUserListContainer").empty();
+                $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
-                SetUserListSession();
+                SetContainerSession(divUserListContainer, currentUserList);
                 SetUserListShowStateSession("true");
                 SetUserAnswerShowStateSession("false");
 
-                $("#divUserListPagerContainer").empty();
+                $(divUserListPagerContainer).empty();
                 let pageSize = 1;
                 if (totalRows < PAGESIZE)
                     pageSize = 1;
@@ -484,7 +489,7 @@ var GetUserList = function (strQuestionnaireID) {
                 else
                     pageSize = totalRows / PAGESIZE + 1;
                 CreateUserListPager(pageSize);
-                SetUserListPagerSession();
+                SetContainerSession(divUserListPagerContainer, currentUserListPager);
             }
         },
         error: function (msg) {
@@ -504,13 +509,13 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
             else {
                 let [objArrUserModel, totalRows] = strOrObjArrUserModel;
 
-                $("#divUserListContainer").empty();
+                $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
-                SetUserListSession();
+                SetContainerSession(divUserListContainer, currentUserList);
                 SetUserListShowStateSession("true");
                 SetUserAnswerShowStateSession("false");
 
-                $("#divUserListPagerContainer").empty();
+                $(divUserListPagerContainer).empty();
                 let pageSize = 1;
                 if (totalRows < PAGESIZE)
                     pageSize = 1;
@@ -519,7 +524,7 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
                 else
                     pageSize = totalRows / PAGESIZE + 1;
                 CreateUserListPager(pageSize);
-                SetUserListPagerSession();
+                SetContainerSession(divUserListPagerContainer, currentUserListPager);
             }
         },
         error: function (msg) {
@@ -536,14 +541,14 @@ var CreateUserDetail = function (objUserModel) {
     let age = objUserModel.Age;
     let answerDate = objUserModel.AnswerDate;
 
-    $("#divUserAnswerContainer").append(
+    $(divUserAnswerContainer).append(
         `
             <div class="row align-items-center justify-content-center gy-3">
                 <div class="col-md-10">
         `
     );
 
-    $("#divUserAnswerContainer").append(
+    $(divUserAnswerContainer).append(
         `
             <div class="row align-items-center justify-content-center">
                 <div class="col-md-6">
@@ -595,14 +600,14 @@ var CreateUserDetail = function (objUserModel) {
     // 此末</div>為開頭<div class="col-md-10">的結束標籤
 }
 var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerModel) {
-    $("#divUserAnswerContainer").append(
+    $(divUserAnswerContainer).append(
         `
             <div class="col-md-10">
                 <div class="row align-items-center justify-content-center gy-3">
         `
     );
 
-    let i = 1
+    let i = 1;
     for (let question of objArrQuestionModel) {
         let questionID = question.QuestionID;
         let questionName = question.QuestionName;
@@ -613,14 +618,12 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
         let arrQuestionItsUserAnswer = objArrUserAnswerModel
             .filter(item => item.QuestionID === questionID);
         let arrUserAnswerNum = [];
-        if (arrQuestionItsUserAnswer.length) {
+        if (arrQuestionItsUserAnswer.length) 
             arrUserAnswerNum = arrQuestionItsUserAnswer.map(item2 => item2.AnswerNum);
-        }
-        else {
+        else 
             arrUserAnswerNum.push(-1);
-        }
-        console.log(arrUserAnswerNum);
-        $("#divUserAnswerContainer").append(
+        
+        $(divUserAnswerContainer).append(
             `
                 <div class="col-12">
                     <div class="d-flex flex-column">
@@ -635,7 +638,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             let jPlus1 = anothorJ + 1;
 
             if (questionTyping === "單選方塊") {
-                $("#divUserAnswerContainer").append(
+                $(divUserAnswerContainer).append(
                     `
                         <div class="form-check">
                             <input id="rdoQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="radio" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -648,7 +651,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             }
 
             if (questionTyping == "複選方塊") {
-                $("#divUserAnswerContainer").append(
+                $(divUserAnswerContainer).append(
                     `
                         <div class="form-check">
                             <input id="ckbQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="checkbox" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -665,7 +668,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
                     ? false
                     : arrQuestionItsUserAnswer.filter(item => item.AnswerNum === jPlus1)[0].Answer;
 
-                $("#divUserAnswerContainer").append(
+                $(divUserAnswerContainer).append(
                     `
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="txtQuestionAnswer_${questionID}_${jPlus1}">
@@ -680,7 +683,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             }
         }
 
-        $("#divUserAnswerContainer").append(
+        $(divUserAnswerContainer).append(
             `
                     </div>
                 </div>
@@ -690,7 +693,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
         i++;
     }
 
-    $("#divUserAnswerContainer").append(
+    $(divUserAnswerContainer).append(
         `
                     </div>
                 </div>
@@ -705,10 +708,6 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
     );
     // 此末</div>為CreateUserDetail函式開頭的
     // <div class="row align-items-center justify-content-center">之結尾標籤
-}
-var SetUserAnswerSession = function () {
-    let strHtml = $("#divUserAnswerContainer").html();
-    sessionStorage.setItem("currentUserAnswer", strHtml);
 }
 var SetUserAnswerShowStateSession = function (strShowState) {
     sessionStorage.setItem("currentUserAnswerShowState", strShowState);
@@ -725,15 +724,163 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
                 let [objUserModel, objArrQuestionModel, objArrUserAnswerModel] =
                     strOrObjArrUserAnswerDetail;
 
-                $("#divUserListContainer").empty();
-                $("#divUserListPagerContainer").empty();
-                $("#divUserAnswerContainer").empty();
+                $(divUserListContainer).empty();
+                $(divUserListPagerContainer).empty();
+                $(divUserAnswerContainer).empty();
 
                 CreateUserDetail(objUserModel);
                 CreateUserAnswerDetail(objArrQuestionModel, objArrUserAnswerModel);
-                SetUserAnswerSession();
+                SetContainerSession(divUserAnswerContainer, currentUserAnswer);
                 SetUserAnswerShowStateSession("true");
                 SetUserListShowStateSession("false");
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+        }
+    });
+}
+
+var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
+    $(divStatisticsContainer).append(
+        `
+            <div class="row align-items-center justify-content-center gy-3">
+                <div class="col-md-10">
+                    <div class="row align-items-center justify-content-center gy-3">
+        `
+    );
+
+    let i = 1;
+    for (let question of objArrQuestionModel) {
+        let questionID = question.QuestionID;
+        let questionName = question.QuestionName;
+        let questionRequired = question.QuestionRequired;
+        let questionTyping = question.QuestionTyping;
+        let arrQuestionAnswer = question.QuestionAnswer.split(";");
+
+        let arrQuestionItsUserAnswer = objArrUserAnswerModel
+            .filter(item => item.QuestionID === questionID);
+
+        let arrUserAnswerNum = [];
+        if (arrQuestionItsUserAnswer.length) 
+            arrUserAnswerNum = arrQuestionItsUserAnswer.map(item2 => item2.AnswerNum);
+        else 
+            arrUserAnswerNum.push(-1);
+        console.log("arrUserAnswerNum: " + arrUserAnswerNum);
+        let arrEachUserAnswerNum = [];
+        if (arrUserAnswerNum.indexOf(-1) === -1) {
+            arrEachUserAnswerNum = arrUserAnswerNum.reduce((acc, val) => {
+                    acc[val] = acc[val] == null ? 1 : acc[val] += 1;
+                    return acc;
+                }, []);
+        }
+        else 
+            arrEachUserAnswerNum = new Array(arrQuestionAnswer.length + 1).fill(null);
+        console.log("arrEachUserAnswerNum: " + arrEachUserAnswerNum);
+
+        $(divStatisticsContainer).append(
+            `
+                <div class="col-12">
+                    <div class="d-flex flex-column">
+                        <h3>
+                            ${i}. ${questionName} ${questionRequired ? "(必填)" : ""}
+                        </h3>
+            `
+        );
+
+        for (let j = 0; j < arrQuestionAnswer.length; j++) {
+            let anothorJ = j;
+            let jPlus1 = anothorJ + 1;
+
+            let prepareEachUserAnswerPercentage1 =
+                (arrEachUserAnswerNum[jPlus1] / arrUserAnswerNum.length) * 100;
+            let prepareEachUserAnswerPercentage2 = prepareEachUserAnswerPercentage1.toFixed();
+            let eachUserAnswerPercentage =
+                arrEachUserAnswerNum[jPlus1] == null
+                    ? "0%"
+                    : prepareEachUserAnswerPercentage2 + "%";
+            let eachUserAnswerTotal =
+                arrEachUserAnswerNum[jPlus1] == null
+                    ? 0
+                    : arrEachUserAnswerNum[jPlus1];
+
+            if (questionTyping === "單選方塊") {
+                $(divStatisticsContainer).append(
+                    `
+                        <div class="form-check">
+                            <label class="form-check-label" for="rdoQuestionAnswer_${questionID}_${jPlus1}">
+                                ${arrQuestionAnswer[j]}
+                                ${eachUserAnswerPercentage}
+                                (${eachUserAnswerTotal})
+                            </label>
+                        </div>
+                    `
+                );
+            }
+
+            if (questionTyping == "複選方塊") {
+                $(divStatisticsContainer).append(
+                    `
+                        <div class="form-check">
+                            <label class="form-check-label" for="ckbQuestionAnswer_${questionID}_${jPlus1}">
+                                ${arrQuestionAnswer[j]}
+                                ${eachUserAnswerPercentage}
+                                (${eachUserAnswerTotal})
+                            </label>
+                        </div>
+                    `
+                );
+            }
+
+            if (questionTyping == "文字") {
+                $(divStatisticsContainer).append(
+                    `
+                        <div class="form-check">
+                            <label class="form-check-label" for="txtQuestionAnswer_${questionID}_${jPlus1}">
+                                ${arrQuestionAnswer[j]}  -
+                            </label>
+                        </div>
+                    `
+                );
+            }
+        }
+
+        $(divStatisticsContainer).append(
+            `
+                    </div>
+                </div>
+            `
+        );
+
+        i++;
+    }
+
+    $(divStatisticsContainer).append(
+        `
+                    </div>
+                </div>
+            </div>
+        `
+    );
+}
+var GetStatistics = function (strQuestionnaireID) {
+    $.ajax({
+        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_STATISTICS",
+        method: "POST",
+        data: { "questionnaireID": strQuestionnaireID },
+        success: function (strOrObjArrStatistics) {
+            if (strOrObjArrStatistics === FAILED)
+                alert("發生錯誤，請再嘗試。");
+            else if (strOrObjArrStatistics === NULL)
+                $(divStatisticsContainer).html("<p>目前尚未有使用者的回答</p>");
+            else {
+                let [objArrQuestionModel, objArrUserAnswerModel] = strOrObjArrStatistics;
+                
+                $(divStatisticsContainer).empty();
+
+                CreateStatistics(objArrQuestionModel, objArrUserAnswerModel);
+                SetContainerSession(divStatisticsContainer, currentStatistics);
             }
         },
         error: function (msg) {

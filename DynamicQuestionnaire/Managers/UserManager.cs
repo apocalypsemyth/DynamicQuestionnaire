@@ -1,5 +1,6 @@
 ﻿using DynamicQuestionnaire.DynamicQuestionnaire.ORM;
 using DynamicQuestionnaire.Helpers;
+using DynamicQuestionnaire.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -182,6 +183,20 @@ namespace DynamicQuestionnaire.Managers
                     }
                 }
             }
+        }
+
+        public UserModel BuildUserModel(User user)
+        {
+            return new UserModel()
+            {
+                UserID = user.UserID,
+                QuestionnaireID = user.QuestionnaireID,
+                UserName = user.UserName,
+                Phone = user.Phone,
+                Email = user.Email,
+                Age = user.Age,
+                AnswerDate = user.AnswerDate,
+            };
         }
     }
 }

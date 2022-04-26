@@ -54,6 +54,6 @@
     </div>
 
     <div id="statistics" class="tab-pane">
-        統計分頁
+        <div id="divStatisticsContainer"></div>
     </div>
 </asp:Content>

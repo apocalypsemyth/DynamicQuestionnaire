@@ -74,6 +74,7 @@
         let strQuestionnaireID = isExistQueryString ? currentQueryString.split("?ID=")[1] : "";
         if (isExistQueryString) {
             GetQuestionnaire(strQuestionnaireID);
+            GetStatistics(strQuestionnaireID);
 
             if (!strUserListHtml)
                 GetUserList(strQuestionnaireID);
