@@ -38,7 +38,7 @@
 
                         <asp:TemplateField HeaderText="觀看統計">
                             <ItemTemplate>
-                                <a href="QuestionnaireDetail.aspx?ID=<%# Eval("QuestionnaireID") %>">前往</a>
+                                <a href="QuestionnaireStatistics.aspx?ID=<%# Eval("QuestionnaireID") %>">前往</a>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

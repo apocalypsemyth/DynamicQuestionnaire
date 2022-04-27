@@ -7,6 +7,9 @@
     <title>前台</title>
     <link rel="stylesheet" href="Css/Global.css" />
     <link rel="stylesheet" href="Content/bootstrap.min.css" />
+    <script src="Scripts/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="JavaScript/Funcs/QuestionnaireStatisticsFunc.js"></script>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
@@ -25,7 +28,6 @@
     </form>
 
     <script src="Scripts/bootstrap.min.js"></script>
-    <script src="Scripts/jquery.min.js"></script>
     <script src="JavaScript/QuestionnaireDetail.js"></script>
     <script src="JavaScript/Modules/QuestionnaireDetailModule.js"></script>
 </body>

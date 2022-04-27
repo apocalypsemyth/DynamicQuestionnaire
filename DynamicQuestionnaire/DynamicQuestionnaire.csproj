@@ -112,10 +112,12 @@
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
     <Content Include="JavaScript\BackAdmin\CommonQuestionDetail.js" />
     <Content Include="JavaScript\BackAdmin\Variables\QuestionnaireDetailVariable.js" />
+    <Content Include="JavaScript\Funcs\QuestionnaireStatisticsFunc.js" />
     <Content Include="JavaScript\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\QuestionnaireDetail.js" />
     <Content Include="QuestionnaireDetail.aspx" />
     <Content Include="QuestionnaireList.aspx" />
+    <Content Include="QuestionnaireStatistics.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -128,6 +130,7 @@
     <Content Include="BackAdmin\QuestionnaireDetailMaster.master" />
     <Content Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx" />
     <Content Include="DB\DynamicQuestionnaire.bak" />
+    <Content Include="API\QuestionnaireStatisticsDataHandler.ashx" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.min.js" />
@@ -145,6 +148,9 @@
     </Compile>
     <Compile Include="API\QuestionnaireDetailDataHandler.ashx.cs">
       <DependentUpon>QuestionnaireDetailDataHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="API\QuestionnaireStatisticsDataHandler.ashx.cs">
+      <DependentUpon>QuestionnaireStatisticsDataHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="BackAdmin\Admin.Master.cs">
       <DependentUpon>Admin.Master</DependentUpon>
@@ -260,6 +266,13 @@
     </Compile>
     <Compile Include="QuestionnaireList.aspx.designer.cs">
       <DependentUpon>QuestionnaireList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="QuestionnaireStatistics.aspx.cs">
+      <DependentUpon>QuestionnaireStatistics.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="QuestionnaireStatistics.aspx.designer.cs">
+      <DependentUpon>QuestionnaireStatistics.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
