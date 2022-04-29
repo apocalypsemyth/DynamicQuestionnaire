@@ -85,7 +85,6 @@
     <Content Include="CheckingQuestionnaireDetail.aspx" />
     <Content Include="Components\ucCancelButton.ascx" />
     <Content Include="Components\ucPager.ascx" />
-    <Content Include="Components\ucSubmitButton.ascx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -107,6 +106,7 @@
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
     <Content Include="JavaScript\BackAdmin\Funcs\CommonQuestionDetailFunc.js" />
+    <Content Include="JavaScript\BackAdmin\Funcs\QuestionnaireDetailFunc.js" />
     <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
@@ -214,13 +214,6 @@
     </Compile>
     <Compile Include="Components\ucPager.ascx.designer.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Components\ucSubmitButton.ascx.cs">
-      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Components\ucSubmitButton.ascx.designer.cs">
-      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
     </Compile>
     <Compile Include="DynamicQuestionnaire.ORM\Category.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\CommonQuestion.cs" />

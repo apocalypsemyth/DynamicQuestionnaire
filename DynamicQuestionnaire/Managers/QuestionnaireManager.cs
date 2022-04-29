@@ -31,6 +31,8 @@ namespace DynamicQuestionnaire.Managers
 
         public List<Questionnaire> GetQuestionnaireList(
             string keyword, 
+            string startDateStr,
+            string endDateStr,
             int pageSize, 
             int pageIndex, 
             out int totalRows
@@ -45,17 +47,44 @@ namespace DynamicQuestionnaire.Managers
                 {
                     if (!string.IsNullOrWhiteSpace(keyword))
                     {
-                        var questionnaireList = contextModel.Questionnaires
-                            .Where(questionnaire => questionnaire.Caption.Contains(keyword))
+                        var filteredQuestionnaireList = contextModel.Questionnaires
+                            .Where(questionnaire => questionnaire.Caption.Contains(keyword));
+
+                        var questionnaireList = filteredQuestionnaireList
                             .OrderByDescending(item => item.StartDate)
                             .ThenByDescending(item2 => item2.UpdateDate)
                             .Skip(skip)
                             .Take(pageSize)
                             .ToList();
 
-                        totalRows = contextModel.Questionnaires
-                            .Where(questionnaire2 => questionnaire2.Caption.Contains(keyword))
-                            .Count();
+                        totalRows = filteredQuestionnaireList.Count();
+
+                        return questionnaireList;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(startDateStr) 
+                        && !string.IsNullOrWhiteSpace(endDateStr))
+                    {
+                        DateTime startDate = DateTime.Parse(startDateStr);
+                        DateTime endDate = DateTime.Parse(endDateStr);
+                        DateTime endDatePlus1 = endDate.AddDays(1);
+
+                        var filteredQuestionnaireList = contextModel.Questionnaires
+                            .Where(questionnaire => questionnaire.EndDate == null 
+                            ?
+                            questionnaire.StartDate >= startDate &&
+                            questionnaire.StartDate < endDatePlus1 
+                            :
+                            questionnaire.StartDate >= startDate
+                            && questionnaire.EndDate < endDatePlus1);
+
+                        var questionnaireList = filteredQuestionnaireList
+                            .OrderByDescending(item => item.StartDate)
+                            .ThenByDescending(item2 => item2.UpdateDate)
+                            .Skip(skip)
+                            .Take(pageSize)
+                            .ToList();
+
+                        totalRows = filteredQuestionnaireList.Count();
 
                         return questionnaireList;
                     }
