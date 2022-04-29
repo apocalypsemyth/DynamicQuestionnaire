@@ -66,10 +66,16 @@ namespace DynamicQuestionnaire.API
                 if (isFirstCreate)
                 {
                     this.CreateQuestionnaireInSession(isFirstCreate, context);
+
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_successedResponse);
                     return;
                 }
 
                 this.CreateQuestionnaireInSession(isFirstCreate, context);
+
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_successedResponse);
                 return;
             }
             
@@ -541,15 +547,23 @@ namespace DynamicQuestionnaire.API
                 if (caption != questionnaire.Caption 
                     || description != questionnaire.Description 
                     || startDate != questionnaire.StartDate 
+                    || endDateStr != null
                     || isEnable != questionnaire.IsEnable)
                 {
                     questionnaire.Caption = caption.Trim();
                     questionnaire.Description = description.Trim();
                     questionnaire.StartDate = startDate;
                     questionnaire.IsEnable = isEnable;
-                    if (DateTime.TryParse(endDateStr, out DateTime endDate))
+                    if (endDateStr != null && DateTime.TryParse(endDateStr, out DateTime endDate))
+                    {
                         if (endDate != questionnaire.EndDate)
                             questionnaire.EndDate = endDate;
+                    }
+                    else if (endDateStr != null)
+                    {
+                        if (questionnaire.EndDate != null)
+                            questionnaire.EndDate = null;
+                    }
 
                     questionnaire.UpdateDate = DateTime.Now;
                     context.Session[_questionnaire] = questionnaire;

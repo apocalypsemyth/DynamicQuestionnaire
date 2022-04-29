@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../Css/BackAdmin/Global.css" />
     <link rel="stylesheet" href="../Content/bootstrap.min.css" />
     <script src="../Scripts/jquery.min.js"></script>
+    <script src="../JavaScript/BackAdmin/Variables/QuestionnaireDetailVariable.js"></script>
+    <script src="../JavaScript/BackAdmin/Funcs/QuestionnaireDetailFunc.js"></script>
     <script src="../JavaScript/BackAdmin/Funcs/CommonQuestionDetailFunc.js"></script>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
@@ -32,7 +34,6 @@
     </form>
 
     <script src="../Scripts/bootstrap.min.js"></script>
-    <script src="../JavaScript/BackAdmin/Variables/QuestionnaireDetailVariable.js"></script>
     <script src="../JavaScript/BackAdmin/QuestionnaireDetail.js"></script>
     <script src="../JavaScript/BackAdmin/Modules/QuestionnaireDetailModule.js"></script>
     <script src="../JavaScript/BackAdmin/CommonQuestionDetail.js"></script>

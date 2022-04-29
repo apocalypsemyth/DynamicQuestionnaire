@@ -1,0 +1,74 @@
+﻿function GetQuestionnaireInputsForServerSubmit() {
+    let strCaption = $("input[id*=txtCaption]").val();
+    let strDescription = $("textarea[id*=txtDescription]").val();
+    let strStartDate = $("input[id*=txtStartDate]").val();
+    let strEndDate = $("input[id*=txtEndDate]").val();
+    let boolIsEnable = $("input[id*=ckbIsEnable]").is(":checked");
+
+    let objQuestionnaire = {
+        "caption": strCaption,
+        "description": strDescription,
+        "startDate": strStartDate,
+        "endDate": strEndDate,
+        "isEnable": boolIsEnable,
+    };
+
+    return objQuestionnaire;
+}
+function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
+    let arrErrorMsg = [];
+    let regex = /^[0-9]{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$/;
+
+    if (!objQuestionnaire.caption)
+        arrErrorMsg.push("請填入問卷名稱。");
+
+    if (!objQuestionnaire.description)
+        arrErrorMsg.push("請填入描述內容。");
+
+    if (!objQuestionnaire.startDate)
+        arrErrorMsg.push("請填入開始時間。");
+    else {
+        if (!regex.test(objQuestionnaire.startDate))
+            arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入開始時間。`);
+    }
+
+    if (objQuestionnaire.endDate) {
+        if (!regex.test(objQuestionnaire.endDate))
+            arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入結束時間。`);
+    }
+
+    if (arrErrorMsg.length > 0)
+        return arrErrorMsg.join("\n");
+    else
+        return true;
+}
+
+function SubmitQuestionnaireAndItsQuestionList(strOperate) {
+    let objQuestionnaireForServerSubmit = GetQuestionnaireInputsForServerSubmit();
+    let isValidQuestionnaireForServerSubmit =
+        CheckQuestionnaireInputsForServerSubmit(objQuestionnaireForServerSubmit);
+    if (typeof isValidQuestionnaireForServerSubmit === "string") {
+        alert(isValidQuestionnaireForServerSubmit);
+        return false;
+    }
+
+    $.ajax({
+        async: false,
+        url: `/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=${strOperate}_QUESTIONNAIRE`,
+        method: "POST",
+        data: objQuestionnaireForServerSubmit,
+        success: function (strErrMsg) {
+            if (strErrMsg === FAILED) {
+                alert("發生錯誤，請再嘗試。");
+                return false;
+            }
+
+            return true;
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert("通訊失敗，請聯絡管理員。");
+            return false;
+        }
+    });
+}

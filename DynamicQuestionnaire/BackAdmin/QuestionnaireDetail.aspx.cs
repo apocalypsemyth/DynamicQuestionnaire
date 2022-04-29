@@ -45,15 +45,31 @@ namespace DynamicQuestionnaire.BackAdmin
             {
                 Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
                 this.InitEditMode(questionnaireID);
+                this.btnSubmitInQuestionnaireTab.Attributes.Add(
+                    "onClick",
+                    "return SubmitQuestionnaireAndItsQuestionList('UPDATE');"
+                    );
+                this.btnSubmitInQuestionTab.Attributes.Add(
+                    "onClick",
+                    "return SubmitQuestionnaireAndItsQuestionList('UPDATE');"
+                    );
             }
             else
+            {
                 this.InitCreateMode();
+                this.btnSubmitInQuestionnaireTab.Attributes.Add(
+                    "onClick", 
+                    "return SubmitQuestionnaireAndItsQuestionList('CREATE');"
+                    );
+                this.btnSubmitInQuestionTab.Attributes.Add(
+                    "onClick", 
+                    "return SubmitQuestionnaireAndItsQuestionList('CREATE');"
+                    );
+            }
 
             if (!this.IsPostBack)
                 this.Session[_isUpdateModeOfCommonQuestion] = false;
 
-            this.ucSubmitButtonInQuestionnaireTab.OnSubmitClick += UcInQuestionnaireTab_OnSubmitClick;
-            this.ucSubmitButtonInQuestionTab.OnSubmitClick += UcInQuestionTab_OnSubmitClick;
             this.ucCancelButtonInQuestionnaireTab.OnCancelClick += UcInQuestionnaireTab_OnCancelClick;
             this.ucCancelButtonInQuestionTab.OnCancelClick += UcInQuestionTab_OnCancelClick;
         }
@@ -71,18 +87,12 @@ namespace DynamicQuestionnaire.BackAdmin
             this.SameLogicOfRemoveSessionAndBackToList(sender, e);
         }
 
-        protected void UcInQuestionnaireTab_OnSubmitClick(
-            object sender,
-            EventArgs e
-            )
+        protected void btnSubmitInQuestionnaireTab_Click(object sender, EventArgs e)
         {
             this.SameLogicOfBtnSubmit_Click(sender, e);
         }
 
-        protected void UcInQuestionTab_OnSubmitClick(
-            object sender,
-            EventArgs e
-            )
+        protected void btnSubmitInQuestionTab_Click(object sender, EventArgs e)
         {
             this.SameLogicOfBtnSubmit_Click(sender, e);
         }
@@ -92,14 +102,6 @@ namespace DynamicQuestionnaire.BackAdmin
             EventArgs e
             )
         {
-            if (!this.CheckQuestionnaireInputs(out List<string> errorMsgList))
-            {
-                string errorMsg = string.Join("\\n", errorMsgList);
-                this.AlertMessage(errorMsg);
-
-                return;
-            }
-
             bool isUpdateModeOfCommonQuestion = (bool)(this.Session[_isUpdateModeOfCommonQuestion]);
 
             if (isUpdateModeOfCommonQuestion)
@@ -107,16 +109,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion();
             }
 
-            Questionnaire newOrToUpdateQuestionnaire = 
-                this.Session[_questionnaire] as Questionnaire;
-            if (newOrToUpdateQuestionnaire == null)
-            {
-                this.AlertMessage("請填寫問題後，先按下加入按鈕。");
-                return;
-            }
-
-            this.FinalUpdateQuestionnaireInSession(newOrToUpdateQuestionnaire);
-            Questionnaire finalUpdatedQuestionnaire = this.Session[_questionnaire] as Questionnaire;
+            Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
 
             if (_isEditMode || isUpdateModeOfCommonQuestion)
             {
@@ -137,7 +130,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
                 if (isUpdateModeOfCommonQuestion)
                 {
-                    Guid questionnaireID = finalUpdatedQuestionnaire.QuestionnaireID;
+                    Guid questionnaireID = newOrToUpdateQuestionnaire.QuestionnaireID;
                     
                     this._questionMgr
                         .UpdateQuestionListInIsUpdateModeOfCommonQuestion(
@@ -146,7 +139,7 @@ namespace DynamicQuestionnaire.BackAdmin
                         );
 
                     this._questionnaireMgr
-                        .UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(finalUpdatedQuestionnaire);
+                        .UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(newOrToUpdateQuestionnaire);
                 }
                 else
                 {
@@ -156,9 +149,9 @@ namespace DynamicQuestionnaire.BackAdmin
                         );
 
                     if (hasAnyUpdated)
-                        finalUpdatedQuestionnaire.UpdateDate = DateTime.Now;
+                        newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
 
-                    this._questionnaireMgr.UpdateQuestionnaire(finalUpdatedQuestionnaire);
+                    this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
                 }
             }
             else if (!(_isEditMode && isUpdateModeOfCommonQuestion))
@@ -187,6 +180,7 @@ namespace DynamicQuestionnaire.BackAdmin
             this.Session.Remove(_questionnaire);
             this.Session.Remove(_questionList);
             this.Session.Remove(_currentPagerIndex);
+            this.Session.Remove(_isUpdateModeOfCommonQuestion);
 
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
@@ -299,42 +293,6 @@ namespace DynamicQuestionnaire.BackAdmin
                 else
                     this.btnExportAndDownloadDataToCSV.Visible = true;
             }
-        }
-
-        private bool CheckQuestionnaireInputs(out List<string> errorMsgList)
-        {
-            errorMsgList = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(this.txtCaption.Text))
-                errorMsgList.Add("請填入問卷名稱。");
-
-            if (string.IsNullOrWhiteSpace(this.txtDescription.Text))
-                errorMsgList.Add("請填入描述內容。");
-
-            if (string.IsNullOrWhiteSpace(this.txtStartDate.Text))
-                errorMsgList.Add("請填入開始時間。");
-
-            if (errorMsgList.Count > 0)
-                return false;
-            else
-                return true;
-        }
-
-        private void FinalUpdateQuestionnaireInSession(Questionnaire questionnaire)
-        {
-            Questionnaire newOrUpdatedQuestionnaire = new Questionnaire()
-            {
-                QuestionnaireID = questionnaire.QuestionnaireID,
-                Caption = questionnaire.Caption,
-                Description = questionnaire.Description,
-                IsEnable = questionnaire.IsEnable,
-                StartDate = questionnaire.StartDate,
-                EndDate = questionnaire.EndDate,
-                CreateDate = questionnaire.CreateDate,
-                UpdateDate = questionnaire.UpdateDate,
-            };
-
-            this.Session[_questionnaire] = newOrUpdatedQuestionnaire;
         }
 
         private void CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion()
