@@ -22,8 +22,10 @@
             </div>
 
             <div class="col-md-2">
-                <a href="QuestionnaireList.aspx">問卷管理</a><br />
-                <a href="CommonQuestionList.aspx">常用問題管理</a><br />
+                <div class="d-flex flex-column">
+                    <a href="QuestionnaireList.aspx">問卷管理</a>
+                    <a href="CommonQuestionList.aspx">常用問題管理</a>
+                </div>
             </div>
 
             <main class="col-md-8">

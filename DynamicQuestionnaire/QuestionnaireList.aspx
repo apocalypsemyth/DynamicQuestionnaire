@@ -9,22 +9,42 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="questionnaireListContainer">
         <div class="row align-items-center justify-content-center gy-3">
-            <div class="col-md-10">
-                <div id="questionnaireSearch">
-                    問卷標題：<asp:TextBox ID="txtKeyword" runat="server"></asp:TextBox>
+            <div class="col-md-8">
+                <div class="row">
+                    <label for='<%= this.txtKeyword.ClientID %>' class="col-sm-2 col-form-label">
+                        問卷標題：
+                    </label>
+                    <div class="col-sm-8">
+                        <asp:TextBox ID="txtKeyword" CssClass="form-control" runat="server" />
+                    </div>
+                </div>
+            </div>
 
-                    <div>
-                        開始 / 結束：<asp:TextBox ID="txtStartDate" runat="server"></asp:TextBox>
-                        <asp:TextBox ID="txtEndDate" runat="server"></asp:TextBox>
+            <div class="col-md-8">
+                <div class="row mb-5">
+                    <label for='<%= this.txtStartDate.ClientID %>' class="col-sm-2 col-form-label">
+                        開始 / 結束：
+                    </label>
+                    <div class="col-sm-4">
+                        <asp:TextBox ID="txtStartDate" CssClass="form-control" runat="server" />
+                    </div>
+                    <div class="col-sm-4">
+                        <asp:TextBox ID="txtEndDate" CssClass="form-control" runat="server" />
+                    </div>
+                    <div class="col-sm-2 align-self-center">
                         <asp:Button ID="btnSearchQuestionnaire" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <asp:GridView ID="gvQuestionnaireList" CssClass="table table-bordered w-auto" runat="server" AutoGenerateColumns="false">
                     <Columns>
-                        <asp:BoundField DataField="QuestionnaireID" HeaderText="問卷代碼" />
+                        <asp:TemplateField HeaderText="問卷代碼">
+                            <ItemTemplate>
+                                <asp:Literal ID="ltlQuestionListNumber" Text='<%# Container.DataItemIndex + 1 %>' runat="server" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
 
                         <asp:TemplateField HeaderText="問卷">
                             <ItemTemplate>
@@ -49,7 +69,7 @@
                 </asp:PlaceHolder>
             </div>
 
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <uc1:ucPager runat="server" ID="ucPager" PageSize="10" />
             </div>
         </div>

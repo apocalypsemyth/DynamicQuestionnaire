@@ -10,22 +10,21 @@
     <div id="backAdminCommonQuestionListContainer">
         <div class="row gy-3">
             <div class="col-md-8">
-                <div class="row mb-3">
+                <div class="row">
                     <label for='<%= this.txtKeyword.ClientID %>' class="col-sm-2 col-form-label">
                         常用問題名稱：
                     </label>
-                    <div class="col-sm-10">
-                        <div class="d-flex align-items-center justify-content-center gap-3">
-                            <asp:TextBox ID="txtKeyword" CssClass="form-control" runat="server" />
-
-                            <asp:Button ID="btnSearchCommonQuestion" runat="server" Text="搜尋" OnClick="btnSearchCommonQuestion_Click" />
-                        </div>
+                    <div class="col-sm-6">
+                        <asp:TextBox ID="txtKeyword" CssClass="form-control" runat="server" />
+                    </div>
+                    <div class="col-sm-2 align-self-center">
+                        <asp:Button ID="btnSearchCommonQuestion" runat="server" Text="搜尋" OnClick="btnSearchCommonQuestion_Click" />
                     </div>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <div class="d-flex align-items-center justify-content-end">
+                <div class="d-flex gap-1 mt-3">
                     <asp:Button ID="btnDeleteCommonQuestion" runat="server" Text="刪除" OnClick="btnDeleteCommonQuestion_Click" />
                     <asp:Button ID="btnCreateCommonQuestion" runat="server" Text="新增" OnClick="btnCreateCommonQuestion_Click" />
                 </div>
