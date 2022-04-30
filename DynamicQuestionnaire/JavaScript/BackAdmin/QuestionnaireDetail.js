@@ -124,7 +124,7 @@
         });
         $("button[id=btnAddQuestion]").click(function (e) {
             e.preventDefault();
-
+            
             let objQuestionnaire = GetQuestionnaireInputs();
             let isValidQuestionnaire = CheckQuestionnaireInputs(objQuestionnaire);
             if (typeof isValidQuestionnaire === "string") {
@@ -133,7 +133,7 @@
             }
 
             if (window.location.search.indexOf("?ID=") !== -1) {
-                UpdateQuestionnaire(objQuestionnaire);
+                let btnHref = $(this).attr("href");
 
                 let objQuestion = GetQuestionInputs();
                 let isValidQuestion = CheckQuestionInputs(objQuestion);
@@ -142,7 +142,15 @@
                     return;
                 }
 
-                CreateQuestion(objQuestion);
+                if (btnHref) {
+                    let strQuestionID = $(this).attr("href");
+                    objQuestion.clickedQuestionID = strQuestionID;
+                    UpdateQuestion(objQuestion);
+                }
+                else {
+                    UpdateQuestionnaire(objQuestionnaire);
+                    CreateQuestion(objQuestion);
+                }
             }
             else 
                 CreateQuestionnaire(objQuestionnaire);
@@ -159,41 +167,17 @@
             DeleteQuestionList(arrCheckedQuestionID.join());
         });
 
-        $(document).on("click", "a.currentEditQuestion[id*=aLinkEditQuestion]", function (e) {
+        $(document).on("click", "a[id*=aLinkEditQuestion]", function (e) {
             e.preventDefault();
 
             if (window.location.search.indexOf("?ID=") === -1) {
-                alert("請先新增後，再編輯");
+                alert("請先新增後，再編輯。");
                 return;
             }
-
-            $(this).toggleClass("currentEditQuestion");
-
-            let objQuestion = GetQuestionInputs();
-            let isValidQuestion = CheckQuestionInputs(objQuestion);
-            if (typeof isValidQuestion === "string") {
-                alert(isValidQuestion);
-                return;
-            }
-
-            let aLinkHref = $(this).attr("href");
-            let strQuestionID = aLinkHref.split('?QuestionID=')[1];
-            objQuestion.clickedQuestionID = strQuestionID;
-            UpdateQuestion(objQuestion);
-        });
-        $(document).on("click", "a:not(.currentEditQuestion)[id*=aLinkEditQuestion]", function (e) {
-            e.preventDefault();
-
-            if (window.location.search.indexOf("?ID=") === -1) {
-                alert("請先新增後，再編輯");
-                return;
-            }
-
-            $("#divQuestionListContainer table tbody tr td a.currentEditQuestion[id*=aLinkEditQuestion]").removeClass("currentEditQuestion");
-            $(this).toggleClass("currentEditQuestion");
 
             let aLinkHref = $(this).attr("href");
             let strQuestionID = aLinkHref.split("?QuestionID=")[1];
+            $("button[id=btnAddQuestion]").attr("href", strQuestionID);
             ShowToUpdateQuestion(strQuestionID);
         });
 

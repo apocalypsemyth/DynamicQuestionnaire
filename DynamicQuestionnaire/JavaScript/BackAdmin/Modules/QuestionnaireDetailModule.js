@@ -319,14 +319,15 @@ var UpdateQuestion = function (objQuestion) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=UPDATE_QUESTION",
         method: "POST",
         data: objQuestion,
-        success: function (objArrQuestion) {
+        success: function (strOrObjArrQuestion) {
             if (objQuestion === FAILED) 
                 alert("發生錯誤，請再嘗試。");
             else {
-                $(divQuestionListContainer).empty();
                 ResetQuestionInputs();
+                $("button[id=btnAddQuestion]").removeAttr("href");
+                $(divQuestionListContainer).empty();
 
-                CreateQuestionListTable(objArrQuestion);
+                CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
