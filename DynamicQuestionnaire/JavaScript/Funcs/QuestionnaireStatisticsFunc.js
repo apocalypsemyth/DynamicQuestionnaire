@@ -1,7 +1,4 @@
-﻿const FAILED = "FAILED";
-let divQuestionnaireStatisticsContainer = "#divQuestionnaireStatisticsContainer";
-
-function CreatePieChart(strSelector, strQuestionName, arrQuestionAnswer, arrEachUserAnswerNum) {
+﻿function CreatePieChart(strSelector, strQuestionName, arrQuestionAnswer, arrEachUserAnswerNum) {
     function setTranslation(p, slice) {
         p.sliced = slice;
         if (p.sliced) {
@@ -24,10 +21,10 @@ function CreatePieChart(strSelector, strQuestionName, arrQuestionAnswer, arrEach
             type: 'pie'
         },
         title: {
-            text: strQuestionName
+            text: null
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})'
         },
         plotOptions: {
             pie: {
@@ -45,9 +42,10 @@ function CreatePieChart(strSelector, strQuestionName, arrQuestionAnswer, arrEach
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    format: '<b>{point.name}</b>: {point.percentage:.1f}% ({point.y})',
                     style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
                     }
                 }
             }
@@ -120,21 +118,31 @@ function CreateQuestionnaireStatistics(objArrQuestionModel, objArrUserAnswerMode
 
         let resultQuestionName = `${i}. ${questionName} ${questionRequired ? "(必填)" : ""}`;
 
-        $("#divQuestionnaireStatisticsInnerContainer").append(
-            `
-                <div class="col-12 align-self-center">
-            `
-        );
-
-        if (questionTyping === "文字") {
+        if (!arrQuestionItsUserAnswer.length) {
             $("#divQuestionnaireStatisticsInnerContainer").append(
                 `
-                    <div class="d-flex align-items-center justify-content-center">
+                    <div class="col-12">
                         <div class="d-flex flex-column">
-                            <h5>
+                            <h2>
                                 ${resultQuestionName}
-                            </h5>
-                            <p class="text-center">
+                            </h2>
+                            <p>
+                                目前尚未有使用者的回答
+                            </p>
+                        </div>
+                    </div>
+                `
+            );
+        }
+        else if (questionTyping === "文字") {
+            $("#divQuestionnaireStatisticsInnerContainer").append(
+                `
+                    <div class="col-12">
+                        <div class="d-flex flex-column">
+                            <h2>
+                                ${resultQuestionName}
+                            </h2>
+                            <p>
                                 -
                             </p>
                         </div>
@@ -147,24 +155,24 @@ function CreateQuestionnaireStatistics(objArrQuestionModel, objArrUserAnswerMode
 
             $("#divQuestionnaireStatisticsInnerContainer").append(
                 `
-                    <div id="${dynamicQuestionnaireStatistics}">
+                    <div class="col-12">
+                        <div class="d-flex flex-column">
+                            <h2>
+                                ${resultQuestionName}
+                            </h2>
+                            <div id="${dynamicQuestionnaireStatistics}"></div>
+                        </div>
                     </div>
                 `
             );
 
             CreatePieChart(
                 dynamicQuestionnaireStatistics,
-                resultQuestionName,
+                questionName,
                 arrQuestionAnswer,
                 arrEachUserAnswerNum
             );
         }
-
-        $("#divQuestionnaireStatisticsInnerContainer").append(
-            `
-                </div>
-            `
-        );
 
         i++;
     }
