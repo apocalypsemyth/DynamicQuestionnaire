@@ -21,7 +21,7 @@
             </div>
 
             <div class="col-md-8">
-                <div class="row mb-5">
+                <div class="row mb-md-5">
                     <label for='<%= this.txtStartDate.ClientID %>' class="col-sm-2 col-form-label">
                         開始 / 結束：
                     </label>
@@ -32,7 +32,7 @@
                         <asp:TextBox ID="txtEndDate" CssClass="form-control" runat="server" />
                     </div>
                     <div class="col-sm-2 align-self-center">
-                        <asp:Button ID="btnSearchQuestionnaire" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
+                        <asp:Button ID="btnSearchQuestionnaire" CssClass="btn btn-primary" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
                     </div>
                 </div>
             </div>

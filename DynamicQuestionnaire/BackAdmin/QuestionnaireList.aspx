@@ -32,15 +32,15 @@
                         <asp:TextBox ID="txtEndDate" CssClass="form-control" runat="server" />
                     </div>
                     <div class="col-sm-2 align-self-center">
-                        <asp:Button ID="btnSearchQuestionnaire" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
+                        <asp:Button ID="btnSearchQuestionnaire" CssClass="btn btn-primary" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
                     </div>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <div class="d-flex gap-1 mt-3">
-                    <asp:Button ID="btnDeleteQuestionnaire" runat="server" Text="刪除" OnClick="btnDeleteQuestionnaire_Click" />
-                    <asp:Button ID="btnCreateQuestionnaire" runat="server" Text="新增" OnClick="btnCreateQuestionnaire_Click" />
+                <div class="d-flex gap-1 mt-3 mt-md-5">
+                    <asp:Button ID="btnDeleteQuestionnaire" CssClass="btn btn-danger" runat="server" Text="刪除" OnClick="btnDeleteQuestionnaire_Click" />
+                    <asp:Button ID="btnCreateQuestionnaire" CssClass="btn btn-success" runat="server" Text="新增" OnClick="btnCreateQuestionnaire_Click" />
                 </div>
             </div>
 
