@@ -80,6 +80,7 @@
   <ItemGroup>
     <Content Include="BackAdmin\CommonQuestionDetail.aspx" />
     <Content Include="BackAdmin\CommonQuestionList.aspx" />
+    <Content Include="BackAdmin\Index.aspx" />
     <Content Include="BackAdmin\QuestionnaireDetail.aspx" />
     <Content Include="BackAdmin\QuestionnaireList.aspx" />
     <Content Include="CheckingQuestionnaireDetail.aspx" />
@@ -101,10 +102,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="Css\BackAdmin\Global.css" />
-    <Content Include="Css\Global.css" />
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
+    <Content Include="Index.aspx" />
     <Content Include="JavaScript\BackAdmin\Funcs\CommonQuestionDetailFunc.js" />
     <Content Include="JavaScript\BackAdmin\Funcs\QuestionnaireDetailFunc.js" />
     <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
@@ -174,6 +174,13 @@
     <Compile Include="BackAdmin\CommonQuestionList.aspx.designer.cs">
       <DependentUpon>CommonQuestionList.aspx</DependentUpon>
     </Compile>
+    <Compile Include="BackAdmin\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BackAdmin\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
     <Compile Include="BackAdmin\QuestionnaireDetail.aspx.cs">
       <DependentUpon>QuestionnaireDetail.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -229,6 +236,13 @@
     </Compile>
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Main.Master.cs">
       <DependentUpon>Main.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
