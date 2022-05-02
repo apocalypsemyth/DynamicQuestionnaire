@@ -31,7 +31,7 @@ namespace DynamicQuestionnaire.API
                 }
 
                 var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
-                var questionModelList = this._questionMgr.BuildQuestionModelList(questionList);
+                var questionModelList = this._questionMgr.BuildQuestionModelList(questionList, false);
                 var userAnswerList = this._userAnswerMgr.GetUserAnswerList(questionnaireID);
                 var userAnswerModelList = this._userAnswerMgr.BuildUserAnswerModelList(userAnswerList);
                 object[] statisticsArr = { questionModelList, userAnswerModelList };

@@ -113,7 +113,10 @@ namespace DynamicQuestionnaire.API.BackAdmin
                     var questionListOfCommonQuestionInUpdateMode = 
                         this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
                     var questionModelListOfCommonQuestionInUpdateMode = 
-                        this._questionMgr.BuildQuestionModelList(questionListOfCommonQuestionInUpdateMode);
+                        this._questionMgr.BuildQuestionModelList(
+                            questionListOfCommonQuestionInUpdateMode, 
+                            false
+                            );
                     context.Session[_questionListOfCommonQuestion] = questionModelListOfCommonQuestionInUpdateMode.ToList();
                     string jsonTextInUpdateMode = 
                         Newtonsoft

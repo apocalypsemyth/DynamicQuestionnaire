@@ -45,7 +45,7 @@
             </div>
 
             <div class="col-md-10">
-                <asp:GridView ID="gvQuestionnaireList" CssClass="table table-bordered w-auto" runat="server" AutoGenerateColumns="false">
+                <asp:GridView ID="gvQuestionnaireList" CssClass="table table-bordered w-auto" runat="server" AutoGenerateColumns="false" OnRowDataBound="gvQuestionnaireList_RowDataBound">
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
@@ -54,9 +54,9 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <asp:TemplateField HeaderText="問卷代碼">
+                        <asp:TemplateField HeaderText="#">
                             <ItemTemplate>
-                                <asp:Literal ID="ltlQuestionListNumber" Text='<%# Container.DataItemIndex + 1 %>' runat="server" />
+                                <asp:Literal ID="ltlQuestionListNumber" runat="server" />
                             </ItemTemplate>
                         </asp:TemplateField>
 
@@ -65,8 +65,16 @@
                                 <a href="QuestionnaireDetail.aspx?ID=<%# Eval("QuestionnaireID") %>"><%# Eval("Caption") %></a>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        
+                        <asp:TemplateField HeaderText="狀態">
+                            <ItemTemplate>
+                                <asp:Literal ID="ltlIsEnable" Text='<%# 
+                                    (bool)Eval("IsEnable") 
+                                    ? "開放" 
+                                    : "已關閉" %>' runat="server" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
 
-                        <asp:BoundField DataField="IsEnable" HeaderText="狀態" />
                         <asp:BoundField DataField="StartDate" HeaderText="開始時間" DataFormatString="{0:D}" />
                         <asp:BoundField DataField="EndDate" HeaderText="結束時間" DataFormatString="{0:D}" nulldisplaytext="---" />
 

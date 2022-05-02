@@ -30,11 +30,11 @@ namespace DynamicQuestionnaire.Managers
         }
 
         public List<Questionnaire> GetQuestionnaireList(
-            string keyword, 
+            string keyword,
             string startDateStr,
             string endDateStr,
-            int pageSize, 
-            int pageIndex, 
+            int pageSize,
+            int pageIndex,
             out int totalRows
             )
         {
@@ -61,7 +61,7 @@ namespace DynamicQuestionnaire.Managers
 
                         return questionnaireList;
                     }
-                    else if (!string.IsNullOrWhiteSpace(startDateStr) 
+                    else if (!string.IsNullOrWhiteSpace(startDateStr)
                         && !string.IsNullOrWhiteSpace(endDateStr))
                     {
                         DateTime startDate = DateTime.Parse(startDateStr);
@@ -69,10 +69,10 @@ namespace DynamicQuestionnaire.Managers
                         DateTime endDatePlus1 = endDate.AddDays(1);
 
                         var filteredQuestionnaireList = contextModel.Questionnaires
-                            .Where(questionnaire => questionnaire.EndDate == null 
+                            .Where(questionnaire => questionnaire.EndDate == null
                             ?
                             questionnaire.StartDate >= startDate &&
-                            questionnaire.StartDate < endDatePlus1 
+                            questionnaire.StartDate < endDatePlus1
                             :
                             questionnaire.StartDate >= startDate
                             && questionnaire.EndDate < endDatePlus1);
@@ -91,7 +91,7 @@ namespace DynamicQuestionnaire.Managers
                     else
                     {
                         totalRows = contextModel.Questionnaires.Count();
-                        
+
                         return contextModel.Questionnaires
                             .OrderByDescending(item => item.StartDate)
                             .ThenByDescending(item2 => item2.UpdateDate)
@@ -138,7 +138,7 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
-        
+
         public void DeleteQuestionnaireList(List<Guid> questionnaireIDList)
         {
             try
@@ -197,23 +197,6 @@ namespace DynamicQuestionnaire.Managers
             catch (Exception ex)
             {
                 Logger.WriteLog("QuestionnaireManager.UpdateQuestionnaire", ex);
-                throw;
-            }
-        }
-
-        public void UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(Questionnaire questionnaire)
-        {
-            try
-            {
-                using (ContextModel contextModel = new ContextModel())
-                {
-                    contextModel.Questionnaires.Add(questionnaire);
-                    contextModel.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("QuestionnaireManager.UpdateQuestionnaireInIsUpdateModeOfCommonQuestion", ex);
                 throw;
             }
         }

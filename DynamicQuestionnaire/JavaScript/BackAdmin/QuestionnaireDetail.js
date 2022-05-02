@@ -3,6 +3,9 @@
         if (sessionStorage.getItem(activeTab) != null)
             sessionStorage.removeItem(activeTab);
 
+        if (sessionStorage.getItem(currentCommonQuestionOfCategoryNameShowState) != null)
+            sessionStorage.removeItem(currentCommonQuestionOfCategoryNameShowState);
+
         if (sessionStorage.getItem(currentQuestionListTable) != null)
             sessionStorage.removeItem(currentQuestionListTable);
 
@@ -28,11 +31,13 @@
         let currentActiveTab = sessionStorage.getItem(activeTab);
         // question
         let strQuestionListHtml = sessionStorage.getItem(currentQuestionListTable);
-        if (strQuestionListHtml) 
+        if (strQuestionListHtml) {
+            $(divQuestionListContainer).empty();
             $(divQuestionListContainer).html(strQuestionListHtml);
+        }
         // question-info userList
         let strUserListHtml = sessionStorage.getItem(currentUserList);
-        let strUserListShowState = sessionStorage.getItem(currentUserListShowState)
+        let strUserListShowState = sessionStorage.getItem(currentUserListShowState);
         let strUserListPagerHtml = sessionStorage.getItem(currentUserListPager);
         if (strUserListHtml && currentActiveTab === "#question-info") {
             $(divQuestionListContainer).empty();
@@ -112,17 +117,26 @@
             $(divQuestionListContainer).html(strQuestionListHtml);
         }
 
-        $("select[id*=ddlCategoryList]").click(function (e) {
+        let strCurrentCommonQuestionOfCategoryNameShowState =
+            sessionStorage.getItem(currentCommonQuestionOfCategoryNameShowState);
+        if (strCurrentCommonQuestionOfCategoryNameShowState === showState)
+            $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").show();
+        else
+            $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").hide();
+
+        $(selectCategoryList).click(function (e) {
             e.preventDefault();
+
             let strSelectedCategoryText = $(this).find(":selected").text();
 
-            if (strSelectedCategoryText == "自訂問題")
+            if (strSelectedCategoryText === customizedQuestionOfCategoryName
+                || strSelectedCategoryText === commonQuestionOfCategoryName)
                 return;
 
             let strSelectedCategoryID = $(this).val();
             SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
         });
-        $("button[id=btnAddQuestion]").click(function (e) {
+        $(btnAddQuestion).click(function (e) {
             e.preventDefault();
             
             let objQuestionnaire = GetQuestionnaireInputs();
@@ -155,7 +169,7 @@
             else 
                 CreateQuestionnaire(objQuestionnaire);
         });
-        $("button[id=btnDeleteQuestion]").click(function (e) {
+        $(btnDeleteQuestion).click(function (e) {
             e.preventDefault();
 
             let arrCheckedQuestionID = [];
@@ -177,7 +191,7 @@
 
             let aLinkHref = $(this).attr("href");
             let strQuestionID = aLinkHref.split("?QuestionID=")[1];
-            $("button[id=btnAddQuestion]").attr("href", strQuestionID);
+            $(btnAddQuestion).attr("href", strQuestionID);
             ShowToUpdateQuestion(strQuestionID);
         });
 
@@ -206,12 +220,16 @@
         $(document).on("click", "button[id=btnBackToUserList]", function (e) {
             e.preventDefault();
 
-            $(btnExportAndDownloadDataToCSV).show();
             $(divUserAnswerContainer).empty();
+
+            $(btnExportAndDownloadDataToCSV).show();
+            let strUserListHtml = sessionStorage.getItem(currentUserList);
+            let strUserListPagerHtml = sessionStorage.getItem(currentUserListPager);
             $(divUserListContainer).html(strUserListHtml);
             $(divUserListPagerContainer).html(strUserListPagerHtml);
-            SetUserAnswerShowStateSession(hideState);
-            SetUserListShowStateSession(showState);
+
+            SetContainerShowStateSession(currentUserAnswerShowState, hideState);
+            SetContainerShowStateSession(currentUserListShowState, showState);
         });
     }
 });

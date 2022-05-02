@@ -10,6 +10,8 @@ namespace DynamicQuestionnaire.BackAdmin
 {
     public partial class QuestionnaireList : System.Web.UI.Page
     {
+        private int _questionListAmount { get; set; }
+        private int _questionListPageIndex { get; set; }
         private const int _pageSize = 10;
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
 
@@ -53,7 +55,10 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.ucPager.TotalRows = totalRows;
                 this.ucPager.PageIndex = pageIndex;
                 this.ucPager.Bind("Keyword", keyword);
-                this.ucPager.Bind("Date", startDate + "~" + endDate);
+                if (string.IsNullOrWhiteSpace(startDate) || string.IsNullOrWhiteSpace(endDate))
+                    this.ucPager.Bind("Date", null);
+                else
+                    this.ucPager.Bind("Date", startDate + "~" + endDate);
 
                 if (questionnaireList.Count == 0)
                 {
@@ -65,12 +70,28 @@ namespace DynamicQuestionnaire.BackAdmin
                     this.gvQuestionnaireList.Visible = true;
                     this.plcEmpty.Visible = false;
 
+                    this._questionListAmount = totalRows;
+                    this._questionListPageIndex = pageIndex;
                     this.gvQuestionnaireList.DataSource = questionnaireList;
                     this.gvQuestionnaireList.DataBind();
                 }
             }
         }
 
+        protected void gvQuestionnaireList_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                Literal ltlQuestionListNumber = e.Row.FindControl("ltlQuestionListNumber") as Literal;
+                string reverseQuestionListNumber = 
+                    (_questionListAmount - 
+                    ((_questionListPageIndex - 1) * _pageSize) - 
+                    e.Row.RowIndex)
+                    .ToString();
+                ltlQuestionListNumber.Text = reverseQuestionListNumber;
+            }
+        }
+        
         protected void btnSearchQuestionnaire_Click(object sender, EventArgs e)
         {
             string keyword = this.txtKeyword.Text.Trim();

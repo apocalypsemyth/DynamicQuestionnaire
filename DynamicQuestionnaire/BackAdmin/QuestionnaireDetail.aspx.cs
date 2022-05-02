@@ -20,7 +20,7 @@ namespace DynamicQuestionnaire.BackAdmin
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
         private string _currentPagerIndex = "CurrentPagerIndex";
-        private string _isUpdateModeOfCommonQuestion = "IsUpdateModeOfCommonQuestion";
+        private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private CategoryManager _categoryMgr = new CategoryManager();
@@ -67,8 +67,8 @@ namespace DynamicQuestionnaire.BackAdmin
                     );
             }
 
-            if (!this.IsPostBack)
-                this.Session[_isUpdateModeOfCommonQuestion] = false;
+            if (this.Session[_isSetCommonQuestionOnQuestionnaire] == null)
+                this.Session[_isSetCommonQuestionOnQuestionnaire] = false;
 
             this.ucCancelButtonInQuestionnaireTab.OnCancelClick += UcInQuestionnaireTab_OnCancelClick;
             this.ucCancelButtonInQuestionTab.OnCancelClick += UcInQuestionTab_OnCancelClick;
@@ -102,16 +102,11 @@ namespace DynamicQuestionnaire.BackAdmin
             EventArgs e
             )
         {
-            bool isUpdateModeOfCommonQuestion = (bool)(this.Session[_isUpdateModeOfCommonQuestion]);
-
-            if (isUpdateModeOfCommonQuestion)
-            {
-                this.CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion();
-            }
-
+            bool isSetCommonQuestionOnQuestionnaire = 
+                (bool)(this.Session[_isSetCommonQuestionOnQuestionnaire]);
             Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
 
-            if (_isEditMode || isUpdateModeOfCommonQuestion)
+            if (_isEditMode || isSetCommonQuestionOnQuestionnaire)
             {
                 List<QuestionModel> toUpdateQuestionModelList = 
                     this.Session[_questionList] as List<QuestionModel>;
@@ -128,33 +123,17 @@ namespace DynamicQuestionnaire.BackAdmin
                     return;
                 }
 
-                if (isUpdateModeOfCommonQuestion)
-                {
-                    Guid questionnaireID = newOrToUpdateQuestionnaire.QuestionnaireID;
-                    
-                    this._questionMgr
-                        .UpdateQuestionListInIsUpdateModeOfCommonQuestion(
-                        questionnaireID, 
-                        toUpdateQuestionModelList
-                        );
+                this._questionMgr.UpdateQuestionList(
+                    toUpdateQuestionModelList, 
+                    out bool hasAnyUpdated
+                    );
 
-                    this._questionnaireMgr
-                        .UpdateQuestionnaireInIsUpdateModeOfCommonQuestion(newOrToUpdateQuestionnaire);
-                }
-                else
-                {
-                    this._questionMgr.UpdateQuestionList(
-                        toUpdateQuestionModelList, 
-                        out bool hasAnyUpdated
-                        );
+                if (hasAnyUpdated)
+                    newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
 
-                    if (hasAnyUpdated)
-                        newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
-
-                    this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
-                }
+                this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
             }
-            else if (!(_isEditMode && isUpdateModeOfCommonQuestion))
+            else if (!(_isEditMode && isSetCommonQuestionOnQuestionnaire))
             {
                 List<Question> newQuestionList = 
                     this.Session[_questionList] as List<Question>;
@@ -180,7 +159,7 @@ namespace DynamicQuestionnaire.BackAdmin
             this.Session.Remove(_questionnaire);
             this.Session.Remove(_questionList);
             this.Session.Remove(_currentPagerIndex);
-            this.Session.Remove(_isUpdateModeOfCommonQuestion);
+            this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
 
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
@@ -216,9 +195,6 @@ namespace DynamicQuestionnaire.BackAdmin
         private void InitCreateMode()
         {
             var categoryList = this._categoryMgr.GetCategoryList();
-            var excludeCommonQuestionCategoryList = 
-                categoryList
-                .Where(item => item.CategoryName != "常用問題");
             var typingList = this._typingMgr.GetTypingList();
 
             // 問卷控制項繫結
@@ -228,7 +204,7 @@ namespace DynamicQuestionnaire.BackAdmin
             // 問題控制項繫結
             this.ddlCategoryList.DataTextField = "CategoryName";
             this.ddlCategoryList.DataValueField = "CategoryID";
-            this.ddlCategoryList.DataSource = excludeCommonQuestionCategoryList;
+            this.ddlCategoryList.DataSource = categoryList;
             this.ddlCategoryList.DataBind();
             this.ddlCategoryList.ClearSelection();
             this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
@@ -256,9 +232,6 @@ namespace DynamicQuestionnaire.BackAdmin
             else
             {
                 var categoryList = this._categoryMgr.GetCategoryList();
-                var excludeCommonQuestionCategoryList =
-                    categoryList
-                    .Where(item => item.CategoryName != "常用問題");
                 var typingList = this._typingMgr.GetTypingList();
                 var userList = this._userMgr.GetUserList(questionnaireID);
 
@@ -276,7 +249,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 // 問題控制項繫結
                 this.ddlCategoryList.DataTextField = "CategoryName";
                 this.ddlCategoryList.DataValueField = "CategoryID";
-                this.ddlCategoryList.DataSource = excludeCommonQuestionCategoryList;
+                this.ddlCategoryList.DataSource = categoryList;
                 this.ddlCategoryList.DataBind();
                 this.ddlCategoryList.ClearSelection();
                 this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
@@ -294,31 +267,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     this.btnExportAndDownloadDataToCSV.Visible = true;
             }
         }
-
-        private void CreateQuestionnaireInSessionInIsUpdateModeOfCommonQuestion()
-        {
-            Questionnaire newQuestionnaire = new Questionnaire()
-            {
-                QuestionnaireID = Guid.NewGuid(),
-                Caption = this.txtCaption.Text.Trim(),
-                Description = this.txtDescription.Text.Trim(),
-                IsEnable = this.ckbIsEnable.Checked,
-                CreateDate = DateTime.Now,
-                UpdateDate = DateTime.Now,
-            };
-
-            if (DateTime.TryParse(this.txtStartDate.Text, out DateTime startDate))
-                newQuestionnaire.StartDate = startDate;
-
-            if (!string.IsNullOrWhiteSpace(this.txtEndDate.Text))
-            {
-                if (DateTime.TryParse(this.txtEndDate.Text, out DateTime endDate))
-                    newQuestionnaire.EndDate = endDate;
-            }
-
-            this.Session[_questionnaire] = newQuestionnaire;
-        }
-
+        
         private void AlertMessage(string errorMsg)
         {
             ClientScript.RegisterStartupScript(

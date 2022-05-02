@@ -2,6 +2,9 @@
     let strHtml = $(strSelector).html();
     sessionStorage.setItem(strSessionName, strHtml);
 }
+var SetContainerShowStateSession = function (strSessionName, strShowState) {
+    sessionStorage.setItem(strSessionName, strShowState);
+}
 
 var GetQuestionnaireInputs = function () {
     let strCaption = $("input[id*=txtCaption]").val();
@@ -143,9 +146,9 @@ var UpdateQuestionnaire = function (objQuestionnaire) {
     });
 }
 
-var ResetQuestionInputs = function () {
+var ResetQuestionInputs = function (strCategoryName) {
     $("select[id*=ddlCategoryList] option").filter(function () {
-        return $(this).text() == "自訂問題";
+        return $(this).text() == strCategoryName;
     }).prop('selected', true);
     $("select[id*=ddlTypingList]").val("單選方塊").change();
     $("input[id*=txtQuestionName]").val("");
@@ -222,11 +225,14 @@ var GetQuestionList = function (strQuestionnaireID) {
         success: function (strOrObjArrQuestion) {
             $(divQuestionListContainer).empty();
 
-            if (strOrObjArrQuestion === FAILED) 
+            if (strOrObjArrQuestion === FAILED)
                 alert("發生錯誤，請刷新重試");
-            else if (strOrObjArrQuestion === NULL)
+            else if (strOrObjArrQuestion === NULL) {
+                $(btnDeleteQuestion).hide();
                 $(divQuestionListContainer).append("<p>尚未有資料</p>");
+            }
             else {
+                $(btnDeleteQuestion).show();
                 CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
@@ -242,12 +248,30 @@ var CreateQuestion = function (objQuestion) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=CREATE_QUESTION",
         method: "POST",
         data: objQuestion,
-        success: function (objArrQuestion) {
-            ResetQuestionInputs();
-            $(divQuestionListContainer).empty();
+        success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
+            if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
+                alert("發生錯誤，請刷新重試");
+            else {
+                let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
 
-            CreateQuestionListTable(objArrQuestion);
-            SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                if (isSetCommonQuestionOnQuestionnaire) {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .show();
+                    ResetQuestionInputs(commonQuestionOfCategoryName);
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
+                }
+                else {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .hide();
+                    ResetQuestionInputs(customizedQuestionOfCategoryName);
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+                }
+
+                $(btnDeleteQuestion).show();
+                $(divQuestionListContainer).empty();
+                CreateQuestionListTable(objArrQuestion);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+            }
         },
         error: function (msg) {
             console.log(msg);
@@ -261,8 +285,10 @@ var DeleteQuestionList = function (strQuestionIDList) {
         method: "POST",
         data: { "checkedQuestionIDList": strQuestionIDList, },
         success: function (strOrObjArrQuestion) {
-            if (strOrObjArrQuestion === NULL) 
-                alert("沒有可以刪除的問題");
+            if (strOrObjArrQuestion === NULL + FAILED)
+                alert("發生錯誤，請再嘗試。");
+            else if (strOrObjArrQuestion === NULL) 
+                $(btnDeleteQuestion).hide();
             else if (strOrObjArrQuestion === FAILED) 
                 alert("請選擇要刪除的問題");
             else {
@@ -319,15 +345,28 @@ var UpdateQuestion = function (objQuestion) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=UPDATE_QUESTION",
         method: "POST",
         data: objQuestion,
-        success: function (strOrObjArrQuestion) {
-            if (objQuestion === FAILED) 
+        success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
+            if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
                 alert("發生錯誤，請再嘗試。");
             else {
-                ResetQuestionInputs();
-                $("button[id=btnAddQuestion]").removeAttr("href");
-                $(divQuestionListContainer).empty();
+                let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
 
-                CreateQuestionListTable(strOrObjArrQuestion);
+                if (isSetCommonQuestionOnQuestionnaire) {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .show();
+                    ResetQuestionInputs(commonQuestionOfCategoryName);
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
+                }
+                else {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .hide();
+                    ResetQuestionInputs(customizedQuestionOfCategoryName);
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+                }
+
+                $(btnAddQuestion).removeAttr("href");
+                $(divQuestionListContainer).empty();
+                CreateQuestionListTable(objArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
@@ -346,9 +385,10 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
             if (strOrObjArrQuestionOfCommonQuestion === FAILED)
                 alert("發生錯誤，請再嘗試。");
             else {
-                ResetQuestionInputs();
-                $(divQuestionListContainer).empty();
+                ResetQuestionInputs(commonQuestionOfCategoryName);
+                $(btnDeleteQuestion).show();
 
+                $(divQuestionListContainer).empty();
                 CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
@@ -412,9 +452,6 @@ var CreateUserListTable = function (objArrUserModel) {
         );
     }
 }
-var SetUserListShowStateSession = function (strShowState) {
-    sessionStorage.setItem(currentUserListShowState, strShowState);
-}
 var CreateUserListPager = function (intPageSize) {
     $(divUserListPagerContainer).append(
         `
@@ -465,8 +502,8 @@ var GetUserList = function (strQuestionnaireID) {
                 $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
                 SetContainerSession(divUserListContainer, currentUserList);
-                SetUserListShowStateSession(showState);
-                SetUserAnswerShowStateSession(hideState);
+                SetContainerShowStateSession(currentUserListShowState, showState);
+                SetContainerShowStateSession(currentUserAnswerShowState, hideState);
 
                 $(divUserListPagerContainer).empty();
                 let pageSize = 1;
@@ -500,8 +537,8 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
                 $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel);
                 SetContainerSession(divUserListContainer, currentUserList);
-                SetUserListShowStateSession(showState);
-                SetUserAnswerShowStateSession(hideState);
+                SetContainerShowStateSession(currentUserListShowState, showState);
+                SetContainerShowStateSession(currentUserAnswerShowState, hideState);
 
                 $(divUserListPagerContainer).empty();
                 let pageSize = 1;
@@ -697,9 +734,6 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
     // 此末</div>為CreateUserDetail函式開頭的
     // <div class="row align-items-center justify-content-center">之結尾標籤
 }
-var SetUserAnswerShowStateSession = function (strShowState) {
-    sessionStorage.setItem(currentUserAnswerShowState, strShowState);
-}
 var GetUserAnswer = function (objQuestionnaireAndUserID) {
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_USERANSWER",
@@ -720,8 +754,8 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
                 CreateUserDetail(objUserModel);
                 CreateUserAnswerDetail(objArrQuestionModel, objArrUserAnswerModel);
                 SetContainerSession(divUserAnswerContainer, currentUserAnswer);
-                SetUserAnswerShowStateSession(showState);
-                SetUserListShowStateSession(hideState);
+                SetContainerShowStateSession(currentUserAnswerShowState, showState);
+                SetContainerShowStateSession(currentUserListShowState, hideState);
             }
         },
         error: function (msg) {
