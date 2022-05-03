@@ -5,6 +5,9 @@
 var SetContainerShowStateSession = function (strSessionName, strShowState) {
     sessionStorage.setItem(strSessionName, strShowState);
 }
+var SetElementCurrentStateSession = function (strSessionName, strCurrentState) {
+    sessionStorage.setItem(strSessionName, strCurrentState);
+}
 
 var GetQuestionnaireInputs = function () {
     let strCaption = $("input[id*=txtCaption]").val();
@@ -101,11 +104,11 @@ var GetQuestionnaire = function (strQuestionnaireID) {
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strErrorMsg) {
             if (strErrorMsg === FAILED)
-                alert("發生錯誤，請再嘗試");
+                alert(errorMessageOfRetry);
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -126,7 +129,7 @@ var CreateQuestionnaire = function (objQuestionnaire) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -137,11 +140,11 @@ var UpdateQuestionnaire = function (objQuestionnaire) {
         data: objQuestionnaire,
         success: function (strErrorMsg) {
             if (strErrorMsg === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -226,10 +229,10 @@ var GetQuestionList = function (strQuestionnaireID) {
             $(divQuestionListContainer).empty();
 
             if (strOrObjArrQuestion === FAILED)
-                alert("發生錯誤，請刷新重試");
+                alert(errorMessageOfRetry);
             else if (strOrObjArrQuestion === NULL) {
                 $(btnDeleteQuestion).hide();
-                $(divQuestionListContainer).append("<p>尚未有資料</p>");
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
             }
             else {
                 $(btnDeleteQuestion).show();
@@ -239,7 +242,7 @@ var GetQuestionList = function (strQuestionnaireID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -250,7 +253,7 @@ var CreateQuestion = function (objQuestion) {
         data: objQuestion,
         success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
             if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
-                alert("發生錯誤，請刷新重試");
+                alert(errorMessageOfRetry);
             else {
                 let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
 
@@ -275,7 +278,7 @@ var CreateQuestion = function (objQuestion) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -286,7 +289,7 @@ var DeleteQuestionList = function (strQuestionIDList) {
         data: { "checkedQuestionIDList": strQuestionIDList, },
         success: function (strOrObjArrQuestion) {
             if (strOrObjArrQuestion === NULL + FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else if (strOrObjArrQuestion === NULL) 
                 $(btnDeleteQuestion).hide();
             else if (strOrObjArrQuestion === FAILED) 
@@ -295,7 +298,7 @@ var DeleteQuestionList = function (strQuestionIDList) {
                 $(divQuestionListContainer).empty();
 
                 if (strOrObjArrQuestion.length === 0) 
-                    $(divQuestionListContainer).append("<p>尚未有資料</p>");
+                    $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 else {
                     if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
                         let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
@@ -311,7 +314,7 @@ var DeleteQuestionList = function (strQuestionIDList) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -322,7 +325,7 @@ var ShowToUpdateQuestion = function (strQuestionID) {
         data: { "clickedQuestionID": strQuestionID },
         success: function (objQuestion) {
             if (objQuestion === FAILED || objQuestion === NULL) 
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else {
                 $("select[id*=ddlCategoryList] option").filter(function () {
                     return $(this).text() == objQuestion.QuestionCategory;
@@ -335,7 +338,7 @@ var ShowToUpdateQuestion = function (strQuestionID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 
@@ -347,7 +350,7 @@ var UpdateQuestion = function (objQuestion) {
         data: objQuestion,
         success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
             if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else {
                 let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
 
@@ -372,7 +375,7 @@ var UpdateQuestion = function (objQuestion) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -383,7 +386,7 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
         data: { "selectedCategoryID": strSelectedCategoryID },
         success: function (strOrObjArrQuestionOfCommonQuestion) {
             if (strOrObjArrQuestionOfCommonQuestion === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else {
                 ResetQuestionInputs(commonQuestionOfCategoryName);
                 $(btnDeleteQuestion).show();
@@ -391,11 +394,42 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
                 $(divQuestionListContainer).empty();
                 CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                SetElementCurrentStateSession(
+                    currentSetCommonQuestionOnQuestionnaireState,
+                    settedState
+                );
             }
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
+        }
+    });
+}
+var DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire = function () {
+    $.ajax({
+        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=DELETE_SETTED_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE",
+        method: "POST",
+        success: function (strMsg) {
+            if (strMsg === NULL) {
+                $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                    .hide();
+                ResetQuestionInputs(customizedQuestionOfCategoryName);
+                SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+
+                $(btnDeleteQuestion).hide();
+
+                $(divQuestionListContainer).empty();
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                SetElementCurrentStateSession(
+                    currentSetCommonQuestionOnQuestionnaireState,
+                    notSettedState
+                );
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -493,7 +527,7 @@ var GetUserList = function (strQuestionnaireID) {
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrUserModel) {
             if (strOrObjArrUserModel === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else if (strOrObjArrUserModel === NULL)
                 $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
             else {
@@ -519,7 +553,7 @@ var GetUserList = function (strQuestionnaireID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -530,7 +564,7 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
         data: objQuestionnaireIDAndIndex,
         success: function (strOrObjArrUserModel) {
             if (strOrObjArrUserModel === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else {
                 let [objArrUserModel, totalRows] = strOrObjArrUserModel;
 
@@ -554,7 +588,7 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -741,7 +775,7 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
         data: objQuestionnaireAndUserID,
         success: function (strOrObjArrUserAnswerDetail) {
             if (strOrObjArrUserAnswerDetail === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else {
                 let [objUserModel, objArrQuestionModel, objArrUserAnswerModel] =
                     strOrObjArrUserAnswerDetail;
@@ -760,7 +794,7 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }
@@ -893,7 +927,7 @@ var GetStatistics = function (strQuestionnaireID) {
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrStatistics) {
             if (strOrObjArrStatistics === FAILED)
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
             else if (strOrObjArrStatistics === NULL)
                 $(divStatisticsContainer).html(emptyMessageOfUserListOrStatistics);
             else {
@@ -907,7 +941,7 @@ var GetStatistics = function (strQuestionnaireID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }

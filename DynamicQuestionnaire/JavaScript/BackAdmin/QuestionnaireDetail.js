@@ -6,6 +6,9 @@
         if (sessionStorage.getItem(currentCommonQuestionOfCategoryNameShowState) != null)
             sessionStorage.removeItem(currentCommonQuestionOfCategoryNameShowState);
 
+        if (sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState) != null)
+            sessionStorage.removeItem(currentSetCommonQuestionOnQuestionnaireState);
+
         if (sessionStorage.getItem(currentQuestionListTable) != null)
             sessionStorage.removeItem(currentQuestionListTable);
 
@@ -129,12 +132,27 @@
 
             let strSelectedCategoryText = $(this).find(":selected").text();
 
-            if (strSelectedCategoryText === customizedQuestionOfCategoryName
-                || strSelectedCategoryText === commonQuestionOfCategoryName)
-                return;
+            let strCurrentSetCommonQuestionOnQuestionnaireState =
+                sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+                if (strSelectedCategoryText === customizedQuestionOfCategoryName) {
+                    let isSetCustomizedQuestion =
+                        confirm(`如果已經選擇常用問題後，
+                            再次選擇自訂問題，
+                            會將先前的常用問題全部移除，
+                            請問仍要繼續嗎？`);
+                    if (isSetCustomizedQuestion)
+                        DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire();
+                }
+            }
+            else {
+                if (strSelectedCategoryText === customizedQuestionOfCategoryName
+                    || strSelectedCategoryText === commonQuestionOfCategoryName)
+                    return;
 
-            let strSelectedCategoryID = $(this).val();
-            SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+                let strSelectedCategoryID = $(this).val();
+                SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+            }
         });
         $(btnAddQuestion).click(function (e) {
             e.preventDefault();

@@ -445,6 +445,18 @@ namespace DynamicQuestionnaire.API
                 context.Response.Write(jsonText);
                 return;
             }
+            
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("DELETE_SETTED_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE", 
+                context.Request.QueryString["Action"], true) == 0)
+            {
+                context.Session[_isSetCommonQuestionOnQuestionnaire] = false;
+                context.Session[_questionList] = new List<Question>();
+
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_nullResponse);
+                return;
+            }
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
                 && string.Compare("GET_USERLIST", 
