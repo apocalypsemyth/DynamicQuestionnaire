@@ -222,14 +222,34 @@ var GetQuestionList = function (strQuestionnaireID) {
         success: function (strOrObjArrQuestion) {
             $(divQuestionListContainer).empty();
 
-            if (strOrObjArrQuestion === FAILED)
+            if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);
+                $(btnDeleteQuestion).hide();
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+            }
             else if (strOrObjArrQuestion === NULL) {
                 $(btnDeleteQuestion).hide();
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
             else {
                 $(btnDeleteQuestion).show();
+
+                if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
+                    let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
+
+                    if (filteredObjArrQuestion.length === 0) {
+                        $(btnDeleteQuestion).hide();
+                        $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    else {
+                        CreateQuestionListTable(filteredObjArrQuestion);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    return;
+                }
                 CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
