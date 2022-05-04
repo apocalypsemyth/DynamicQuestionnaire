@@ -119,12 +119,6 @@ var CreateQuestionnaire = function (objQuestionnaire) {
         data: objQuestionnaire,
         success: function () {
             let objQuestion = GetQuestionInputs();
-            let isValidQuestion = CheckQuestionInputs(objQuestion);
-            if (typeof isValidQuestion === "string") {
-                alert(isValidQuestion);
-                return;
-            }
-
             CreateQuestion(objQuestion);
         },
         error: function (msg) {
@@ -256,8 +250,11 @@ var CreateQuestion = function (objQuestion) {
                 alert(errorMessageOfRetry);
             else {
                 let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
+                let strCurrentSetCommonQuestionOnQuestionnaireState =
+                    sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
 
-                if (isSetCommonQuestionOnQuestionnaire) {
+                if (isSetCommonQuestionOnQuestionnaire
+                    && strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
                     $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
                         .show();
                     ResetQuestionInputs(commonQuestionOfCategoryName);
@@ -272,6 +269,21 @@ var CreateQuestion = function (objQuestion) {
 
                 $(btnDeleteQuestion).show();
                 $(divQuestionListContainer).empty();
+
+                if (objArrQuestion.some(item => item.IsDeleted)) {
+                    let filteredObjArrQuestion = objArrQuestion.filter(item2 => !item2.IsDeleted);
+
+                    if (filteredObjArrQuestion.length === 0) {
+                        $(btnDeleteQuestion).hide();
+                        $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    else {
+                        CreateQuestionListTable(filteredObjArrQuestion);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    return;
+                }
                 CreateQuestionListTable(objArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
@@ -290,23 +302,46 @@ var DeleteQuestionList = function (strQuestionIDList) {
         success: function (strOrObjArrQuestion) {
             if (strOrObjArrQuestion === NULL + FAILED)
                 alert(errorMessageOfRetry);
-            else if (strOrObjArrQuestion === NULL) 
-                $(btnDeleteQuestion).hide();
-            else if (strOrObjArrQuestion === FAILED) 
-                alert("請選擇要刪除的問題");
             else {
+                let strCurrentSetCommonQuestionOnQuestionnaireState =
+                    sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+                if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+                        $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                            .show();
+                        ResetQuestionInputs(commonQuestionOfCategoryName);
+                        SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
+                }
+                else {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .hide();
+                    ResetQuestionInputs(customizedQuestionOfCategoryName);
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+                }
+
                 $(divQuestionListContainer).empty();
 
-                if (strOrObjArrQuestion.length === 0) 
+                if (strOrObjArrQuestion.length === 0) {
+                    $(btnDeleteQuestion).hide();
                     $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                    SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                }
                 else {
+                    $(btnDeleteQuestion).show();
+
                     if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
                         let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
-                        CreateQuestionListTable(filteredObjArrQuestion);
-                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+
+                        if (filteredObjArrQuestion.length === 0) {
+                            $(btnDeleteQuestion).hide();
+                            $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                            SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                        }
+                        else {
+                            CreateQuestionListTable(filteredObjArrQuestion);
+                            SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                        }
                         return;
                     }
-
                     CreateQuestionListTable(strOrObjArrQuestion);
                     SetContainerSession(divQuestionListContainer, currentQuestionListTable);
                 }
@@ -389,15 +424,15 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
                 alert(errorMessageOfRetry);
             else {
                 ResetQuestionInputs(commonQuestionOfCategoryName);
+                SetElementCurrentStateSession(
+                    currentSetCommonQuestionOnQuestionnaireState,
+                    settedState
+                );
                 $(btnDeleteQuestion).show();
 
                 $(divQuestionListContainer).empty();
                 CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
-                SetElementCurrentStateSession(
-                    currentSetCommonQuestionOnQuestionnaireState,
-                    settedState
-                );
             }
         },
         error: function (msg) {
@@ -417,14 +452,16 @@ var DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire = function () {
                 ResetQuestionInputs(customizedQuestionOfCategoryName);
                 SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
 
-                $(btnDeleteQuestion).hide();
-
-                $(divQuestionListContainer).empty();
-                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
                 SetElementCurrentStateSession(
                     currentSetCommonQuestionOnQuestionnaireState,
                     notSettedState
                 );
+
+                $(btnDeleteQuestion).hide();
+
+                $(divQuestionListContainer).empty();
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
         error: function (msg) {

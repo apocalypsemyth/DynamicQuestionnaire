@@ -137,11 +137,8 @@
             if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
                 if (strSelectedCategoryText === customizedQuestionOfCategoryName) {
                     let isSetCustomizedQuestion =
-                        confirm(`如果已經選擇常用問題後，
-                            再次選擇自訂問題，
-                            會將先前的常用問題全部移除，
-                            請問仍要繼續嗎？`);
-                    if (isSetCustomizedQuestion)
+                        confirm("如果已經選擇常用問題，\n再次選擇自訂問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
+                    if (isSetCustomizedQuestion) 
                         DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire();
                 }
             }
@@ -164,15 +161,39 @@
                 return;
             }
 
+            let objQuestion = GetQuestionInputs();
+            let isValidQuestion = CheckQuestionInputs(objQuestion);
+            if (typeof isValidQuestion === "string") {
+                alert(isValidQuestion);
+                return;
+            }
+
+            let strCurrentSetCommonQuestionOnQuestionnaireState =
+                sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+                let isToModifyCommonQuestion =
+                    confirm("如果對常用問題進行任何增刪修，\n其將成為自訂問題，\n請問仍要繼續嗎？");
+                if (!isToModifyCommonQuestion)
+                    return;
+                else {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .hide();
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+
+                    $(selectCategoryList + " option").filter(function () {
+                        return $(this).text() == customizedQuestionOfCategoryName;
+                    }).prop('selected', true);
+                    objQuestion.questionCategory = customizedQuestionOfCategoryName;
+
+                    SetElementCurrentStateSession(
+                        currentSetCommonQuestionOnQuestionnaireState,
+                        notSettedState
+                    );
+                }
+            }
+
             if (window.location.search.indexOf("?ID=") !== -1) {
                 let btnHref = $(this).attr("href");
-
-                let objQuestion = GetQuestionInputs();
-                let isValidQuestion = CheckQuestionInputs(objQuestion);
-                if (typeof isValidQuestion === "string") {
-                    alert(isValidQuestion);
-                    return;
-                }
 
                 if (btnHref) {
                     let strQuestionID = $(this).attr("href");
@@ -195,6 +216,33 @@
                 .each(function () {
                     arrCheckedQuestionID.push($(this).attr("id"));
                 });
+            if (arrCheckedQuestionID.length === 0) {
+                alert("請選擇要刪除的問題。");
+                return;
+            }
+
+            let strCurrentSetCommonQuestionOnQuestionnaireState =
+                sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+                let isToModifyCommonQuestion = 
+                    confirm("如果對常用問題進行任何增刪修，\n其將成為自訂問題，\n請問仍要繼續嗎？");
+                if (!isToModifyCommonQuestion)
+                    return;
+                else {
+                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                        .hide();
+                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
+
+                    $(selectCategoryList + " option").filter(function () {
+                        return $(this).text() == customizedQuestionOfCategoryName;
+                    }).prop('selected', true);
+
+                    SetElementCurrentStateSession(
+                        currentSetCommonQuestionOnQuestionnaireState,
+                        notSettedState
+                    );
+                }
+            }
 
             DeleteQuestionList(arrCheckedQuestionID.join());
         });

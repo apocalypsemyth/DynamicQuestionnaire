@@ -170,28 +170,38 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
-        public void UpdateQuestionnaire(Questionnaire questionnaire)
+        public void UpdateQuestionnaire(
+            bool isUpdateMode, 
+            bool isSetCommonQuestionOnQuestionnaire, 
+            Questionnaire questionnaire
+            )
         {
             try
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
-                    var toUpdateQuestionnaire = contextModel.Questionnaires
-                        .SingleOrDefault(item => item.QuestionnaireID
-                        == questionnaire.QuestionnaireID);
-
-                    if (toUpdateQuestionnaire.UpdateDate != questionnaire.UpdateDate)
+                    if (isUpdateMode && !isSetCommonQuestionOnQuestionnaire 
+                        || isUpdateMode && isSetCommonQuestionOnQuestionnaire)
                     {
-                        toUpdateQuestionnaire.Caption = questionnaire.Caption;
-                        toUpdateQuestionnaire.Description = questionnaire.Description;
-                        toUpdateQuestionnaire.StartDate = questionnaire.StartDate;
-                        toUpdateQuestionnaire.EndDate = questionnaire.EndDate;
-                        toUpdateQuestionnaire.IsEnable = questionnaire.IsEnable;
-                        toUpdateQuestionnaire.CreateDate = questionnaire.CreateDate;
-                        toUpdateQuestionnaire.UpdateDate = questionnaire.UpdateDate;
+                        var toUpdateQuestionnaire = contextModel.Questionnaires
+                            .SingleOrDefault(item => item.QuestionnaireID
+                            == questionnaire.QuestionnaireID);
 
-                        contextModel.SaveChanges();
+                        if (toUpdateQuestionnaire.UpdateDate != questionnaire.UpdateDate)
+                        {
+                            toUpdateQuestionnaire.Caption = questionnaire.Caption;
+                            toUpdateQuestionnaire.Description = questionnaire.Description;
+                            toUpdateQuestionnaire.StartDate = questionnaire.StartDate;
+                            toUpdateQuestionnaire.EndDate = questionnaire.EndDate;
+                            toUpdateQuestionnaire.IsEnable = questionnaire.IsEnable;
+                            toUpdateQuestionnaire.CreateDate = questionnaire.CreateDate;
+                            toUpdateQuestionnaire.UpdateDate = questionnaire.UpdateDate;
+                        }
                     }
+                    else
+                        contextModel.Questionnaires.Add(questionnaire);
+                    
+                    contextModel.SaveChanges();
                 }
             }
             catch (Exception ex)

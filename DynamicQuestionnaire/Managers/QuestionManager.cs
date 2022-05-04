@@ -197,6 +197,7 @@ namespace DynamicQuestionnaire.Managers
                 if (isSetCommonQuestionOnQuestionnaire)
                 {
                     questionModel.QuestionID = Guid.NewGuid();
+                    questionModel.CommonQuestionID = null;
                     questionModel.IsCreated = true;
                 }
 

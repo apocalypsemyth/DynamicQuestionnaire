@@ -123,6 +123,14 @@ namespace DynamicQuestionnaire.BackAdmin
                     return;
                 }
 
+                if (isSetCommonQuestionOnQuestionnaire)
+                {
+                    foreach (var questionModel in toUpdateQuestionModelList)
+                    {
+                        questionModel.QuestionnaireID = newOrToUpdateQuestionnaire.QuestionnaireID;
+                    }
+                }
+
                 this._questionMgr.UpdateQuestionList(
                     toUpdateQuestionModelList, 
                     out bool hasAnyUpdated
@@ -131,7 +139,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 if (hasAnyUpdated)
                     newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
 
-                this._questionnaireMgr.UpdateQuestionnaire(newOrToUpdateQuestionnaire);
+                this._questionnaireMgr.UpdateQuestionnaire(
+                    _isEditMode, 
+                    isSetCommonQuestionOnQuestionnaire, 
+                    newOrToUpdateQuestionnaire
+                    );
             }
             else if (!(_isEditMode && isSetCommonQuestionOnQuestionnaire))
             {

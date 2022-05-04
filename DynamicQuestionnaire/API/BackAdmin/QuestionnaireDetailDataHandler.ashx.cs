@@ -238,10 +238,12 @@ namespace DynamicQuestionnaire.API
                         return;
                     }
 
-                    // 為了能應對isUpdateMode和isSetCommonQuestionOnQuestionnaire兩種情況，所以這裡直接寫true
-                    this.CreateQuestionInSession(true, context);
+                    this.CreateQuestionInSession(isUpdateMode, isSetCommonQuestionOnQuestionnaire, context);
                     object[] questionModelListAndIsSetCommonQuestionOnQuestionnaireArr = 
-                        { context.Session[_questionList], isSetCommonQuestionOnQuestionnaire };
+                    { 
+                        context.Session[_questionList], 
+                        context.Session[_isSetCommonQuestionOnQuestionnaire] 
+                    };
                     string modelJsonText = 
                         Newtonsoft
                         .Json
@@ -256,9 +258,12 @@ namespace DynamicQuestionnaire.API
                 if (context.Session[_questionList] == null)
                     context.Session[_questionList] = new List<Question>();
 
-                this.CreateQuestionInSession(isUpdateMode, context);
+                this.CreateQuestionInSession(isUpdateMode, isSetCommonQuestionOnQuestionnaire, context);
                 object[] questionListAndIsSetCommonQuestionOnQuestionnaireArr =
-                        { context.Session[_questionList], isSetCommonQuestionOnQuestionnaire };
+                { 
+                    context.Session[_questionList], 
+                    context.Session[_isSetCommonQuestionOnQuestionnaire] 
+                };
                 string jsonText = 
                     Newtonsoft
                     .Json
@@ -289,13 +294,6 @@ namespace DynamicQuestionnaire.API
                         context.Response.Write(_nullResponse + _failedResponse);
                         return;
                     }
-
-                    if (questionModelList.Count == 0)
-                    {
-                        context.Response.ContentType = _textResponse;
-                        context.Response.Write(_nullResponse);
-                        return;
-                    }
                 }
                 else
                 {
@@ -309,30 +307,19 @@ namespace DynamicQuestionnaire.API
                         context.Response.Write(_nullResponse + _failedResponse);
                         return;
                     }
-
-                    if (questionList.Count == 0)
-                    {
-                        context.Response.ContentType = _textResponse;
-                        context.Response.Write(_nullResponse);
-                        return;
-                    }
                 }
 
                 string checkedQuestionIDList = context.Request.Form["checkedQuestionIDList"];
-                if (string.IsNullOrEmpty(checkedQuestionIDList))
-                {
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_failedResponse);
-
-                    return;
-                }
-
                 string[] checkedQuestionIDStrArr = checkedQuestionIDList.Split(',');
                 Guid[] checkedQuestionIDGuidArr = 
                     checkedQuestionIDStrArr.Select(item => Guid.Parse(item)).ToArray();
 
-                bool resultState = (isUpdateMode || isSetCommonQuestionOnQuestionnaire) ? true : false;
-                this.DeleteQuestionListInSession(resultState, checkedQuestionIDGuidArr, context);
+                this.DeleteQuestionListInSession(
+                    isUpdateMode, 
+                    isSetCommonQuestionOnQuestionnaire, 
+                    checkedQuestionIDGuidArr, 
+                    context
+                    );
                 string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_questionList]);
 
                 context.Response.ContentType = _jsonResponse;
@@ -712,7 +699,11 @@ namespace DynamicQuestionnaire.API
             return _failedResponse;
         }
 
-        private void CreateQuestionInSession(bool isUpdateMode, HttpContext context)
+        private void CreateQuestionInSession(
+            bool isUpdateMode, 
+            bool isSetCommonQuestionOnQuestionnaire, 
+            HttpContext context
+            )
         {
             string questionName = context.Request.Form["questionName"];
             string questionAnswer = context.Request.Form["questionAnswer"];
@@ -721,7 +712,7 @@ namespace DynamicQuestionnaire.API
             string questionRequiredStr = context.Request.Form["questionRequired"];
             Questionnaire questionnaire = context.Session[_questionnaire] as Questionnaire;
 
-            if (isUpdateMode)
+            if (isUpdateMode || isSetCommonQuestionOnQuestionnaire)
             {
                 List<QuestionModel> questionModelList = context.Session[_questionList] as List<QuestionModel>;
                 QuestionModel newQuestionModel = new QuestionModel()
@@ -744,6 +735,16 @@ namespace DynamicQuestionnaire.API
                     newQuestionModel.QuestionRequired = false;
 
                 questionModelList.Add(newQuestionModel);
+                if (isSetCommonQuestionOnQuestionnaire)
+                {
+                    if (questionCategory == "自訂問題")
+                    {
+                        foreach (var questionModel in questionModelList)
+                        {
+                            questionModel.QuestionCategory = "自訂問題";
+                        }
+                    }
+                }
                 context.Session[_questionList] = questionModelList
                     .OrderByDescending(item => item.UpdateDate)
                     .ToList();
@@ -773,21 +774,36 @@ namespace DynamicQuestionnaire.API
 
         private void DeleteQuestionListInSession(
             bool isUpdateMode,
+            bool isSetCommonQuestionOnQuestionnaire,
             Guid[] questionIDArr,
             HttpContext context
             )
         {
-            if (isUpdateMode)
+            if (isUpdateMode || isSetCommonQuestionOnQuestionnaire)
             {
                 List<QuestionModel> questionModelList = context.Session[_questionList] as List<QuestionModel>;
                 var toDeleteQuestionModelList = questionIDArr
                     .Select(questionID => questionModelList
                     .Where(questionModel => questionModel.QuestionID == questionID)
                     .FirstOrDefault());
+
+                if (isSetCommonQuestionOnQuestionnaire)
+                {
+                    if (toDeleteQuestionModelList
+                        .Where(item => item.QuestionCategory == "常用問題")
+                        .Any())
+                    {
+                        foreach (var toDeleteQuestionModel in toDeleteQuestionModelList)
+                        {
+                            toDeleteQuestionModel.QuestionCategory = "自訂問題";
+                        }
+                    }
+                }
+
                 foreach (var questionItem in toDeleteQuestionModelList)
                     questionItem.IsDeleted = true;
 
-                context.Session[_questionList] = questionModelList.ToList();
+                context.Session[_questionList] = questionModelList;
                 return;
             }
 
