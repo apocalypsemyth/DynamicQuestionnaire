@@ -114,8 +114,9 @@ namespace DynamicQuestionnaire.API.BackAdmin
                         this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
                     var questionModelListOfCommonQuestionInUpdateMode = 
                         this._questionMgr.BuildQuestionModelList(
-                            questionListOfCommonQuestionInUpdateMode, 
-                            false
+                            true,
+                            false,
+                            questionListOfCommonQuestionInUpdateMode
                             );
                     context.Session[_questionListOfCommonQuestion] = questionModelListOfCommonQuestionInUpdateMode.ToList();
                     string jsonTextInUpdateMode = 

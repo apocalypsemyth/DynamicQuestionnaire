@@ -136,7 +136,11 @@ namespace DynamicQuestionnaire.BackAdmin
                     out bool hasAnyUpdated
                     );
 
-                if (hasAnyUpdated)
+                if (isSetCommonQuestionOnQuestionnaire 
+                    && toUpdateQuestionModelList.Where(item => item.QuestionCategory != "常用問題").Any()
+                    && hasAnyUpdated)
+                    newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
+                else if (!isSetCommonQuestionOnQuestionnaire && hasAnyUpdated)
                     newOrToUpdateQuestionnaire.UpdateDate = DateTime.Now;
 
                 this._questionnaireMgr.UpdateQuestionnaire(
@@ -243,6 +247,7 @@ namespace DynamicQuestionnaire.BackAdmin
             }
             else
             {
+                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
                 var categoryList = this._categoryMgr.GetCategoryList();
                 var typingList = this._typingMgr.GetTypingList();
                 var userList = this._userMgr.GetUserList(questionnaireID);
@@ -264,7 +269,26 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.ddlCategoryList.DataSource = categoryList;
                 this.ddlCategoryList.DataBind();
                 this.ddlCategoryList.ClearSelection();
-                this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
+                if (questionList.Where(item => item.QuestionCategory == "常用問題").Any())
+                {
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(), 
+                        "SetCommonQuestionOnQuestionnaireStateSession", 
+                        "SetCommonQuestionOnQuestionnaireStateSession('set')", 
+                        true
+                        );
+                    this.ddlCategoryList.Items.FindByText("常用問題").Selected = true;
+                }
+                else
+                {
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "SetCommonQuestionOnQuestionnaireStateSession",
+                        "SetCommonQuestionOnQuestionnaireStateSession('notSet')",
+                        true
+                        );
+                    this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
+                }
 
                 this.ddlTypingList.DataTextField = "TypingName";
                 this.ddlTypingList.DataValueField = "TypingName";

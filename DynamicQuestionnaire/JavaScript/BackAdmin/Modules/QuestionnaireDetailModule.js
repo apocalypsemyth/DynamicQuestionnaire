@@ -265,33 +265,23 @@ var CreateQuestion = function (objQuestion) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=CREATE_QUESTION",
         method: "POST",
         data: objQuestion,
-        success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
-            if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
+        success: function (strOrObjArrQuestion) {
+            if (strOrObjArrQuestion === FAILED)
                 alert(errorMessageOfRetry);
             else {
-                let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
                 let strCurrentSetCommonQuestionOnQuestionnaireState =
                     sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
 
-                if (isSetCommonQuestionOnQuestionnaire
-                    && strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .show();
+                if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) 
                     ResetQuestionInputs(commonQuestionOfCategoryName);
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
-                }
-                else {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .hide();
+                else 
                     ResetQuestionInputs(customizedQuestionOfCategoryName);
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-                }
 
                 $(btnDeleteQuestion).show();
                 $(divQuestionListContainer).empty();
 
-                if (objArrQuestion.some(item => item.IsDeleted)) {
-                    let filteredObjArrQuestion = objArrQuestion.filter(item2 => !item2.IsDeleted);
+                if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
+                    let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
 
                     if (filteredObjArrQuestion.length === 0) {
                         $(btnDeleteQuestion).hide();
@@ -304,7 +294,7 @@ var CreateQuestion = function (objQuestion) {
                     }
                     return;
                 }
-                CreateQuestionListTable(objArrQuestion);
+                CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
@@ -325,18 +315,10 @@ var DeleteQuestionList = function (strQuestionIDList) {
             else {
                 let strCurrentSetCommonQuestionOnQuestionnaireState =
                     sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
-                if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
-                        $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                            .show();
-                        ResetQuestionInputs(commonQuestionOfCategoryName);
-                        SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
-                }
-                else {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .hide();
+                if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) 
+                    ResetQuestionInputs(commonQuestionOfCategoryName);
+                else 
                     ResetQuestionInputs(customizedQuestionOfCategoryName);
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-                }
 
                 $(divQuestionListContainer).empty();
 
@@ -403,28 +385,21 @@ var UpdateQuestion = function (objQuestion) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=UPDATE_QUESTION",
         method: "POST",
         data: objQuestion,
-        success: function (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire) {
-            if (strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire === FAILED)
+        success: function (strOrObjArrQuestion) {
+            if (strOrObjArrQuestion === FAILED)
                 alert(errorMessageOfRetry);
             else {
-                let [objArrQuestion, isSetCommonQuestionOnQuestionnaire] = strOrObjArrQuestionAndIsSetCommonQuestionOnQuestionnaire;
-
-                if (isSetCommonQuestionOnQuestionnaire) {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .show();
+                let strCurrentSetCommonQuestionOnQuestionnaireState =
+                    sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+                if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) 
                     ResetQuestionInputs(commonQuestionOfCategoryName);
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, showState);
-                }
-                else {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .hide();
+                else 
                     ResetQuestionInputs(customizedQuestionOfCategoryName);
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-                }
 
                 $(btnAddQuestion).removeAttr("href");
+
                 $(divQuestionListContainer).empty();
-                CreateQuestionListTable(objArrQuestion);
+                CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
         },
@@ -446,8 +421,9 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
                 ResetQuestionInputs(commonQuestionOfCategoryName);
                 SetElementCurrentStateSession(
                     currentSetCommonQuestionOnQuestionnaireState,
-                    settedState
+                    setState
                 );
+
                 $(btnDeleteQuestion).show();
 
                 $(divQuestionListContainer).empty();
@@ -461,20 +437,18 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
         }
     });
 }
-var DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire = function () {
+var DeleteSetQuestionListOfCommonQuestionOnQuestionnaire = function () {
     $.ajax({
-        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=DELETE_SETTED_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE",
+        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=DELETE_SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE",
         method: "POST",
         success: function (strMsg) {
             if (strMsg === NULL) {
                 $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
                     .hide();
                 ResetQuestionInputs(customizedQuestionOfCategoryName);
-                SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-
                 SetElementCurrentStateSession(
                     currentSetCommonQuestionOnQuestionnaireState,
-                    notSettedState
+                    notSetState
                 );
 
                 $(btnDeleteQuestion).hide();

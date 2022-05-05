@@ -1,34 +1,14 @@
 ﻿$(document).ready(function () {
     if (window.location.href.indexOf("QuestionnaireDetail.aspx") === -1) {
-        if (sessionStorage.getItem(activeTab) != null)
-            sessionStorage.removeItem(activeTab);
-
-        if (sessionStorage.getItem(currentCommonQuestionOfCategoryNameShowState) != null)
-            sessionStorage.removeItem(currentCommonQuestionOfCategoryNameShowState);
-
-        if (sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState) != null)
-            sessionStorage.removeItem(currentSetCommonQuestionOnQuestionnaireState);
-
-        if (sessionStorage.getItem(currentQuestionListTable) != null)
-            sessionStorage.removeItem(currentQuestionListTable);
-
-        if (sessionStorage.getItem(currentUserList) != null);
-            sessionStorage.removeItem(currentUserList);
-
-        if (sessionStorage.getItem(currentUserListShowState) != null)
-            sessionStorage.removeItem(currentUserListShowState);
-
-        if (sessionStorage.getItem(currentUserAnswer) != null);
-            sessionStorage.removeItem(currentUserAnswer);
-
-        if (sessionStorage.getItem(currentUserAnswerShowState) != null);
-            sessionStorage.removeItem(currentUserAnswerShowState);
-
-        if (sessionStorage.getItem(currentUserListPager) != null);
-            sessionStorage.removeItem(currentUserListPager);
-
-        if (sessionStorage.getItem(currentStatistics) != null);
-            sessionStorage.removeItem(currentStatistics);
+        sessionStorage.removeItem(activeTab);
+        sessionStorage.removeItem(currentSetCommonQuestionOnQuestionnaireState);
+        sessionStorage.removeItem(currentQuestionListTable);
+        sessionStorage.removeItem(currentUserList);
+        sessionStorage.removeItem(currentUserListShowState);
+        sessionStorage.removeItem(currentUserAnswer);
+        sessionStorage.removeItem(currentUserAnswerShowState);
+        sessionStorage.removeItem(currentUserListPager);
+        sessionStorage.removeItem(currentStatistics);
     }
     else {
         let currentActiveTab = sessionStorage.getItem(activeTab);
@@ -120,9 +100,9 @@
             $(divQuestionListContainer).html(strQuestionListHtml);
         }
 
-        let strCurrentCommonQuestionOfCategoryNameShowState =
-            sessionStorage.getItem(currentCommonQuestionOfCategoryNameShowState);
-        if (strCurrentCommonQuestionOfCategoryNameShowState === showState)
+        let strCurrentSetCommonQuestionOnQuestionnaireState =
+            sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+        if (strCurrentSetCommonQuestionOnQuestionnaireState === setState)
             $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").show();
         else
             $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").hide();
@@ -131,20 +111,40 @@
             e.preventDefault();
 
             let strSelectedCategoryText = $(this).find(":selected").text();
-
+            let isSetCustomizedOrCommonQuestionOfCategoryName =
+                (strSelectedCategoryText === customizedQuestionOfCategoryName
+                || strSelectedCategoryText === commonQuestionOfCategoryName);
+            let isUpdateMode = window.location.search.indexOf("?ID=") !== -1;
             let strCurrentSetCommonQuestionOnQuestionnaireState =
                 sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
-            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) {
                 if (strSelectedCategoryText === customizedQuestionOfCategoryName) {
                     let isSetCustomizedQuestion =
-                        confirm("如果已經選擇常用問題，\n再次選擇自訂問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
+                        confirm("選擇常用問題後，\n再次選擇自訂問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
                     if (isSetCustomizedQuestion) 
-                        DeleteSettedQuestionListOfCommonQuestionOnQuestionnaire();
+                        DeleteSetQuestionListOfCommonQuestionOnQuestionnaire();
+                }
+                else if (!isSetCustomizedOrCommonQuestionOfCategoryName) {
+                    let isSetOtherCommonQuestion =
+                        confirm("選擇常用問題後，\n再選擇其他常用問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
+                    if (isSetOtherCommonQuestion) {
+                        let strSelectedCategoryID = $(this).val();
+                        SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+                    }
                 }
             }
             else {
-                if (strSelectedCategoryText === customizedQuestionOfCategoryName
-                    || strSelectedCategoryText === commonQuestionOfCategoryName)
+                if (isUpdateMode && !isSetCustomizedOrCommonQuestionOfCategoryName) {
+                    let isSetAnyTemplateOfCommonQuestion =
+                        confirm("如果選擇常用問題，\n現在的自訂問題會全部移除，\n請問仍要繼續嗎？");
+
+                    if (isSetAnyTemplateOfCommonQuestion) {
+                        let strSelectedCategoryID = $(this).val();
+                        SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+                    }
+                }
+                else if (isSetCustomizedOrCommonQuestionOfCategoryName)
                     return;
 
                 let strSelectedCategoryID = $(this).val();
@@ -170,7 +170,7 @@
 
             let strCurrentSetCommonQuestionOnQuestionnaireState =
                 sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
-            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) {
                 let isToModifyCommonQuestion =
                     confirm("如果對常用問題進行任何增刪修，\n其將成為自訂問題，\n請問仍要繼續嗎？");
                 if (!isToModifyCommonQuestion)
@@ -178,17 +178,15 @@
                 else {
                     $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
                         .hide();
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-
                     $(selectCategoryList + " option").filter(function () {
                         return $(this).text() == customizedQuestionOfCategoryName;
                     }).prop('selected', true);
-                    objQuestion.questionCategory = customizedQuestionOfCategoryName;
-
                     SetElementCurrentStateSession(
                         currentSetCommonQuestionOnQuestionnaireState,
-                        notSettedState
+                        notSetState
                     );
+
+                    objQuestion.questionCategory = customizedQuestionOfCategoryName;
                 }
             }
 
@@ -223,7 +221,7 @@
 
             let strCurrentSetCommonQuestionOnQuestionnaireState =
                 sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
-            if (strCurrentSetCommonQuestionOnQuestionnaireState === settedState) {
+            if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) {
                 let isToModifyCommonQuestion = 
                     confirm("如果對常用問題進行任何增刪修，\n其將成為自訂問題，\n請問仍要繼續嗎？");
                 if (!isToModifyCommonQuestion)
@@ -231,15 +229,12 @@
                 else {
                     $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
                         .hide();
-                    SetContainerShowStateSession(currentCommonQuestionOfCategoryNameShowState, hideState);
-
                     $(selectCategoryList + " option").filter(function () {
                         return $(this).text() == customizedQuestionOfCategoryName;
                     }).prop('selected', true);
-
                     SetElementCurrentStateSession(
                         currentSetCommonQuestionOnQuestionnaireState,
-                        notSettedState
+                        notSetState
                     );
                 }
             }

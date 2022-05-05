@@ -145,21 +145,20 @@ namespace DynamicQuestionnaire.Managers
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
-                    var toDeleteQuestionListOfQuestionnaireList = questionnaireIDList
-                        .Select(questionnaireID => contextModel.Questions
-                        .Where(questionnID => questionnID.QuestionnaireID == questionnaireID)
-                        .FirstOrDefault())
-                        .ToList();
+                    foreach (var questionnaireID in questionnaireIDList)
+                    {
+                        var toDeleteQuestionListOfQuestionnaire = 
+                            contextModel.Questions
+                            .Where(question => question.QuestionnaireID == questionnaireID);
+                        contextModel.Questions.RemoveRange(toDeleteQuestionListOfQuestionnaire);
 
-                    contextModel.Questions.RemoveRange(toDeleteQuestionListOfQuestionnaireList);
-
-                    var toDeleteQuestionnaireList = questionnaireIDList
-                        .Select(questionnaireID => contextModel.Questionnaires
-                        .Where(questionnaire => questionnaire.QuestionnaireID == questionnaireID)
-                        .FirstOrDefault())
-                        .ToList();
-
-                    contextModel.Questionnaires.RemoveRange(toDeleteQuestionnaireList);
+                        var toDeleteQuestionnaire = 
+                            contextModel.Questionnaires
+                            .Where(questionnaire => questionnaire.QuestionnaireID == questionnaireID)
+                            .FirstOrDefault();
+                        contextModel.Questionnaires.Remove(toDeleteQuestionnaire);
+                    }
+                    
                     contextModel.SaveChanges();
                 }
             }

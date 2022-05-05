@@ -169,8 +169,9 @@ namespace DynamicQuestionnaire.Managers
         }
 
         public List<QuestionModel> BuildQuestionModelList(
-            List<Question> questionList, 
-            bool isSetCommonQuestionOnQuestionnaire
+            bool isUpdateMode,
+            bool isSetCommonQuestionOnQuestionnaire,
+            List<Question> questionList
             )
         {
             List<QuestionModel> questionModelList = new List<QuestionModel>();
@@ -194,9 +195,11 @@ namespace DynamicQuestionnaire.Managers
                     IsDeleted = false,
                 };
 
-                if (isSetCommonQuestionOnQuestionnaire)
+                if (!isUpdateMode && isSetCommonQuestionOnQuestionnaire)
                 {
                     questionModel.QuestionID = Guid.NewGuid();
+                    questionModel.CreateDate = DateTime.Now;
+                    questionModel.UpdateDate = DateTime.Now;
                     questionModel.CommonQuestionID = null;
                     questionModel.IsCreated = true;
                 }

@@ -1,4 +1,10 @@
-﻿function GetQuestionnaireInputsForServerSubmit() {
+﻿function SetCommonQuestionOnQuestionnaireStateSession(strSettedOrNotState) {
+    if (sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState) == null) {
+        sessionStorage.setItem(currentSetCommonQuestionOnQuestionnaireState, strSettedOrNotState);
+    }
+}
+
+function GetQuestionnaireInputsForServerSubmit() {
     let strCaption = $("input[id*=txtCaption]").val();
     let strDescription = $("textarea[id*=txtDescription]").val();
     let strStartDate = $("input[id*=txtStartDate]").val();
