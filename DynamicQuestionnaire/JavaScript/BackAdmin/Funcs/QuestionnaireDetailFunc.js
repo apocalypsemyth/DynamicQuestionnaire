@@ -65,7 +65,7 @@ function SubmitQuestionnaireAndItsQuestionList(strOperate) {
         data: objQuestionnaireForServerSubmit,
         success: function (strErrMsg) {
             if (strErrMsg === FAILED) {
-                alert("發生錯誤，請再嘗試。");
+                alert(errorMessageOfRetry);
                 return false;
             }
 
@@ -73,7 +73,7 @@ function SubmitQuestionnaireAndItsQuestionList(strOperate) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
             return false;
         }
     });

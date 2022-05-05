@@ -413,7 +413,10 @@ namespace DynamicQuestionnaire.API
                     {
                         if (questionModelForCheck.QuestionCategory == "常用問題" 
                             && questionModelForCheck.IsCreated == false)
+                        {
                             questionModelForCheck.IsDeleted = true;
+                            questionModelListOfCommonQuestion.Add(questionModelForCheck);
+                        }
                         else
                             questionModelListForCheck.Remove(questionModelForCheck);
                     }
@@ -446,11 +449,51 @@ namespace DynamicQuestionnaire.API
                 && string.Compare("DELETE_SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE", 
                 context.Request.QueryString["Action"], true) == 0)
             {
+                bool isUpdateMode = (bool)context.Session[_isUpdateMode];
+                bool isSetCommonQuestionOnQuestionnaire =
+                    (bool)context.Session[_isSetCommonQuestionOnQuestionnaire];
+
+                if (isUpdateMode && isSetCommonQuestionOnQuestionnaire)
+                {
+                    List<QuestionModel> questionModelListForCheck =
+                        context.Session[_questionList] as List<QuestionModel>;
+
+                    if (questionModelListForCheck == null)
+                    {
+                        context.Response.ContentType = _textResponse;
+                        context.Response.Write(_failedResponse);
+                        return;
+                    }
+
+                    foreach (var questionModelForCheck in questionModelListForCheck)
+                    {
+                        if (questionModelForCheck.QuestionCategory == "常用問題"
+                            && questionModelForCheck.IsCreated == false)
+                            questionModelForCheck.IsDeleted = true;
+                        else
+                        {
+                            context.Session[_isSetCommonQuestionOnQuestionnaire] = false;
+                            questionModelListForCheck.Remove(questionModelForCheck);
+                        }
+                    }
+
+                    context.Session[_questionList] = questionModelListForCheck;
+                    string jsonTextForAfterUpdatedFirstCommonQuestionOnQuestionnaire =
+                        Newtonsoft
+                        .Json
+                        .JsonConvert
+                        .SerializeObject(context.Session[_questionList]);
+
+                    context.Response.ContentType = _jsonResponse;
+                    context.Response.Write(jsonTextForAfterUpdatedFirstCommonQuestionOnQuestionnaire);
+                    return;
+                }
+
                 context.Session[_isSetCommonQuestionOnQuestionnaire] = false;
                 context.Session[_questionList] = new List<Question>();
 
                 context.Response.ContentType = _textResponse;
-                context.Response.Write(_nullResponse);
+                context.Response.Write(context.Session[_questionList]);
                 return;
             }
 

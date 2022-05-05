@@ -220,16 +220,15 @@ var GetQuestionList = function (strQuestionnaireID) {
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrQuestion) {
+            $(btnDeleteQuestion).hide();
             $(divQuestionListContainer).empty();
 
             if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);
-                $(btnDeleteQuestion).hide();
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
             else if (strOrObjArrQuestion === NULL) {
-                $(btnDeleteQuestion).hide();
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
@@ -425,8 +424,23 @@ var SetQuestionListOfCommonQuestionOnQuestionnaire = function (strSelectedCatego
                 );
 
                 $(btnDeleteQuestion).show();
-
                 $(divQuestionListContainer).empty();
+
+                if (strOrObjArrQuestionOfCommonQuestion.some(item => item.IsDeleted)) {
+                    let filteredObjArrQuestion =
+                        strOrObjArrQuestionOfCommonQuestion.filter(item2 => !item2.IsDeleted);
+
+                    if (filteredObjArrQuestion.length === 0) {
+                        $(btnDeleteQuestion).hide();
+                        $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    else {
+                        CreateQuestionListTable(filteredObjArrQuestion);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    return;
+                }
                 CreateQuestionListTable(strOrObjArrQuestionOfCommonQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
@@ -441,19 +455,29 @@ var DeleteSetQuestionListOfCommonQuestionOnQuestionnaire = function () {
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=DELETE_SET_QUESTIONLIST_OF_COMMONQUESTION_ON_QUESTIONNAIRE",
         method: "POST",
-        success: function (strMsg) {
-            if (strMsg === NULL) {
-                $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                    .hide();
-                ResetQuestionInputs(customizedQuestionOfCategoryName);
-                SetElementCurrentStateSession(
-                    currentSetCommonQuestionOnQuestionnaireState,
-                    notSetState
-                );
+        success: function (strOrObjArrQuestion) {
+            ResetQuestionInputs(customizedQuestionOfCategoryName);
+            $(btnDeleteQuestion).hide();
+            $(divQuestionListContainer).empty();
 
-                $(btnDeleteQuestion).hide();
+            if (strOrObjArrQuestion === FAILED) {
+                alert(errorMessageOfRetry);
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+            }
+            else if (strOrObjArrQuestion.length === 0) {
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+            }
+            else if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
+                let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
 
-                $(divQuestionListContainer).empty();
+                if (filteredObjArrQuestion.length === 0) {
+                    $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                    SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    return;
+                }
+                alert(errorMessageOfRetry);
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }

@@ -122,8 +122,18 @@
                 if (strSelectedCategoryText === customizedQuestionOfCategoryName) {
                     let isSetCustomizedQuestion =
                         confirm("選擇常用問題後，\n再次選擇自訂問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
-                    if (isSetCustomizedQuestion) 
+                    if (isSetCustomizedQuestion) {
+                        $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
+                            .hide();
+                        $(selectCategoryList + " option").filter(function () {
+                            return $(this).text() == customizedQuestionOfCategoryName;
+                        }).prop('selected', true);
+                        SetElementCurrentStateSession(
+                            currentSetCommonQuestionOnQuestionnaireState,
+                            notSetState
+                        );
                         DeleteSetQuestionListOfCommonQuestionOnQuestionnaire();
+                    }
                 }
                 else if (!isSetCustomizedOrCommonQuestionOfCategoryName) {
                     let isSetOtherCommonQuestion =
@@ -146,9 +156,10 @@
                 }
                 else if (isSetCustomizedOrCommonQuestionOfCategoryName)
                     return;
-
-                let strSelectedCategoryID = $(this).val();
-                SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+                else {
+                    let strSelectedCategoryID = $(this).val();
+                    SetQuestionListOfCommonQuestionOnQuestionnaire(strSelectedCategoryID);
+                }
             }
         });
         $(btnAddQuestion).click(function (e) {

@@ -89,19 +89,50 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void btnSubmitInQuestionnaireTab_Click(object sender, EventArgs e)
         {
-            this.SameLogicOfBtnSubmit_Click(sender, e);
+
+            bool isSubmitSuccessed = this.SameLogicOfBtnSubmit_Click(sender, e, out string errorMsg);
+            if (isSubmitSuccessed)
+                this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<script type='text/javascript'>");
+                sb.Append("window.onload=function(){");
+                sb.Append("alert('");
+                sb.Append(errorMsg);
+                sb.Append("')};");
+                sb.Append("</script>");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString());
+            }
         }
 
         protected void btnSubmitInQuestionTab_Click(object sender, EventArgs e)
         {
-            this.SameLogicOfBtnSubmit_Click(sender, e);
+
+            bool isSubmitSuccessed = this.SameLogicOfBtnSubmit_Click(sender, e, out string errorMsg);
+            if (isSubmitSuccessed)
+                this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<script type='text/javascript'>");
+                sb.Append("window.onload=function(){");
+                sb.Append("alert('");
+                sb.Append(errorMsg);
+                sb.Append("')};");
+                sb.Append("</script>");
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "alert", sb.ToString());
+            }
         }
 
-        private void SameLogicOfBtnSubmit_Click(
+        private bool SameLogicOfBtnSubmit_Click(
             object sender,
-            EventArgs e
+            EventArgs e,
+            out string errorMsg
             )
         {
+            errorMsg = "";
+
             bool isSetCommonQuestionOnQuestionnaire = 
                 (bool)(this.Session[_isSetCommonQuestionOnQuestionnaire]);
             Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
@@ -113,14 +144,25 @@ namespace DynamicQuestionnaire.BackAdmin
                 if (toUpdateQuestionModelList == null 
                     || toUpdateQuestionModelList.Count == 0)
                 {
-                    this.AlertMessage("請填寫至少一個問題。");
-                    return;
+                    errorMsg = "請填寫至少一個問題。";
+                    return false;
                 }
 
                 if (toUpdateQuestionModelList.All(item => item.IsDeleted))
                 {
-                    this.AlertMessage("問題不能全空，請填寫或留下至少一個問題。");
-                    return;
+                    errorMsg = "問題不能全空，請填寫或留下至少一個問題。";
+
+                    if (isSetCommonQuestionOnQuestionnaire 
+                        && toUpdateQuestionModelList.All(item => item.QuestionCategory == "常用問題" 
+                        && item.IsCreated == false))
+                    {
+                        foreach (var toUpdateQuestionModel in toUpdateQuestionModelList)
+                            toUpdateQuestionModel.IsDeleted = false;
+
+                        this.Session[_questionList] = toUpdateQuestionModelList;
+                    }
+
+                    return false;
                 }
 
                 if (isSetCommonQuestionOnQuestionnaire)
@@ -155,15 +197,15 @@ namespace DynamicQuestionnaire.BackAdmin
                     this.Session[_questionList] as List<Question>;
                 if (newQuestionList == null || newQuestionList.Count == 0)
                 {
-                    this.AlertMessage("請填寫至少一個問題。");
-                    return;
+                    errorMsg = "請填寫至少一個問題。";
+                    return false;
                 }
 
                 this._questionnaireMgr.CreateQuestionnaire(newOrToUpdateQuestionnaire);
                 this._questionMgr.CreateQuestionList(newQuestionList);
             }
 
-            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            return true;
         }
 
         private void SameLogicOfRemoveSessionAndBackToList(
