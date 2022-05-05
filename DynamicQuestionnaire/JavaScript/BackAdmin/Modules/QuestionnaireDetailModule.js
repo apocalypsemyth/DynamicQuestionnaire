@@ -270,7 +270,6 @@ var CreateQuestion = function (objQuestion) {
             else {
                 let strCurrentSetCommonQuestionOnQuestionnaireState =
                     sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
-
                 if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) 
                     ResetQuestionInputs(commonQuestionOfCategoryName);
                 else 
@@ -396,8 +395,23 @@ var UpdateQuestion = function (objQuestion) {
                     ResetQuestionInputs(customizedQuestionOfCategoryName);
 
                 $(btnAddQuestion).removeAttr("href");
-
+                $(btnDeleteQuestion).show();
                 $(divQuestionListContainer).empty();
+
+                if (strOrObjArrQuestion.some(item => item.IsDeleted)) {
+                    let filteredObjArrQuestion = strOrObjArrQuestion.filter(item2 => !item2.IsDeleted);
+
+                    if (filteredObjArrQuestion.length === 0) {
+                        $(btnDeleteQuestion).hide();
+                        $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    else {
+                        CreateQuestionListTable(filteredObjArrQuestion);
+                        SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+                    }
+                    return;
+                }
                 CreateQuestionListTable(strOrObjArrQuestion);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
