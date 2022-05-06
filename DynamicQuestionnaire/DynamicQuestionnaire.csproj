@@ -107,6 +107,7 @@
     <Content Include="Index.aspx" />
     <Content Include="JavaScript\BackAdmin\Funcs\CommonQuestionDetailFunc.js" />
     <Content Include="JavaScript\BackAdmin\Funcs\QuestionnaireDetailFunc.js" />
+    <Content Include="JavaScript\BackAdmin\Funcs\QuestionnaireListFunc.js" />
     <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
