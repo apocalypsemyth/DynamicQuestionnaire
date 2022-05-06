@@ -411,14 +411,11 @@ namespace DynamicQuestionnaire.API
 
                     foreach (var questionModelForCheck in questionModelListForCheck)
                     {
-                        if (questionModelForCheck.QuestionCategory == "常用問題" 
-                            && questionModelForCheck.IsCreated == false)
+                        if (questionModelForCheck.IsCreated == false)
                         {
                             questionModelForCheck.IsDeleted = true;
                             questionModelListOfCommonQuestion.Add(questionModelForCheck);
                         }
-                        else
-                            questionModelListForCheck.Remove(questionModelForCheck);
                     }
 
                     context.Session[_questionList] = questionModelListOfCommonQuestion;
@@ -467,8 +464,7 @@ namespace DynamicQuestionnaire.API
 
                     foreach (var questionModelForCheck in questionModelListForCheck)
                     {
-                        if (questionModelForCheck.QuestionCategory == "常用問題"
-                            && questionModelForCheck.IsCreated == false)
+                        if (questionModelForCheck.IsCreated == false)
                             questionModelForCheck.IsDeleted = true;
                         else
                         {

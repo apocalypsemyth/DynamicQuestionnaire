@@ -41,6 +41,14 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
     if (objQuestionnaire.endDate) {
         if (!regex.test(objQuestionnaire.endDate))
             arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入結束時間。`);
+        else {
+            let startDate = new Date(objQuestionnaire.startDate);
+            let endDate = new Date(objQuestionnaire.endDate);
+
+            if (startDate > endDate) {
+                arrErrorMsg.push("請填入一前一後時序的始末日期。");
+            }
+        }
     }
 
     if (arrErrorMsg.length > 0)

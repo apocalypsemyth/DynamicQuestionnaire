@@ -152,12 +152,13 @@ namespace DynamicQuestionnaire.BackAdmin
                 {
                     errorMsg = "問題不能全空，請填寫或留下至少一個問題。";
 
-                    if (isSetCommonQuestionOnQuestionnaire 
-                        && toUpdateQuestionModelList.All(item => item.QuestionCategory == "常用問題" 
-                        && item.IsCreated == false))
+                    if (isSetCommonQuestionOnQuestionnaire)
                     {
                         foreach (var toUpdateQuestionModel in toUpdateQuestionModelList)
-                            toUpdateQuestionModel.IsDeleted = false;
+                        {
+                            if (toUpdateQuestionModel.IsCreated == false)
+                                toUpdateQuestionModel.IsDeleted = false;
+                        }
 
                         this.Session[_questionList] = toUpdateQuestionModelList;
                     }
