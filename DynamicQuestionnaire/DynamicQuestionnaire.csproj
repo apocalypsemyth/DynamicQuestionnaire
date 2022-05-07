@@ -116,6 +116,7 @@
     <Content Include="JavaScript\Funcs\QuestionnaireStatisticsFunc.js" />
     <Content Include="JavaScript\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\QuestionnaireDetail.js" />
+    <Content Include="JavaScript\Variables\QuestionnaireDetailVariable.js" />
     <Content Include="JavaScript\Variables\QuestionnaireStatisticsVariable.js" />
     <Content Include="QuestionnaireDetail.aspx" />
     <Content Include="QuestionnaireList.aspx" />

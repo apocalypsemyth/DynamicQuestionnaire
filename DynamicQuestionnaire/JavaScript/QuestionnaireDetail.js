@@ -5,8 +5,10 @@
 
         let objUser = GetUserInputs();
         let isValidUserInputs = CheckUserInputs(objUser);
-        if (!isValidUserInputs)
+        if (!isValidUserInputs) {
+            alert("填寫的資訊有錯，請您再檢查。");
             return false;
+        }
 
         let isValidRequiredQuestionInputs = CheckRequiredQuestionInputs();
         if (typeof isValidRequiredQuestionInputs === "string") {

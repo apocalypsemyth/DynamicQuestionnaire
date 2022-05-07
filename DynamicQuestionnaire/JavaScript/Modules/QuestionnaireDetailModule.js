@@ -1,28 +1,24 @@
-﻿const SINGLE_SELECT = "單選方塊";
-const MULTIPLE_SELECT = "複選方塊";
-const TEXT = "文字";
-
-var ResetUserInputsIsInvalidClass = function () {
-    $("input[id*=txtUserName]").removeClass("is-invalid");
-    $("input[id*=txtUserPhone]").removeClass("is-invalid");
-    $("input[id*=txtUserEmail]").removeClass("is-invalid");
-    $("input[id*=txtUserAge]").removeClass("is-invalid");
+﻿var ResetUserInputsIsInvalidClass = function () {
+    $(txtUserName).removeClass(isInvalidClass);
+    $(txtUserPhone).removeClass(isInvalidClass);
+    $(txtUserEmail).removeClass(isInvalidClass);
+    $(txtUserAge).removeClass(isInvalidClass);
 }
 var ResetUserInputs = function () {
-    $("div[id=divValidateUserName]").text("");
-    $("div[id=divValidateUserPhone]").text("");
-    $("div[id=divValidateUserEmail]").text("");
-    $("div[id=divValidateUserAge]").text("");
+    $(divValidateUserName).text("");
+    $(divValidateUserPhone).text("");
+    $(divValidateUserEmail).text("");
+    $(divValidateUserAge).text("");
 }
 var SetUserInputsIsInvalidClass = function (strInputSelector, strDivSelector, strDivErrMsg) {
-    $(strInputSelector).addClass("is-invalid");
+    $(strInputSelector).addClass(isInvalidClass);
     $(strDivSelector).text(strDivErrMsg);
 }
 var GetUserInputs = function () {
-    let strUserName = $("input[id*=txtUserName]").val();
-    let strUserPhone = $("input[id*=txtUserPhone]").val();
-    let strUserEmail = $("input[id*=txtUserEmail]").val();
-    let strUserAge = $("input[id*=txtUserAge]").val();
+    let strUserName = $(txtUserName).val();
+    let strUserPhone = $(txtUserPhone).val();
+    let strUserEmail = $(txtUserEmail).val();
+    let strUserAge = $(txtUserAge).val();
 
     let objUser = {
         "userName": strUserName,
@@ -41,8 +37,8 @@ var CheckUserInputs = function (objUser) {
     if (!objUser.userName) {
         resultChecked = false;
         SetUserInputsIsInvalidClass(
-            "input[id*=txtUserName]",
-            "div[id=divValidateUserName]",
+            txtUserName,
+            divValidateUserName,
             "請填入您的姓名。"
         );
     }
@@ -50,8 +46,8 @@ var CheckUserInputs = function (objUser) {
     if (!objUser.phone) {
         resultChecked = false;
         SetUserInputsIsInvalidClass(
-            "input[id*=txtUserPhone]",
-            "div[id=divValidateUserPhone]",
+            txtUserPhone,
+            divValidateUserPhone,
             "請填入您的手機。"
         );
     }
@@ -60,8 +56,8 @@ var CheckUserInputs = function (objUser) {
         if (!phoneRx.test(objUser.phone)) {
             resultChecked = false;
             SetUserInputsIsInvalidClass(
-                "input[id*=txtUserPhone]",
-                "div[id=divValidateUserPhone]",
+                txtUserPhone,
+                divValidateUserPhone,
                 `請以 "0123456789" 開頭零後九碼的格式填寫。`
             );
         }
@@ -71,8 +67,8 @@ var CheckUserInputs = function (objUser) {
     {
         resultChecked = false;
         SetUserInputsIsInvalidClass(
-            "input[id*=txtUserEmail]",
-            "div[id=divValidateUserEmail]",
+            txtUserEmail,
+            divValidateUserEmail,
             "請填入您的信箱。"
         );
     }
@@ -81,8 +77,8 @@ var CheckUserInputs = function (objUser) {
         if (!emailRx.test(objUser.email)) {
             resultChecked = false;
             SetUserInputsIsInvalidClass(
-                "input[id*=txtUserEmail]",
-                "div[id=divValidateUserEmail]",
+                txtUserEmail,
+                divValidateUserEmail,
                 "請填入合法的信箱格式。"
             );
         }
@@ -92,8 +88,8 @@ var CheckUserInputs = function (objUser) {
     {
         resultChecked = false;
         SetUserInputsIsInvalidClass(
-            "input[id*=txtUserAge]",
-            "div[id=divValidateUserAge]",
+            txtUserAge,
+            divValidateUserAge,
             "請填入您的年齡。"
         );
     }
@@ -102,9 +98,25 @@ var CheckUserInputs = function (objUser) {
         if (isNaN(objUser.age)) {
             resultChecked = false;
             SetUserInputsIsInvalidClass(
-                "input[id*=txtUserAge]",
-                "div[id=divValidateUserAge]",
+                txtUserAge,
+                divValidateUserAge,
                 "請填寫數字。"
+            );
+        }
+        else if (objUser.age <= 0) {
+            resultChecked = false;
+            SetUserInputsIsInvalidClass(
+                txtUserAge,
+                divValidateUserAge,
+                "請填寫大於零的年齡。"
+            );
+        }
+        else if (objUser.age > 150) {
+            resultChecked = false;
+            SetUserInputsIsInvalidClass(
+                txtUserAge,
+                divValidateUserAge,
+                "請填寫小於150的年齡。"
             );
         }
     }
@@ -128,18 +140,18 @@ var CheckRequiredQuestionInputs = function () {
     let resultChecked = true;
     let arrResult = [];
 
-    if (!$("input[id*=rdoQuestionAnswer][required=True]:checked").length) {
+    if (!$(rdoQuestionAnswer + "[required=True]:checked").length) {
         resultChecked = false;
         arrResult.push("請勾選必填單選方塊。");
     }
 
-    if (!$("input[id*=ckbQuestionAnswer][required=True]:checked").length) {
+    if (!$(ckbQuestionAnswer + "[required=True]:checked").length) {
         resultChecked = false;
         arrResult.push("請勾選必填複選方塊。");
     }
 
-    let requiredText = $("input[id*=txtQuestionAnswer][required=True]");
-    let arrAnsweredRequiredText = GetAnsweredTextInputs("input[id*=txtQuestionAnswer][required=True]");
+    let requiredText = $(txtQuestionAnswer + "[required=True]");
+    let arrAnsweredRequiredText = GetAnsweredTextInputs(txtQuestionAnswer + "[required=True]");
     if (requiredText.length !== arrAnsweredRequiredText.length) {
         resultChecked = false;
         arrResult.push("請填寫必填文字。");
@@ -167,27 +179,27 @@ var GetUserAnswerInputs = function (strQuestionTypingItsControl, strQuestionTypi
 var CheckAtLeastOneQuestionInputs = function () {
     let arrResult = [];
 
-    if ($("input:radio[id*=rdoQuestionAnswer]").length) {
+    if ($(rdoQuestionAnswer).length) {
         arrResult.push(
             GetUserAnswerInputs(
-                "input:radio[id*=rdoQuestionAnswer]:checked"
+                rdoQuestionAnswer + ":checked"
                 , SINGLE_SELECT)
         );
     }
 
-    if ($("input:checkbox[id*=ckbQuestionAnswer]").length) {
+    if ($(ckbQuestionAnswer).length) {
         arrResult.push(
             GetUserAnswerInputs(
-                "input:checkbox[id*=ckbQuestionAnswer]:checked"
+                ckbQuestionAnswer + ":checked"
                 , MULTIPLE_SELECT)
         );
     }
 
-    let arrAnsweredText = GetAnsweredTextInputs("input[id*=txtQuestionAnswer]");
+    let arrAnsweredText = GetAnsweredTextInputs(txtQuestionAnswer);
     if (arrAnsweredText.length) {
         arrResult.push(
             GetUserAnswerInputs(
-                "input[id*=txtQuestionAnswer]"
+                txtQuestionAnswer
                 , TEXT)
         );
     }
