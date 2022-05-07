@@ -511,7 +511,7 @@ var DeleteSetQuestionListOfCommonQuestionOnQuestionnaire = function () {
     });
 }
 
-var CreateUserListTable = function (objArrUserModel) {
+var CreateUserListTable = function (objArrUserModel, intTotalRows, intPagerIndex) {
     $(divUserListContainer).append(
         `
             <table class="table table-bordered w-auto">
@@ -542,7 +542,7 @@ var CreateUserListTable = function (objArrUserModel) {
             `
                 <tr>
                     <td>
-                        ${objArrUserModel.length - i}
+                        ${intTotalRows - ((intPagerIndex - 1) * PAGESIZE) - i}
                     </td>
                     <td>
                         ${objArrUserModel[i].UserName}
@@ -608,10 +608,10 @@ var GetUserList = function (strQuestionnaireID) {
             else if (strOrObjArrUserModel === NULL)
                 $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
             else {
-                let [objArrUserModel, totalRows] = strOrObjArrUserModel;
+                let [objArrUserModel, totalRows, currentPagerIndex] = strOrObjArrUserModel;
 
                 $(divUserListContainer).empty();
-                CreateUserListTable(objArrUserModel);
+                CreateUserListTable(objArrUserModel, totalRows, currentPagerIndex);
                 SetContainerSession(divUserListContainer, currentUserList);
                 SetContainerShowStateSession(currentUserListShowState, showState);
                 SetContainerShowStateSession(currentUserAnswerShowState, hideState);
@@ -643,10 +643,10 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
             if (strOrObjArrUserModel === FAILED)
                 alert(errorMessageOfRetry);
             else {
-                let [objArrUserModel, totalRows] = strOrObjArrUserModel;
+                let [objArrUserModel, totalRows, currentPagerIndex] = strOrObjArrUserModel;
 
                 $(divUserListContainer).empty();
-                CreateUserListTable(objArrUserModel);
+                CreateUserListTable(objArrUserModel, totalRows, currentPagerIndex);
                 SetContainerSession(divUserListContainer, currentUserList);
                 SetContainerShowStateSession(currentUserListShowState, showState);
                 SetContainerShowStateSession(currentUserAnswerShowState, hideState);
@@ -824,7 +824,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
 
     $("#divUserAnswerInnerContainer").append(
         `
-            <div class="col-12">
+            <div class="col-10">
                 <div class="d-flex align-items-center justify-content-end">
                     <button id="btnBackToUserList" class="btn btn-success">返回</button>
                 </div>

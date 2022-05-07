@@ -15,7 +15,7 @@ namespace DynamicQuestionnaire.API
     /// </summary>
     public class QuestionnaireDetailDataHandler : IHttpHandler, IRequiresSessionState
     {
-        private int _pageSize = 2;
+        private int _pageSize = 4;
 
         private string _textResponse = "text/plain";
         private string _jsonResponse = "application/json";
@@ -922,19 +922,22 @@ namespace DynamicQuestionnaire.API
 
         private void UpdateUserListPager(Guid questionnaireID, HttpContext context)
         {
+            int currentPagerIndex = int.Parse(context.Session[_currentPagerIndex].ToString());
             var userList = this._userMgr.GetUserList(
                     questionnaireID,
                     _pageSize,
-                    int.Parse(context.Session[_currentPagerIndex].ToString()),
+                    currentPagerIndex,
                     out int totalRows
                     );
+
             List<UserModel> userModelList = new List<UserModel>();
             foreach (var user in userList)
             {
                 var newUserModel = this._userMgr.BuildUserModel(user);
                 userModelList.Add(newUserModel);
             }
-            object[] userModelListAndTotalRowsArr = { userModelList, totalRows };
+
+            object[] userModelListAndTotalRowsArr = { userModelList, totalRows, currentPagerIndex };
             string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(userModelListAndTotalRowsArr);
 
             context.Response.ContentType = _jsonResponse;

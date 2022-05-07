@@ -1,6 +1,6 @@
 ﻿const FAILED = "FAILED";
 const NULL = "NULL";
-const PAGESIZE = 2;
+const PAGESIZE = 4;
 
 // Session name
 let activeTab = "activeTab";
