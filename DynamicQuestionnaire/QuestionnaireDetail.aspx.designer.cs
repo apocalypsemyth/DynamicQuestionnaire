@@ -24,6 +24,15 @@ namespace DynamicQuestionnaire
         protected global::System.Web.UI.WebControls.Repeater rptQuestionnaireDetail;
 
         /// <summary>
+        /// questionnaireUserForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl questionnaireUserForm;
+
+        /// <summary>
         /// txtUserName control.
         /// </summary>
         /// <remarks>

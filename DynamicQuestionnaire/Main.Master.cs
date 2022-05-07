@@ -11,7 +11,19 @@ namespace DynamicQuestionnaire
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            string currentRawUrl = this.Request.RawUrl;
+            bool isQuestionnaireList = currentRawUrl.Contains("QuestionnaireList.aspx");
 
+            if (isQuestionnaireList)
+            {
+                this.plcToggleFormSidebar.Visible = true;
+                this.formMain.Attributes["class"] = "col-md-8 offset-md-2";
+            }
+            else
+            {
+                this.plcToggleFormSidebar.Visible = false;
+                this.formMain.Attributes["class"] = "col-md-10";
+            }
         }
     }
 }

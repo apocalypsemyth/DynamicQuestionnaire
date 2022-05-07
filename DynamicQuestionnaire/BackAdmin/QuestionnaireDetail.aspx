@@ -9,7 +9,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="questionnaire" class="tab-pane show active">
-        <div class="row gy-3">
+        <div class="row gy-3 p-3">
             <div class="col-md-8">
                 <div class="row">
                     <label for='<%= this.txtCaption.ClientID %>' class="col-sm-2 col-form-label">
@@ -71,7 +71,7 @@
     </div>
 
     <div id="question" class="tab-pane">
-        <div class="row gy-3">
+        <div class="row gy-3 p-3">
             <div class="col-md-8">
                 <div class="row">
                     <label for='<%= this.ddlCategoryList.ClientID %>' class="col-sm-2 col-form-label">
@@ -140,7 +140,7 @@
     </div>
 
     <div id="question-info" class="tab-pane">
-        <div class="d-flex flex-column gap-3">
+        <div class="d-flex flex-column gap-3 p-3">
             <div class="w-auto">
                 <asp:Button ID="btnExportAndDownloadDataToCSV" CssClass="btn btn-info" runat="server" Text="匯出" OnClick="btnExportAndDownloadDataToCSV_Click" />
             </div>
@@ -154,6 +154,8 @@
     </div>
 
     <div id="statistics" class="tab-pane">
-        <div id="divStatisticsContainer"></div>
+        <div class="p-3">
+            <div id="divStatisticsContainer"></div>
+        </div>
     </div>
 </asp:Content>

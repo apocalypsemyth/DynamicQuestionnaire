@@ -26,26 +26,34 @@
             $(divQuestionListContainer).empty();
 
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSV).show();
+                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
+                $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
+                $(divUserListPagerContainer).show();
                 $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $(btnExportAndDownloadDataToCSV).hide();
+                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
                 $(divUserListContainer).empty();
+                $(divUserListContainer).hide();
                 $(divUserListPagerContainer).empty();
+                $(divUserListPagerContainer).hide();
             }
         }
         else if (strUserListHtml) {
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSV).show();
+                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
+                $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
+                $(divUserListPagerContainer).show();
                 $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $(btnExportAndDownloadDataToCSV).hide();
+                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
                 $(divUserListContainer).empty();
+                $(divUserListContainer).hide();
                 $(divUserListPagerContainer).empty();
+                $(divUserListPagerContainer).hide();
             }
         }
         // question-info userAnswer
@@ -83,8 +91,10 @@
                 GetUserList(strQuestionnaireID);
         }
         else {
+            $(divUserListContainer).show();
             $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
             $(divUserListPagerContainer).empty();
+            $(divUserListPagerContainer).hide();
             $(divStatisticsContainer).html(emptyMessageOfUserListOrStatistics);
         }
         GetQuestionList(strQuestionnaireID);
@@ -299,10 +309,12 @@
 
             $(divUserAnswerContainer).empty();
 
-            $(btnExportAndDownloadDataToCSV).show();
+            $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
             let strUserListHtml = sessionStorage.getItem(currentUserList);
             let strUserListPagerHtml = sessionStorage.getItem(currentUserListPager);
+            $(divUserListContainer).show();
             $(divUserListContainer).html(strUserListHtml);
+            $(divUserListPagerContainer).show();
             $(divUserListPagerContainer).html(strUserListPagerHtml);
 
             SetContainerShowStateSession(currentUserAnswerShowState, hideState);

@@ -22,13 +22,15 @@
                 <h1>前台 - 問卷填寫</h1>
             </div>
 
-            <div id="formSidebar" class="col-md-2">
-                <div class="w-auto">
-                    <a class="btn btn-info text-white" href="BackAdmin/QuestionnaireList.aspx">後台 - 問卷管理</a>
+            <asp:PlaceHolder ID="plcToggleFormSidebar" runat="server">
+                <div id="formSidebar" class="col-md-2">
+                    <div class="w-auto">
+                        <a class="btn btn-info text-white" href="BackAdmin/QuestionnaireList.aspx">後台 - 問卷管理</a>
+                    </div>
                 </div>
-            </div>
+            </asp:PlaceHolder>
 
-            <main class="col-md-8 offset-md-2">
+            <main id="formMain" class="col-md-8 offset-md-2" runat="server">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>
             </main>

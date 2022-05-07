@@ -603,20 +603,33 @@ var GetUserList = function (strQuestionnaireID) {
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrUserModel) {
-            if (strOrObjArrUserModel === FAILED)
+            $(divUserListContainer).show();
+            $(divUserListContainer).empty();
+            $(divUserListPagerContainer).empty();
+            $(divUserListPagerContainer).hide();
+
+            if (strOrObjArrUserModel === FAILED) {
                 alert(errorMessageOfRetry);
-            else if (strOrObjArrUserModel === NULL)
-                $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
+                $(divUserListContainer).append(emptyMessageOfUserListOrStatistics);
+                SetContainerSession(divUserListContainer, currentUserList);
+                SetContainerShowStateSession(currentUserListShowState, showState);
+                SetContainerShowStateSession(currentUserAnswerShowState, hideState);
+            }
+            else if (strOrObjArrUserModel === NULL) {
+                $(divUserListContainer).append(emptyMessageOfUserListOrStatistics);
+                SetContainerSession(divUserListContainer, currentUserList);
+                SetContainerShowStateSession(currentUserListShowState, showState);
+                SetContainerShowStateSession(currentUserAnswerShowState, hideState);
+            }
             else {
                 let [objArrUserModel, totalRows, currentPagerIndex] = strOrObjArrUserModel;
 
-                $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel, totalRows, currentPagerIndex);
                 SetContainerSession(divUserListContainer, currentUserList);
                 SetContainerShowStateSession(currentUserListShowState, showState);
                 SetContainerShowStateSession(currentUserAnswerShowState, hideState);
 
-                $(divUserListPagerContainer).empty();
+                $(divUserListPagerContainer).show();
                 let pageSize = 1;
                 if (totalRows < PAGESIZE)
                     pageSize = 1;
@@ -640,18 +653,27 @@ var UpdateUserList = function (objQuestionnaireIDAndIndex) {
         method: "POST",
         data: objQuestionnaireIDAndIndex,
         success: function (strOrObjArrUserModel) {
-            if (strOrObjArrUserModel === FAILED)
+            $(divUserListContainer).show();
+            $(divUserListContainer).empty();
+            $(divUserListPagerContainer).empty();
+            $(divUserListPagerContainer).hide();
+
+            if (strOrObjArrUserModel === FAILED) {
                 alert(errorMessageOfRetry);
+                $(divUserListContainer).append(emptyMessageOfUserListOrStatistics);
+                SetContainerSession(divUserListContainer, currentUserList);
+                SetContainerShowStateSession(currentUserListShowState, showState);
+                SetContainerShowStateSession(currentUserAnswerShowState, hideState);
+            }
             else {
                 let [objArrUserModel, totalRows, currentPagerIndex] = strOrObjArrUserModel;
 
-                $(divUserListContainer).empty();
                 CreateUserListTable(objArrUserModel, totalRows, currentPagerIndex);
                 SetContainerSession(divUserListContainer, currentUserList);
                 SetContainerShowStateSession(currentUserListShowState, showState);
                 SetContainerShowStateSession(currentUserAnswerShowState, hideState);
 
-                $(divUserListPagerContainer).empty();
+                $(divUserListPagerContainer).show();
                 let pageSize = 1;
                 if (totalRows < PAGESIZE)
                     pageSize = 1;
@@ -838,17 +860,19 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
         method: "POST",
         data: objQuestionnaireAndUserID,
         success: function (strOrObjArrUserAnswerDetail) {
+            $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
+            $(divUserListContainer).empty();
+            $(divUserListContainer).hide();
+            $(divUserListPagerContainer).empty();
+            $(divUserListPagerContainer).hide();
+
             if (strOrObjArrUserAnswerDetail === FAILED)
                 alert(errorMessageOfRetry);
             else {
                 let [objUserModel, objArrQuestionModel, objArrUserAnswerModel] =
                     strOrObjArrUserAnswerDetail;
 
-                $(btnExportAndDownloadDataToCSV).hide();
-                $(divUserListContainer).empty();
-                $(divUserListPagerContainer).empty();
                 $(divUserAnswerContainer).empty();
-
                 CreateUserDetail(objUserModel);
                 CreateUserAnswerDetail(objArrQuestionModel, objArrUserAnswerModel);
                 SetContainerSession(divUserAnswerContainer, currentUserAnswer);

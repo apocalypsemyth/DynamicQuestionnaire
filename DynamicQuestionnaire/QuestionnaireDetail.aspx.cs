@@ -13,6 +13,9 @@ namespace DynamicQuestionnaire
     {
         private bool _isPostBack = false;
 
+        // Session name
+        private string _isEnable = "IsEnable";
+
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
         private QuestionManager _questionMgr = new QuestionManager();
 
@@ -29,6 +32,20 @@ namespace DynamicQuestionnaire
                 {
                     this.AlertMessage("查無此問卷");
                     this.Response.Redirect("QuestionnaireList.aspx", true);
+                }
+
+                this.Session[_isEnable] = questionnaire.IsEnable;
+                if (questionnaire.IsEnable)
+                {
+                    this.questionnaireUserForm.Visible = true;
+                    this.btnCancel.Visible = true;
+                    this.aLinkCheckingQuestionnaireDetail.Visible = true;
+                }
+                else
+                {
+                    this.questionnaireUserForm.Visible = false;
+                    this.btnCancel.Visible = false;
+                    this.aLinkCheckingQuestionnaireDetail.Visible = false;
                 }
 
                 // 為使用Repeater創建的List
@@ -49,6 +66,8 @@ namespace DynamicQuestionnaire
         protected void rptQuestionList_PreRender(object sender, EventArgs e)
         {
             if (_isPostBack) return;
+            bool isEnable = (bool)this.Session[_isEnable];
+            string isEnableAttribute = isEnable ? "" : "disabled";
 
             foreach (RepeaterItem rptItem in this.rptQuestionList.Items)
             {
@@ -74,7 +93,7 @@ namespace DynamicQuestionnaire
                             ltlQuestionAnswer.Text += 
                                 $@"
                                     <div class='form-check'>
-                                        <input id='rdoQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='radio' name='rdoQuestionAnswer_{questionID}' required='{isRequired}' />
+                                        <input id='rdoQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='radio' name='rdoQuestionAnswer_{questionID}' required='{isRequired}' {isEnableAttribute} />
                                         <label class='form-check-label' for='rdoQuestionAnswer_{questionID}_{iPlus1}'>
                                             {qaArr[i]}
                                         </label>
@@ -85,7 +104,7 @@ namespace DynamicQuestionnaire
                             ltlQuestionAnswer.Text +=
                                 $@"
                                     <div class='form-check'>
-                                        <input id='ckbQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='checkbox' required='{isRequired}' />
+                                        <input id='ckbQuestionAnswer_{questionID}_{iPlus1}' class='form-check-input' type='checkbox' required='{isRequired}' {isEnableAttribute} />
                                         <label class='form-check-label' for='ckbQuestionAnswer_{questionID}_{iPlus1}'>
                                             {qaArr[i]}
                                         </label>
@@ -100,7 +119,7 @@ namespace DynamicQuestionnaire
                                             {qaArr[i]}
                                         </label>
                                         <div class='col-sm-10'>
-                                            <input id='txtQuestionAnswer_{questionID}_{iPlus1}' class='form-control' type='text' required='{isRequired}' />
+                                            <input id='txtQuestionAnswer_{questionID}_{iPlus1}' class='form-control' type='text' required='{isRequired}' {isEnableAttribute} />
                                         </div>
                                     </div>
                                 ";
@@ -113,6 +132,8 @@ namespace DynamicQuestionnaire
         
         protected void btnCancel_Click(object sender, EventArgs e)
         {
+            this.Session.Remove(_isEnable);
+
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
 
