@@ -489,7 +489,7 @@ namespace DynamicQuestionnaire.API
                 context.Session[_questionList] = new List<Question>();
 
                 context.Response.ContentType = _textResponse;
-                context.Response.Write(context.Session[_questionList]);
+                context.Response.Write(_nullResponse);
                 return;
             }
 

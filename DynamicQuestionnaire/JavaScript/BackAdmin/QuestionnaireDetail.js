@@ -134,6 +134,11 @@
                         );
                         DeleteSetQuestionListOfCommonQuestionOnQuestionnaire();
                     }
+                    else {
+                        $(selectCategoryList + " option").filter(function () {
+                            return $(this).text() == commonQuestionOfCategoryName;
+                        }).prop('selected', true);
+                    }
                 }
                 else if (!isSetCustomizedOrCommonQuestionOfCategoryName) {
                     let isSetOtherCommonQuestion =

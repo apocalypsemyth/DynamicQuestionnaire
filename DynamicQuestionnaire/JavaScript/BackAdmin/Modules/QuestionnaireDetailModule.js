@@ -487,7 +487,7 @@ var DeleteSetQuestionListOfCommonQuestionOnQuestionnaire = function () {
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
-            else if (strOrObjArrQuestion.length === 0) {
+            else if (strOrObjArrQuestion === NULL) {
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
