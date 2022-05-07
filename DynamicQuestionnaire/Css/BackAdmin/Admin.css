@@ -1,0 +1,11 @@
+﻿@media (min-width: 768px) {
+    #backAdminFormContainer {
+        position: relative;
+    }
+
+    #backAdminFormSidebar {
+        position: absolute;
+        top: 10rem;
+        left: 10%;
+    }
+}

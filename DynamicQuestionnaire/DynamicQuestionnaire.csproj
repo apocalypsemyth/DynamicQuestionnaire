@@ -102,6 +102,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Css\BackAdmin\Admin.css" />
+    <Content Include="Css\Main.css" />
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
     <Content Include="Index.aspx" />

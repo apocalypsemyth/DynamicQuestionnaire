@@ -31,7 +31,7 @@
                     <div class="col-sm-4">
                         <asp:TextBox ID="txtEndDate" CssClass="form-control" runat="server" />
                     </div>
-                    <div class="col-sm-2 align-self-center">
+                    <div class="col-sm-2 align-self-center offset-10 mt-3 offset-sm-0 mt-sm-0">
                         <asp:Button ID="btnSearchQuestionnaire" CssClass="btn btn-primary" runat="server" Text="搜尋" OnClick="btnSearchQuestionnaire_Click" />
                     </div>
                 </div>

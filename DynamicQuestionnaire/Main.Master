@@ -4,7 +4,8 @@
 
 <html>
 <head runat="server">
-    <title>前台</title>
+    <title>前台 - 問卷填寫</title>
+    <link rel="stylesheet" href="Css/Main.css" />
     <link rel="stylesheet" href="Content/bootstrap.min.css" />
     <script src="Scripts/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -16,12 +17,18 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div class="row align-items-center justify-content-center g-0 gy-3 p-3">
+        <div id="formContainer" class="row align-items-center justify-content-center g-0 gy-3 p-3">
             <div class="col-md-11">
-                <h1>前台</h1>
+                <h1>前台 - 問卷填寫</h1>
             </div>
 
-            <main class="col-md-10">
+            <div id="formSidebar" class="col-md-2">
+                <div class="d-flex">
+                    <a class="w-50 btn btn-info" href="BackAdmin/QuestionnaireList.aspx">後台 - 問卷管理</a>
+                </div>
+            </div>
+
+            <main class="col-md-8 offset-md-2">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>
             </main>

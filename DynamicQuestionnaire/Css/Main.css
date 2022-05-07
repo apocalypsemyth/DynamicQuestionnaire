@@ -1,0 +1,11 @@
+﻿@media (min-width: 768px) {
+    #formContainer {
+        position: relative;
+    }
+
+    #formSidebar {
+        position: absolute;
+        top: 10rem;
+        left: 10%;
+    }
+}

@@ -26,10 +26,11 @@ namespace DynamicQuestionnaire.BackAdmin
             if (!this.IsPostBack)
             {
                 string keyword = this.Request.QueryString["Keyword"];
+                string date = this.Request.QueryString["Date"];
+
                 if (!string.IsNullOrWhiteSpace(keyword))
                     this.txtKeyword.Text = keyword;
                 
-                string date = this.Request.QueryString["Date"];
                 string startDate = "";
                 string endDate = "";
                 if (!string.IsNullOrWhiteSpace(date))
@@ -98,7 +99,12 @@ namespace DynamicQuestionnaire.BackAdmin
             string startDateStr = this.txtStartDate.Text.Trim();
             string endDateStr = this.txtEndDate.Text.Trim();
 
-            if (!string.IsNullOrWhiteSpace(keyword))
+            if (!string.IsNullOrWhiteSpace(keyword) && (!string.IsNullOrWhiteSpace(startDateStr) || !string.IsNullOrWhiteSpace(endDateStr)))
+            {
+                this.AlertMessage("一次只能搜尋關鍵字或始末日期。");
+                return;
+            }
+            else if (!string.IsNullOrWhiteSpace(keyword))
                 this.Response.Redirect("QuestionnaireList.aspx?Keyword=" + keyword);
             else if (!string.IsNullOrWhiteSpace(startDateStr) 
                 || !string.IsNullOrWhiteSpace(endDateStr))
@@ -186,12 +192,11 @@ namespace DynamicQuestionnaire.BackAdmin
 
             if (!DateTime.TryParse(endDateStr, out DateTime endDateMayContainHrMinSec))
                 errorMsgList.Add("請輸入正確的結束日期。");
-
-            if (startDateMayContainHrMinSec.Date > endDateMayContainHrMinSec.Date)
-                errorMsgList.Add("請輸入一前一後時序的始末日期。");
-
-            if (startDateMayContainHrMinSec.Date == endDateMayContainHrMinSec.Date)
-                errorMsgList.Add("請輸入時差至少一天的始末日期。");
+            else
+            {
+                if (startDateMayContainHrMinSec.Date > endDateMayContainHrMinSec.Date)
+                    errorMsgList.Add("請輸入一前一後時序的始末日期。");
+            }
 
             if (errorMsgList.Count > 0)
             {
