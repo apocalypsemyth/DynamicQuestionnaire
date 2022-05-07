@@ -679,67 +679,65 @@ var CreateUserDetail = function (objUserModel) {
 
     $(divUserAnswerContainer).append(
         `
-            <div class="row align-items-center justify-content-center gy-3">
+            <div id="divUserAnswerInnerContainer" class="row gy-3">
                 <div class="col-md-10">
-        `
-    );
-
-    $(divUserAnswerContainer).append(
-        `
-            <div class="row align-items-center justify-content-center">
-                <div class="col-md-6">
-                    <div class="row mb-3">
-                        <label for="txtUserName" class="col-sm-2 col-form-label">姓名</label>
-                        <div class="col-sm-10">
-                            <input id="txtUserName" class="form-control" value="${userName}" disabled />
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label for="txtUserName" class="col-sm-2 col-form-label">姓名</label>
+                                <div class="col-sm-10">
+                                    <input id="txtUserName" class="form-control" value="${userName}" disabled />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="row mb-3">
-                        <label for="txtUserPhone" class="col-sm-2 col-form-label">手機</label>
-                        <div class="col-sm-10">
-                            <input id="txtUserPhone" class="form-control" value="${phone}" disabled />
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label for="txtUserPhone" class="col-sm-2 col-form-label">手機</label>
+                                <div class="col-sm-10">
+                                    <input id="txtUserPhone" class="form-control" value="${phone}" disabled />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="row mb-3">
-                        <label for="txtUserEmail" class="col-sm-2 col-form-label">Email</label>
-                        <div class="col-sm-10">
-                            <input id="txtUserEmail" class="form-control" value="${email}" disabled />
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label for="txtUserEmail" class="col-sm-2 col-form-label">Email</label>
+                                <div class="col-sm-10">
+                                    <input id="txtUserEmail" class="form-control" value="${email}" disabled />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="row mb-3">
-                        <label for="txtUserAge" class="col-sm-2 col-form-label">年齡</label>
-                        <div class="col-sm-10">
-                            <input id="txtUserAge" class="form-control" value="${age}" disabled />
+                        <div class="col-md-6">
+                            <div class="row">
+                                <label for="txtUserAge" class="col-sm-2 col-form-label">年齡</label>
+                                <div class="col-sm-10">
+                                    <input id="txtUserAge" class="form-control" value="${age}" disabled />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-end">
-                        填寫時間 ${answerDate}
+                        <div class="col-12">
+                            <div class="d-flex align-items-center justify-content-end">
+                                填寫時間 ${answerDate}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            </div>
         `
     );
-    // 此末</div>為開頭<div class="col-md-10">的結束標籤
 }
 var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerModel) {
-    $(divUserAnswerContainer).append(
+    $("#divUserAnswerInnerContainer").append(
         `
             <div class="col-md-10">
-                <div class="row align-items-center justify-content-center gy-3">
+                <div id="divUserAnswerDetailInnerContainer"
+                     class="row gy-3"
+                >
+                </div>
+            </div>
         `
     );
 
@@ -759,13 +757,15 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
         else 
             arrUserAnswerNum.push(-1);
         
-        $(divUserAnswerContainer).append(
+        $("#divUserAnswerDetailInnerContainer").append(
             `
-                <div class="col-12">
+                <div id="${questionID}" class="col-12">
                     <div class="d-flex flex-column">
                         <h3>
                             ${i}. ${questionName} ${questionRequired ? "(必填)" : ""}
                         </h3>
+                    </div>
+                </div>
             `
         );
 
@@ -774,7 +774,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             let jPlus1 = anothorJ + 1;
 
             if (questionTyping === "單選方塊") {
-                $(divUserAnswerContainer).append(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
                             <input id="rdoQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="radio" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -787,7 +787,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             }
 
             if (questionTyping == "複選方塊") {
-                $(divUserAnswerContainer).append(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
                             <input id="ckbQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="checkbox" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -804,7 +804,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
                     ? false
                     : arrQuestionItsUserAnswer.filter(item => item.AnswerNum === jPlus1)[0].Answer;
 
-                $(divUserAnswerContainer).append(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="txtQuestionAnswer_${questionID}_${jPlus1}">
@@ -819,31 +819,18 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             }
         }
 
-        $(divUserAnswerContainer).append(
-            `
-                    </div>
-                </div>
-            `
-        );
-
         i++;
     }
 
-    $(divUserAnswerContainer).append(
+    $("#divUserAnswerInnerContainer").append(
         `
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-end">
-                        <button id="btnBackToUserList" class="btn btn-success">返回</button>
-                    </div>
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-end">
+                    <button id="btnBackToUserList" class="btn btn-success">返回</button>
                 </div>
             </div>
         `
     );
-    // 此末</div>為CreateUserDetail函式開頭的
-    // <div class="row align-items-center justify-content-center">之結尾標籤
 }
 var GetUserAnswer = function (objQuestionnaireAndUserID) {
     $.ajax({
@@ -879,9 +866,12 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
 var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
     $(divStatisticsContainer).append(
         `
-            <div class="row align-items-center justify-content-center gy-3">
+            <div class="row gy-3">
                 <div class="col-md-10">
-                    <div class="row align-items-center justify-content-center gy-3">
+                    <div id="divStatisticsInnerContainer" class="row gy-3">
+                    </div>
+                </div>
+            </div>
         `
     );
 
@@ -912,13 +902,15 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
         else 
             arrEachUserAnswerNum = new Array(arrQuestionAnswer.length + 1).fill(null);
 
-        $(divStatisticsContainer).append(
+        $("#divStatisticsInnerContainer").append(
             `
-                <div class="col-12">
+                <div id="${questionID}" class="col-12">
                     <div class="d-flex flex-column">
                         <h3>
                             ${i}. ${questionName} ${questionRequired ? "(必填)" : ""}
                         </h3>
+                    </div>
+                </div>
             `
         );
 
@@ -939,7 +931,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
                     : arrEachUserAnswerNum[jPlus1];
 
             if (questionTyping === "單選方塊") {
-                $(divStatisticsContainer).append(
+                $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
                             <label class="form-check-label" for="rdoQuestionAnswer_${questionID}_${jPlus1}">
@@ -953,7 +945,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
             }
 
             if (questionTyping == "複選方塊") {
-                $(divStatisticsContainer).append(
+                $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
                             <label class="form-check-label" for="ckbQuestionAnswer_${questionID}_${jPlus1}">
@@ -967,7 +959,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
             }
 
             if (questionTyping == "文字") {
-                $(divStatisticsContainer).append(
+                $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
                             <label class="form-check-label" for="txtQuestionAnswer_${questionID}_${jPlus1}">
@@ -979,23 +971,8 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
             }
         }
 
-        $(divStatisticsContainer).append(
-            `
-                    </div>
-                </div>
-            `
-        );
-
         i++;
     }
-
-    $(divStatisticsContainer).append(
-        `
-                    </div>
-                </div>
-            </div>
-        `
-    );
 }
 var GetStatistics = function (strQuestionnaireID) {
     $.ajax({
