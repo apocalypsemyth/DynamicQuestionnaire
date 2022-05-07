@@ -23,8 +23,8 @@
             </div>
 
             <div id="formSidebar" class="col-md-2">
-                <div class="d-flex">
-                    <a class="w-50 btn btn-info" href="BackAdmin/QuestionnaireList.aspx">後台 - 問卷管理</a>
+                <div class="w-auto">
+                    <a class="btn btn-info text-white" href="BackAdmin/QuestionnaireList.aspx">後台 - 問卷管理</a>
                 </div>
             </div>
 

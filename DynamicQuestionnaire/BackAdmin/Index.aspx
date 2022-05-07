@@ -18,7 +18,7 @@
 
             <div class="col-md-10">
                 <div class="d-flex align-items-center justify-content-center">
-                    <asp:Button ID="btnGoToQuestionnaireList" CssClass="btn btn-info" runat="server" Text="前往" OnClick="btnGoToQuestionnaireList_Click" />
+                    <asp:Button ID="btnGoToQuestionnaireList" CssClass="btn btn-info text-white" runat="server" Text="前往" OnClick="btnGoToQuestionnaireList_Click" />
                 </div>
             </div>
         </div>

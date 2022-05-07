@@ -140,13 +140,17 @@
     </div>
 
     <div id="question-info" class="tab-pane">
-        <asp:Button ID="btnExportAndDownloadDataToCSV" CssClass="btn btn-info" runat="server" Text="匯出" OnClick="btnExportAndDownloadDataToCSV_Click" />
+        <div class="d-flex flex-column gap-3">
+            <div class="w-auto">
+                <asp:Button ID="btnExportAndDownloadDataToCSV" CssClass="btn btn-info" runat="server" Text="匯出" OnClick="btnExportAndDownloadDataToCSV_Click" />
+            </div>
 
-        <div id="divUserListContainer"></div>
+            <div id="divUserListContainer"></div>
 
-        <div id="divUserListPagerContainer"></div>
+            <div id="divUserListPagerContainer"></div>
 
-        <div id="divUserAnswerContainer"></div>
+            <div id="divUserAnswerContainer"></div>
+        </div>
     </div>
 
     <div id="statistics" class="tab-pane">
