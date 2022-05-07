@@ -230,7 +230,10 @@ namespace DynamicQuestionnaire.BackAdmin
 
             this.Response.Clear();
             this.Response.Buffer = true;
-            this.Response.AddHeader("content-disposition", "attachment;filename=UserList.csv");
+            this.Response.AddHeader(
+                "content-disposition", 
+                $"attachment;filename=UserAnswerList_{DateTime.Now}.csv"
+                );
             this.Response.Charset = "";
             this.Response.ContentType = "application/csv";
             this.Response.ContentEncoding = Encoding.UTF8;

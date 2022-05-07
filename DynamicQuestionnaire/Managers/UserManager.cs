@@ -168,14 +168,38 @@ namespace DynamicQuestionnaire.Managers
 
                             csv += "\r\n";
 
+                            string userName = "";
                             foreach (DataRow row in dt.Rows)
                             {
-                                foreach (DataColumn column in dt.Columns)
+                                if (userName != row[0].ToString())
                                 {
-                                    csv += row[column.ColumnName].ToString().Replace(",", ";") + ',';
-                                }
+                                    userName = row[0].ToString();
 
-                                csv += "\r\n";
+                                    foreach (DataColumn column in dt.Columns)
+                                    {
+                                        csv += row[column.ColumnName].ToString().Replace(",", ";") + ',';
+                                    }
+
+                                    csv += "\r\n";
+                                }
+                                else if (userName == row[0].ToString())
+                                {
+                                    foreach (DataColumn column in dt.Columns)
+                                    {
+                                        if (column.ColumnName == "UserName" 
+                                            || column.ColumnName == "Phone" 
+                                            || column.ColumnName == "Email" 
+                                            || column.ColumnName == "Age" 
+                                            || column.ColumnName == "AnswerDate")
+                                        {
+                                            csv += "" + ',';
+                                        }
+                                        else
+                                            csv += row[column.ColumnName].ToString().Replace(",", ";") + ',';
+                                    }
+
+                                    csv += "\r\n";
+                                }
                             }
 
                             return csv;
