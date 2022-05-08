@@ -134,8 +134,8 @@
     <Content Include="API\QuestionnaireDetailDataHandler.ashx" />
     <Content Include="BackAdmin\QuestionnaireDetailMaster.master" />
     <Content Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx" />
-    <Content Include="DB\DynamicQuestionnaire.bak" />
     <Content Include="API\QuestionnaireStatisticsDataHandler.ashx" />
+    <Content Include="DB\DynamicQuestionnaire.bak" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.min.js" />
