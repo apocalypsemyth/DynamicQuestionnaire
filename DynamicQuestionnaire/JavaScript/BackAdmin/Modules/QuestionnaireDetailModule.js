@@ -796,7 +796,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             let jPlus1 = anothorJ + 1;
 
             if (questionTyping === "單選方塊") {
-                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column`).append(
                     `
                         <div class="form-check">
                             <input id="rdoQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="radio" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -809,7 +809,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             }
 
             if (questionTyping == "複選方塊") {
-                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column`).append(
                     `
                         <div class="form-check">
                             <input id="ckbQuestionAnswer_${questionID}_${jPlus1}" class="form-check-input" type="checkbox" ${arrUserAnswerNum.indexOf(jPlus1) !== -1 ? "checked" : null} disabled />
@@ -826,7 +826,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
                     ? false
                     : arrQuestionItsUserAnswer.filter(item => item.AnswerNum === jPlus1)[0].Answer;
 
-                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
+                $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column`).append(
                     `
                         <div class="row">
                             <label class="col-sm-2 col-form-label" for="txtQuestionAnswer_${questionID}_${jPlus1}">
