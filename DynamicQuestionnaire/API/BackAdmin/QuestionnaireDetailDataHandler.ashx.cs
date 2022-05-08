@@ -89,6 +89,8 @@ namespace DynamicQuestionnaire.API
                     return;
                 }
 
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_successedResponse);
                 return;
             }
 

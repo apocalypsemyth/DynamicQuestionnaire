@@ -114,7 +114,7 @@
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
     <Content Include="JavaScript\BackAdmin\CommonQuestionDetail.js" />
-    <Content Include="JavaScript\BackAdmin\Variables\QuestionnaireDetailVariable.js" />
+    <Content Include="JavaScript\BackAdmin\Variables\BackAdminVariable.js" />
     <Content Include="JavaScript\Funcs\QuestionnaireStatisticsFunc.js" />
     <Content Include="JavaScript\Modules\QuestionnaireDetailModule.js" />
     <Content Include="JavaScript\QuestionnaireDetail.js" />

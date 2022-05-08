@@ -18,6 +18,7 @@ namespace DynamicQuestionnaire.API.BackAdmin
         private string _jsonResponse = "application/json";
         private string _nullResponse = "NULL";
         private string _failedResponse = "FAILED";
+        private string _successedResponse = "SUCCESSED";
 
         // Session name
         private string _isUpdateMode = "IsUpdateMode";
@@ -56,16 +57,23 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 if (isFirstCreate)
                 {
                     this.CreateCommonQuestionInSession(isFirstCreate, context);
+
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_successedResponse);
                     return;
                 }
 
                 this.CreateCommonQuestionInSession(isFirstCreate, context);
+
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_successedResponse);
                 return;
             }
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("UPDATE_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
             {
                 bool isUpdated = this.UpdateCommonQuestionInSession(context);
+
                 if (isUpdated)
                 {
                     string updatedJsonText = 
@@ -90,7 +98,9 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_QUESTIONLIST_OF_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("GET_QUESTIONLIST_OF_COMMONQUESTION", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
 
@@ -106,49 +116,74 @@ namespace DynamicQuestionnaire.API.BackAdmin
 
                     List<QuestionModel> questionModelListOfCommonQuestion = 
                         context.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
-                    if (questionModelListOfCommonQuestion == null 
-                        || questionModelListOfCommonQuestion.Count == 0)
-                        context.Session[_questionListOfCommonQuestion] = new List<QuestionModel>();
 
-                    var questionListOfCommonQuestionInUpdateMode = 
-                        this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
-                    var questionModelListOfCommonQuestionInUpdateMode = 
-                        this._questionMgr.BuildQuestionModelList(
-                            true,
-                            false,
-                            questionListOfCommonQuestionInUpdateMode
-                            );
-                    context.Session[_questionListOfCommonQuestion] = questionModelListOfCommonQuestionInUpdateMode.ToList();
-                    string jsonTextInUpdateMode = 
+                    if (questionModelListOfCommonQuestion == null)
+                    {
+                        var questionListOfCommonQuestionInUpdateMode = 
+                            this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
+                        var questionModelListOfCommonQuestionInUpdateMode = 
+                            this._questionMgr.BuildQuestionModelList(
+                                true,
+                                false,
+                                questionListOfCommonQuestionInUpdateMode
+                                );
+                        context.Session[_questionListOfCommonQuestion] = questionModelListOfCommonQuestionInUpdateMode;
+                        string jsonTextInUpdateMode = 
+                            Newtonsoft
+                            .Json
+                            .JsonConvert
+                            .SerializeObject(context.Session[_questionListOfCommonQuestion]);
+
+                        context.Response.ContentType = _jsonResponse;
+                        context.Response.Write(jsonTextInUpdateMode);
+                    }
+                    else if (questionModelListOfCommonQuestion.Count == 0)
+                    {
+                        context.Response.ContentType = _textResponse;
+                        context.Response.Write(_nullResponse);
+                    }
+                    else
+                    {
+                        string jsonTextInUpdateMode =
+                            Newtonsoft
+                            .Json
+                            .JsonConvert
+                            .SerializeObject(context.Session[_questionListOfCommonQuestion]);
+
+                        context.Response.ContentType = _jsonResponse;
+                        context.Response.Write(jsonTextInUpdateMode);
+                    }
+                }
+                else
+                {
+                    List<Question> questionListOfCommonQuestion = 
+                        context.Session[_questionListOfCommonQuestion] as List<Question>;
+
+                    if (questionListOfCommonQuestion == null 
+                        || questionListOfCommonQuestion.Count == 0)
+                    {
+                        context.Session[_questionListOfCommonQuestion] = new List<Question>();
+
+                        context.Response.ContentType = _textResponse;
+                        context.Response.Write(_nullResponse);
+                        return;
+                    }
+
+                    string jsonText = 
                         Newtonsoft
                         .Json
                         .JsonConvert
-                        .SerializeObject(questionModelListOfCommonQuestionInUpdateMode);
+                        .SerializeObject(context.Session[_questionListOfCommonQuestion]);
 
                     context.Response.ContentType = _jsonResponse;
-                    context.Response.Write(jsonTextInUpdateMode);
+                    context.Response.Write(jsonText);
                     return;
                 }
-
-                List<Question> questionListOfCommonQuestion = 
-                    context.Session[_questionListOfCommonQuestion] as List<Question>;
-                if (questionListOfCommonQuestion == null || questionListOfCommonQuestion.Count == 0)
-                {
-                    context.Session[_questionListOfCommonQuestion] = new List<Question>();
-
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_nullResponse);
-                    return;
-                }
-
-                string jsonText = Newtonsoft.Json.JsonConvert.SerializeObject(context.Session[_questionListOfCommonQuestion]);
-
-                context.Response.ContentType = _jsonResponse;
-                context.Response.Write(jsonText);
-                return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("CREATE_QUESTION_OF_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("CREATE_QUESTION_OF_COMMONQUESTION", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
 
@@ -156,57 +191,61 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 {
                     List<QuestionModel> questionModelListOfCommonQuestion =
                         context.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
-                    if (questionModelListOfCommonQuestion == null 
-                        || questionModelListOfCommonQuestion.Count == 0)
-                        context.Session[_questionListOfCommonQuestion] = new List<QuestionModel>();
-
-                    this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, false, context);
-                    string questionModelJsonText = 
-                        Newtonsoft
-                        .Json
-                        .JsonConvert
-                        .SerializeObject(context.Session[_questionListOfCommonQuestion]);
-
-                    context.Response.ContentType = _jsonResponse;
-                    context.Response.Write(questionModelJsonText);
-                }
-                else
-                {
-                    List<Question> questionListOfCommonQuestion =
-                        context.Session[_questionListOfCommonQuestion] as List<Question>;
-                    bool isFirstCreate = 
-                        (questionListOfCommonQuestion == null 
-                        || questionListOfCommonQuestion.Count == 0);
-                    if (isFirstCreate)
+                    if (questionModelListOfCommonQuestion == null)
                     {
-                        context.Session[_questionListOfCommonQuestion] = new List<Question>();
-                        this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, isFirstCreate, context);
-                        string firstJsonText = 
-                            Newtonsoft
-                            .Json
-                            .JsonConvert
-                            .SerializeObject(context.Session[_questionListOfCommonQuestion]);
-
-                        context.Response.ContentType = _jsonResponse;
-                        context.Response.Write(firstJsonText);
+                        context.Response.ContentType = _textResponse;
+                        context.Response.Write(_nullResponse + _failedResponse);
                         return;
                     }
 
-                    this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, isFirstCreate, context);
-                    string afterFirstJsonText = 
+                    this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, false, context);
+                    string jsonText = 
                         Newtonsoft
                         .Json
                         .JsonConvert
                         .SerializeObject(context.Session[_questionListOfCommonQuestion]);
 
                     context.Response.ContentType = _jsonResponse;
-                    context.Response.Write(afterFirstJsonText);
+                    context.Response.Write(jsonText);
+                    return;
                 }
 
+                List<Question> questionListOfCommonQuestion =
+                    context.Session[_questionListOfCommonQuestion] as List<Question>;
+                bool isFirstCreate = 
+                    (questionListOfCommonQuestion == null 
+                    || questionListOfCommonQuestion.Count == 0);
+
+                if (isFirstCreate)
+                {
+                    context.Session[_questionListOfCommonQuestion] = new List<Question>();
+                    this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, isFirstCreate, context);
+                    string firstJsonText = 
+                        Newtonsoft
+                        .Json
+                        .JsonConvert
+                        .SerializeObject(context.Session[_questionListOfCommonQuestion]);
+
+                    context.Response.ContentType = _jsonResponse;
+                    context.Response.Write(firstJsonText);
+                    return;
+                }
+
+                this.CreateQuestionOfCommonQuestionInSession(isUpdateMode, isFirstCreate, context);
+                string afterFirstJsonText = 
+                    Newtonsoft
+                    .Json
+                    .JsonConvert
+                    .SerializeObject(context.Session[_questionListOfCommonQuestion]);
+
+                context.Response.ContentType = _jsonResponse;
+                context.Response.Write(afterFirstJsonText);
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("DELETE_QUESTIONLIST_OF_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("DELETE_QUESTIONLIST_OF_COMMONQUESTION", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
 
@@ -214,11 +253,10 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 {
                     List<QuestionModel> questionModelListOfCommonQuestion = 
                         context.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
-                    if (questionModelListOfCommonQuestion == null 
-                        || questionModelListOfCommonQuestion.Count == 0)
+                    if (questionModelListOfCommonQuestion == null)
                     {
                         context.Response.ContentType = _textResponse;
-                        context.Response.Write(_nullResponse);
+                        context.Response.Write(_nullResponse + _failedResponse);
                         return;
                     }
                 }
@@ -226,47 +264,38 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 {
                     List<Question> questionListOfCommonQuestion = 
                         context.Session[_questionListOfCommonQuestion] as List<Question>;
-                    if (questionListOfCommonQuestion == null 
-                        || questionListOfCommonQuestion.Count == 0)
+                    if (questionListOfCommonQuestion == null)
                     {
                         context.Response.ContentType = _textResponse;
-                        context.Response.Write(_nullResponse);
+                        context.Response.Write(_nullResponse + _failedResponse);
                         return;
                     }
                 }
 
                 string checkedQuestionIDListOfCommonQuestion = 
                     context.Request.Form["checkedQuestionIDListOfCommonQuestion"];
-                if (string.IsNullOrEmpty(checkedQuestionIDListOfCommonQuestion))
-                {
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_failedResponse);
-
-                    return;
-                }
-
                 string[] checkedQuestionIDStrArr = checkedQuestionIDListOfCommonQuestion.Split(',');
                 Guid[] checkedQuestionIDGuidArr = 
                     checkedQuestionIDStrArr.Select(item => Guid.Parse(item)).ToArray();
+
                 this.DeleteQuestionListOfCommonQuestionInSession(
                     isUpdateMode, 
                     checkedQuestionIDGuidArr, 
                     context
                     );
-                object[] leftQuestionListOfCommonQuestionAndIsUpdateModeArr = 
-                    { context.Session[_questionListOfCommonQuestion], isUpdateMode };
                 string jsonText = 
                     Newtonsoft
                     .Json
                     .JsonConvert
-                    .SerializeObject(leftQuestionListOfCommonQuestionAndIsUpdateModeArr);
+                    .SerializeObject(context.Session[_questionListOfCommonQuestion]);
 
                 context.Response.ContentType = _jsonResponse;
                 context.Response.Write(jsonText);
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("SHOW_TO_UPDATE_QUESTION_OF_COMMONQUESTION", 
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("SHOW_TO_UPDATE_QUESTION_OF_COMMONQUESTION", 
                 context.Request.QueryString["Action"], true) == 0)
             {
                 string clickedQuestionIDOfCommonQuestion = 
@@ -312,7 +341,9 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 return;
             }
 
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("UPDATE_QUESTION_OF_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("UPDATE_QUESTION_OF_COMMONQUESTION", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 string clickedQuestionIDOfCommonQuestion = 
                     context.Request.Form["clickedQuestionIDOfCommonQuestion"];
@@ -426,43 +457,18 @@ namespace DynamicQuestionnaire.API.BackAdmin
                     questionModelListOfCommonQuestion
                     .OrderByDescending(item => item.UpdateDate)
                     .ToList();
+                return;
             }
-            else
+
+            List<Question> questionListOfCommonQuestion =
+                context.Session[_questionListOfCommonQuestion] as List<Question>;
+
+            if (isFirstCreate)
             {
-                List<Question> questionListOfCommonQuestion =
-                    context.Session[_questionListOfCommonQuestion] as List<Question>;
-
-                if (isFirstCreate)
-                {
-                    Question newQuestionOfCommonQuestion = new Question()
-                    {
-                        QuestionID = Guid.NewGuid(),
-                        QuestionnaireID = Guid.NewGuid(),
-                        QuestionCategory = questionCategory,
-                        QuestionTyping = questionTyping,
-                        QuestionName = questionName.Trim(),
-                        QuestionAnswer = questionAnswer.Trim(),
-                        CreateDate = DateTime.Now,
-                        UpdateDate = DateTime.Now,
-                        CommonQuestionID = commonQuestion.CommonQuestionID,
-                    };
-                    if (bool.TryParse(questionRequiredStr, out bool questionRequired))
-                        newQuestionOfCommonQuestion.QuestionRequired = questionRequired;
-                    else
-                        newQuestionOfCommonQuestion.QuestionRequired = false;
-
-                    questionListOfCommonQuestion.Add(newQuestionOfCommonQuestion);
-                    context.Session[_questionListOfCommonQuestion] = questionListOfCommonQuestion;
-                    return;
-                }
-
-                var questionOfCommonQuestion = 
-                    questionListOfCommonQuestion.FirstOrDefault();
-                Guid questionnaireIDOfQuestionOfCommonQuestion = questionOfCommonQuestion.QuestionnaireID;
-                Question afterFirstNewQuestionOfCommonQuestion = new Question()
+                Question newQuestionOfCommonQuestion = new Question()
                 {
                     QuestionID = Guid.NewGuid(),
-                    QuestionnaireID = questionnaireIDOfQuestionOfCommonQuestion,
+                    QuestionnaireID = Guid.NewGuid(),
                     QuestionCategory = questionCategory,
                     QuestionTyping = questionTyping,
                     QuestionName = questionName.Trim(),
@@ -471,14 +477,38 @@ namespace DynamicQuestionnaire.API.BackAdmin
                     UpdateDate = DateTime.Now,
                     CommonQuestionID = commonQuestion.CommonQuestionID,
                 };
-                if (bool.TryParse(questionRequiredStr, out bool questionRequired2))
-                    afterFirstNewQuestionOfCommonQuestion.QuestionRequired = questionRequired2;
+                if (bool.TryParse(questionRequiredStr, out bool questionRequired))
+                    newQuestionOfCommonQuestion.QuestionRequired = questionRequired;
                 else
-                    afterFirstNewQuestionOfCommonQuestion.QuestionRequired = false;
+                    newQuestionOfCommonQuestion.QuestionRequired = false;
 
-                questionListOfCommonQuestion.Add(afterFirstNewQuestionOfCommonQuestion);
+                questionListOfCommonQuestion.Add(newQuestionOfCommonQuestion);
                 context.Session[_questionListOfCommonQuestion] = questionListOfCommonQuestion;
+                return;
             }
+
+            var questionOfCommonQuestion = 
+                questionListOfCommonQuestion.FirstOrDefault();
+            Guid questionnaireIDOfQuestionOfCommonQuestion = questionOfCommonQuestion.QuestionnaireID;
+            Question afterFirstNewQuestionOfCommonQuestion = new Question()
+            {
+                QuestionID = Guid.NewGuid(),
+                QuestionnaireID = questionnaireIDOfQuestionOfCommonQuestion,
+                QuestionCategory = questionCategory,
+                QuestionTyping = questionTyping,
+                QuestionName = questionName.Trim(),
+                QuestionAnswer = questionAnswer.Trim(),
+                CreateDate = DateTime.Now,
+                UpdateDate = DateTime.Now,
+                CommonQuestionID = commonQuestion.CommonQuestionID,
+            };
+            if (bool.TryParse(questionRequiredStr, out bool questionRequired2))
+                afterFirstNewQuestionOfCommonQuestion.QuestionRequired = questionRequired2;
+            else
+                afterFirstNewQuestionOfCommonQuestion.QuestionRequired = false;
+
+            questionListOfCommonQuestion.Add(afterFirstNewQuestionOfCommonQuestion);
+            context.Session[_questionListOfCommonQuestion] = questionListOfCommonQuestion;
         }
 
         private void DeleteQuestionListOfCommonQuestionInSession(

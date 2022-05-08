@@ -71,13 +71,13 @@ function SubmitQuestionnaireAndItsQuestionList(strOperate) {
         url: `/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=${strOperate}_QUESTIONNAIRE`,
         method: "POST",
         data: objQuestionnaireForServerSubmit,
-        success: function (strErrMsg) {
-            if (strErrMsg === FAILED) {
+        success: function (strMsg) {
+            if (strMsg === FAILED) {
                 alert(errorMessageOfRetry);
                 return false;
             }
-
-            return true;
+            else if (strMsg === SUCCESSED)
+                return true;
         },
         error: function (msg) {
             console.log(msg);

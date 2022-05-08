@@ -41,9 +41,19 @@ namespace DynamicQuestionnaire.BackAdmin
             {
                 Guid commonQuestionID = this.GetCommonQuestionIDOrBackToList();
                 this.InitEditMode(commonQuestionID);
+                this.btnSubmit.Attributes.Add(
+                    "onClick", 
+                    "return SubmitCommonQuestionAndItsQuestionList('UPDATE');"
+                    );
             }
             else
+            {
                 this.InitCreateMode();
+                this.btnSubmit.Attributes.Add(
+                    "onClick",
+                    "return SubmitCommonQuestionAndItsQuestionList('CREATE');"
+                    );
+            }
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
@@ -53,27 +63,14 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            if (!this.CheckCommonQuestionInputs(out string errorMsg))
-            {
-                this.AlertMessage(errorMsg);
-                return;
-            }
-
             CommonQuestion newOrToUpdateCommonQuestion = 
                 this.Session[_commonQuestion] as CommonQuestion;
-            if (newOrToUpdateCommonQuestion == null)
-            {
-                this.AlertMessage("請填寫常用問題名稱與問題後，先按下加入按鈕。");
-                return;
-            }
-
-            var newOrUpdatedCommonQuestion = 
-                this.FinalUpdateCommonQuestion(newOrToUpdateCommonQuestion);
 
             if (_isEditMode)
             {
                 List<QuestionModel> toUpdateQuestionModelListOfCommonQuestion = 
                     this.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
+
                 if (toUpdateQuestionModelListOfCommonQuestion == null 
                     || toUpdateQuestionModelListOfCommonQuestion.Count == 0)
                 {
@@ -84,6 +81,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 if (toUpdateQuestionModelListOfCommonQuestion.All(item => item.IsDeleted))
                 {
                     this.AlertMessage("問題不能全空，請填寫或留下至少一個問題。");
+
+                    foreach (var toUpdateQuestionModel in toUpdateQuestionModelListOfCommonQuestion)
+                        toUpdateQuestionModel.IsDeleted = false;
+
+                    this.Session[_questionListOfCommonQuestion] = toUpdateQuestionModelListOfCommonQuestion;
                     return;
                 }
 
@@ -93,10 +95,12 @@ namespace DynamicQuestionnaire.BackAdmin
                     );
 
                 if (hasAnyUpdated)
-                    newOrUpdatedCommonQuestion.UpdateDate = DateTime.Now;
+                    newOrToUpdateCommonQuestion.UpdateDate = DateTime.Now;
 
-                this._commonQuestionMgr.UpdateCommonQuestion(newOrUpdatedCommonQuestion);
-                this._categoryMgr.UpdateCategoryByCommonQuestion(newOrUpdatedCommonQuestion);
+                this._commonQuestionMgr.UpdateCommonQuestion(newOrToUpdateCommonQuestion);
+                this._categoryMgr.UpdateCategoryByCommonQuestion(newOrToUpdateCommonQuestion);
+
+                this.SameLogicOfRemoveSessionAndBackToList();
             }
             else
             {
@@ -106,24 +110,20 @@ namespace DynamicQuestionnaire.BackAdmin
                     || newQuestionListOfCommonQuestion.Count == 0)
                 {
                     this.AlertMessage("請填寫至少一個問題。");
-                    ClientScript
-                        .RegisterStartupScript(this.GetType(),
-                        "ShowEmptyQuestionListOfCommonQuestion", 
-                        "ShowEmptyQuestionListOfCommonQuestion();", 
-                        true);
                     return;
                 }
 
-                this._commonQuestionMgr.CreateCommonQuestion(newOrUpdatedCommonQuestion);
+                this._commonQuestionMgr.CreateCommonQuestion(newOrToUpdateCommonQuestion);
                 this._questionMgr.CreateQuestionList(newQuestionListOfCommonQuestion);
                 this._categoryMgr.CreateCategoryOfCommonQuestion(newOrToUpdateCommonQuestion);
-            }
 
-            this.SameLogicOfRemoveSessionAndBackToList();
+                this.SameLogicOfRemoveSessionAndBackToList();
+            }
         }
 
         private void SameLogicOfRemoveSessionAndBackToList()
         {
+            this.Session.Remove(_isUpdateMode);
             this.Session.Remove(_commonQuestion);
             this.Session.Remove(_questionListOfCommonQuestion);
 
@@ -207,32 +207,6 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.ddlTypingList.ClearSelection();
                 this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
             }
-        }
-
-        private bool CheckCommonQuestionInputs(out string errorMsg)
-        {
-            errorMsg = "";
-
-            if (string.IsNullOrWhiteSpace(this.txtCommonQuestionName.Text))
-                errorMsg = "請填入常用問題名稱。";
-
-            if (!string.IsNullOrWhiteSpace(errorMsg))
-                return false;
-            else
-                return true;
-        }
-
-        private CommonQuestion FinalUpdateCommonQuestion(CommonQuestion commonQuestion)
-        {
-            CommonQuestion newOrUpdatedCommonQuestion = new CommonQuestion() 
-            {
-                CommonQuestionID = commonQuestion.CommonQuestionID,
-                CommonQuestionName = commonQuestion.CommonQuestionName,
-                CreateDate = commonQuestion.CreateDate,
-                UpdateDate = commonQuestion.UpdateDate,
-            };
-
-            return newOrUpdatedCommonQuestion;
         }
 
         private void AlertMessage(string errorMsg)
