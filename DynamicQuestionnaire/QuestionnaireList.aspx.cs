@@ -1,4 +1,5 @@
-﻿using DynamicQuestionnaire.Managers;
+﻿using DynamicQuestionnaire.DynamicQuestionnaire.ORM;
+using DynamicQuestionnaire.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,10 @@ namespace DynamicQuestionnaire
         private int _questionListAmount { get; set; }
         private int _questionListPageIndex { get; set; }
         private const int _pageSize = 10;
+
+        // Session name
+        private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
+
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -53,6 +58,12 @@ namespace DynamicQuestionnaire
                     out int totalRows
                     );
 
+                bool hasAnyOverEndDate = this.CheckEndDateOfQuestionnaireList(questionnaireList);
+                var setOrNotSetQuestionnaireList =
+                    hasAnyOverEndDate
+                    ? this.SetIsEnableOfQuestionnaireList(questionnaireList)
+                    : questionnaireList;
+
                 this.ucPager.TotalRows = totalRows;
                 this.ucPager.PageIndex = pageIndex;
                 this.ucPager.Bind("Keyword", keyword);
@@ -61,7 +72,7 @@ namespace DynamicQuestionnaire
                 else
                     this.ucPager.Bind("Date", startDate + "~" + endDate);
 
-                if (questionnaireList.Count == 0)
+                if (setOrNotSetQuestionnaireList.Count == 0)
                 {
                     this.gvQuestionnaireList.Visible = false;
                     this.plcEmpty.Visible = true;
@@ -73,8 +84,16 @@ namespace DynamicQuestionnaire
 
                     this._questionListAmount = totalRows;
                     this._questionListPageIndex = pageIndex;
-                    this.gvQuestionnaireList.DataSource = questionnaireList;
+                    this.gvQuestionnaireList.DataSource = setOrNotSetQuestionnaireList;
                     this.gvQuestionnaireList.DataBind();
+                }
+
+                if (hasAnyOverEndDate)
+                {
+                    this._questionnaireMgr.SetIsEnableOfQuestionnaireList(
+                        (List<Questionnaire>)this.Session[_toSetIsEnableOfQuestionnaireList]
+                        );
+                    this.Session.Remove(_toSetIsEnableOfQuestionnaireList);
                 }
             }
         }
@@ -157,10 +176,10 @@ namespace DynamicQuestionnaire
             errorMsgList = new List<string>();
 
             if (!DateTime.TryParse(startDateStr, out DateTime startDateMayContainHrMinSec))
-                errorMsgList.Add("請輸入正確的開始日期。");
+                errorMsgList.Add(@"請輸入 ""yyyy/MM/dd"" 格式的開始時間。");
 
             if (!DateTime.TryParse(endDateStr, out DateTime endDateMayContainHrMinSec))
-                errorMsgList.Add("請輸入正確的結束日期。");
+                errorMsgList.Add(@"請輸入 ""yyyy/MM/dd"" 格式的結束時間。");
             else
             {
                 if (startDateMayContainHrMinSec.Date > endDateMayContainHrMinSec.Date)
@@ -179,6 +198,42 @@ namespace DynamicQuestionnaire
                 endDate = endDateMayContainHrMinSec.Date;
                 return true;
             }
+        }
+        
+        private bool CheckEndDateOfQuestionnaireList(List<Questionnaire> questionnaireList)
+        {
+            bool hasAnyOverEndDate = false;
+
+            foreach (var questionnaire in questionnaireList)
+            {
+                if (questionnaire.EndDate != null
+                    && questionnaire.EndDate?.Date < DateTime.Now.Date)
+                {
+                    hasAnyOverEndDate = true;
+                    continue;
+                }
+            }
+
+            return hasAnyOverEndDate;
+        }
+
+        private List<Questionnaire> SetIsEnableOfQuestionnaireList(List<Questionnaire> questionnaireList)
+        {
+            this.Session[_toSetIsEnableOfQuestionnaireList] = new List<Questionnaire>();
+            List<Questionnaire> toSetIsEnableOfQuestionnaireList =
+                this.Session[_toSetIsEnableOfQuestionnaireList] as List<Questionnaire>;
+
+            foreach (var questionnaire in questionnaireList)
+            {
+                if (questionnaire.EndDate != null
+                    && questionnaire.EndDate?.Date < DateTime.Now.Date)
+                {
+                    questionnaire.IsEnable = false;
+                    toSetIsEnableOfQuestionnaireList.Add(questionnaire);
+                }
+            }
+
+            return questionnaireList;
         }
 
         private void AlertMessage(string errorMsg)

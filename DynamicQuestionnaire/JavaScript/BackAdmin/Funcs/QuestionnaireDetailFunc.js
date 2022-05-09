@@ -36,18 +36,27 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
     else {
         if (!regex.test(objQuestionnaire.startDate))
             arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入開始時間。`);
+        else {
+            let today = new Date().toDateString();
+            let startDate = new Date(objQuestionnaire.startDate);
+
+            if (startDate.toDateString() < today)
+                arrErrorMsg.push("請填入今天或其後的開始時間。");
+        }
     }
 
     if (objQuestionnaire.endDate) {
         if (!regex.test(objQuestionnaire.endDate))
             arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入結束時間。`);
         else {
+            let today = new Date().toDateString();
             let startDate = new Date(objQuestionnaire.startDate);
             let endDate = new Date(objQuestionnaire.endDate);
 
-            if (startDate > endDate) {
+            if (endDate.toDateString() < today)
+                arrErrorMsg.push("請填入今天或其後的結束時間。");
+            if (startDate > endDate) 
                 arrErrorMsg.push("請填入一前一後時序的始末日期。");
-            }
         }
     }
 
@@ -57,7 +66,7 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
         return true;
 }
 
-function SubmitQuestionnaireAndItsQuestionList(strOperate) {
+function SubmitQuestionnaire(strOperate) {
     let objQuestionnaireForServerSubmit = GetQuestionnaireInputsForServerSubmit();
     let isValidQuestionnaireForServerSubmit =
         CheckQuestionnaireInputsForServerSubmit(objQuestionnaireForServerSubmit);

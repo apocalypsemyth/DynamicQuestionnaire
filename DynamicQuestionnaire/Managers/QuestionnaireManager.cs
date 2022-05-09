@@ -209,5 +209,30 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
+        
+        public void SetIsEnableOfQuestionnaireList(List<Questionnaire> toSetQuestionnaireList)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    foreach (var questionnaire in toSetQuestionnaireList)
+                    {
+                        var toSetQuestionnaire = contextModel.Questionnaires
+                            .SingleOrDefault(item => item.QuestionnaireID 
+                            == questionnaire.QuestionnaireID);
+
+                        toSetQuestionnaire.IsEnable = questionnaire.IsEnable;
+                    }
+
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("QuestionnaireManager.SetIsEnableOfQuestionnaireList", ex);
+                throw;
+            }
+        }
     }
 }

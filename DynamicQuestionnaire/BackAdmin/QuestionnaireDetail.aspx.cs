@@ -47,11 +47,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.InitEditMode(questionnaireID);
                 this.btnSubmitInQuestionnaireTab.Attributes.Add(
                     "onClick",
-                    "return SubmitQuestionnaireAndItsQuestionList('UPDATE');"
+                    "return SubmitQuestionnaire('UPDATE');"
                     );
                 this.btnSubmitInQuestionTab.Attributes.Add(
                     "onClick",
-                    "return SubmitQuestionnaireAndItsQuestionList('UPDATE');"
+                    "return SubmitQuestionnaire('UPDATE');"
                     );
             }
             else
@@ -59,11 +59,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.InitCreateMode();
                 this.btnSubmitInQuestionnaireTab.Attributes.Add(
                     "onClick", 
-                    "return SubmitQuestionnaireAndItsQuestionList('CREATE');"
+                    "return SubmitQuestionnaire('CREATE');"
                     );
                 this.btnSubmitInQuestionTab.Attributes.Add(
                     "onClick", 
-                    "return SubmitQuestionnaireAndItsQuestionList('CREATE');"
+                    "return SubmitQuestionnaire('CREATE');"
                     );
             }
 
