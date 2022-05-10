@@ -15,13 +15,39 @@ namespace DynamicQuestionnaire.BackAdmin
         private int _questionListPageIndex { get; set; }
         private const int _pageSize = 10;
 
-        // Session name
+        // Session name of QuestionnaireList
         private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
+
+        // Session name of QuestionnaireDetail and CommonQuestionDetail
+        private string _isUpdateMode = "IsUpdateMode";
+
+        // Session name of QuestionnaireDetail
+        private string _questionnaire = "Questionnaire";
+        private string _questionList = "QuestionList";
+        private string _currentPagerIndex = "CurrentPagerIndex";
+        private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
+
+        // Session name of CommonQuestionDetail
+        private string _commonQuestion = "CommonQuestion";
+        private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
 
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Session name of QuestionnaireDetail and CommonQuestionDetail
+            this.Session.Remove(_isUpdateMode);
+
+            // Session name of QuestionnaireDetail
+            this.Session.Remove(_questionnaire);
+            this.Session.Remove(_questionList);
+            this.Session.Remove(_currentPagerIndex);
+            this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
+
+            // Session name of CommonQuestionDetail
+            this.Session.Remove(_commonQuestion);
+            this.Session.Remove(_questionListOfCommonQuestion);
+
             string pageIndexStr = this.Request.QueryString["Index"];
             int pageIndex =
                 (string.IsNullOrWhiteSpace(pageIndexStr))
@@ -58,7 +84,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     out int totalRows
                     );
 
-                bool hasAnyOverEndDate = this.CheckEndDateOfQuestionnaireList(questionnaireList);
+                bool hasAnyOverEndDate = this.CheckDateOfQuestionnaireList(questionnaireList);
                 var setOrNotSetQuestionnaireList = 
                     hasAnyOverEndDate 
                     ? this.SetIsEnableOfQuestionnaireList(questionnaireList)                    
@@ -231,21 +257,22 @@ namespace DynamicQuestionnaire.BackAdmin
             }
         }
 
-        private bool CheckEndDateOfQuestionnaireList(List<Questionnaire> questionnaireList)
+        private bool CheckDateOfQuestionnaireList(List<Questionnaire> questionnaireList)
         {
-            bool hasAnyOverEndDate = false;
+            bool hasAnyNotStartOrOverEndDate = false;
 
             foreach (var questionnaire in questionnaireList)
             {
-                if (questionnaire.EndDate != null
+                if (questionnaire.StartDate.Date == DateTime.Now.Date 
+                    || questionnaire.EndDate != null
                     && questionnaire.EndDate?.Date < DateTime.Now.Date)
                 {
-                    hasAnyOverEndDate = true;
+                    hasAnyNotStartOrOverEndDate = true;
                     continue;
                 }
             }
 
-            return hasAnyOverEndDate;
+            return hasAnyNotStartOrOverEndDate;
         }
 
         private List<Questionnaire> SetIsEnableOfQuestionnaireList(List<Questionnaire> questionnaireList)
@@ -256,6 +283,12 @@ namespace DynamicQuestionnaire.BackAdmin
 
             foreach (var questionnaire in questionnaireList)
             {
+                if (questionnaire.StartDate.Date == DateTime.Now.Date)
+                {
+                    questionnaire.IsEnable = true;
+                    toSetIsEnableOfQuestionnaireList.Add(questionnaire);
+                }
+
                 if (questionnaire.EndDate != null 
                     && questionnaire.EndDate?.Date < DateTime.Now.Date)
                 {

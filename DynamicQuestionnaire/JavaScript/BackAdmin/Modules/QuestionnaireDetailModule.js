@@ -240,6 +240,10 @@ var GetQuestionList = function (strQuestionnaireID) {
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
+            else if (strOrObjArrQuestion.length === 0) {
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
+            }
             else {
                 $(btnDeleteQuestion).show();
 

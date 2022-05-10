@@ -14,10 +14,8 @@
         let currentActiveTab = sessionStorage.getItem(activeTab);
         // question
         let strQuestionListHtml = sessionStorage.getItem(currentQuestionListTable);
-        if (strQuestionListHtml) {
-            $(divQuestionListContainer).empty();
+        if (strQuestionListHtml) 
             $(divQuestionListContainer).html(strQuestionListHtml);
-        }
         // question-info userList
         let strUserListHtml = sessionStorage.getItem(currentUserList);
         let strUserListShowState = sessionStorage.getItem(currentUserListShowState);
@@ -107,7 +105,9 @@
             $("#ulQuestionnaireDetailTabs a[href='" + strActiveTab + "']").tab("show");
         }
         if (strActiveTab === "#question") {
-            $(divQuestionListContainer).html(strQuestionListHtml);
+            let strQuestionListHtml = sessionStorage.getItem(currentQuestionListTable);
+            if (strQuestionListHtml)
+                $(divQuestionListContainer).html(strQuestionListHtml);
         }
 
         let strCurrentSetCommonQuestionOnQuestionnaireState =

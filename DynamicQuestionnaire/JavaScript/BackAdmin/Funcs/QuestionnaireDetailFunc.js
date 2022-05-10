@@ -31,16 +31,22 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
     if (!objQuestionnaire.description)
         arrErrorMsg.push("請填入描述內容。");
 
+    let isUpdateMode = window.location.search.indexOf("?ID=") !== -1;
+    let today = new Date().toDateString();
+    let todayMillisecond = Date.parse(today);
+
     if (!objQuestionnaire.startDate)
         arrErrorMsg.push("請填入開始時間。");
     else {
         if (!regex.test(objQuestionnaire.startDate))
             arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入開始時間。`);
         else {
-            let today = new Date().toDateString();
             let startDate = new Date(objQuestionnaire.startDate);
+            let startDateMillisecond = Date.parse(startDate);
 
-            if (startDate.toDateString() < today)
+            if (objQuestionnaire.isEnable && startDateMillisecond > todayMillisecond)
+                arrErrorMsg.push("系統會屆時開放此問卷，請取消已啟用的勾選");
+            else if (!isUpdateMode && startDateMillisecond < todayMillisecond)
                 arrErrorMsg.push("請填入今天或其後的開始時間。");
         }
     }
@@ -49,13 +55,16 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
         if (!regex.test(objQuestionnaire.endDate))
             arrErrorMsg.push(`請以 "yyyy/MM/dd" 的格式輸入結束時間。`);
         else {
-            let today = new Date().toDateString();
             let startDate = new Date(objQuestionnaire.startDate);
+            let startDateMillisecond = Date.parse(startDate);
             let endDate = new Date(objQuestionnaire.endDate);
+            let endDateMillisecond = Date.parse(endDate);
 
-            if (endDate.toDateString() < today)
+            if (objQuestionnaire.isEnable && endDateMillisecond < todayMillisecond) 
+                arrErrorMsg.push("若要開放此問卷，請填入今天或其後的結束時間。");
+            else if (!isUpdateMode && endDateMillisecond < todayMillisecond)
                 arrErrorMsg.push("請填入今天或其後的結束時間。");
-            if (startDate > endDate) 
+            else if (startDateMillisecond > endDateMillisecond) 
                 arrErrorMsg.push("請填入一前一後時序的始末日期。");
         }
     }
