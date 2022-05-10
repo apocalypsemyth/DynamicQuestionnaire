@@ -110,7 +110,7 @@
 
             <div class="col-md-10">
                 <div class="d-flex align-item-center justify-content-end">
-                    <asp:Button ID="btnCancel" runat="server" Text="取消" OnClick="btnCancel_Click" />
+                    <asp:Button ID="btnCancel" CssClass="btn btn-secondary" runat="server" Text="取消" OnClick="btnCancel_Click" />
                     <a id="aLinkCheckingQuestionnaireDetail" class="btn btn-success" runat="server">
                         送出
                     </a>
