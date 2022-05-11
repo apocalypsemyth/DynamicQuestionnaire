@@ -21,6 +21,8 @@ namespace DynamicQuestionnaire
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.btnCancel.Attributes.Add("onClick", "return BackToList();");
+
             _isPostBack = this.IsPostBack;
 
             if (!this.IsPostBack)
@@ -132,9 +134,7 @@ namespace DynamicQuestionnaire
         
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Session.Remove(_isEnable);
 
-            this.Response.Redirect("QuestionnaireList.aspx", true);
         }
 
         protected Guid GetQuestionnaireIDOrBackToList()

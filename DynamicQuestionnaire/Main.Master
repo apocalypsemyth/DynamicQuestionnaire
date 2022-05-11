@@ -11,6 +11,7 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="JavaScript/Variables/QuestionnaireDetailVariable.js"></script>
     <script src="JavaScript/Variables/QuestionnaireStatisticsVariable.js"></script>
+    <script src="JavaScript/Funcs/QuestionnaireDetailFunc.js"></script>
     <script src="JavaScript/Funcs/QuestionnaireStatisticsFunc.js"></script>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>

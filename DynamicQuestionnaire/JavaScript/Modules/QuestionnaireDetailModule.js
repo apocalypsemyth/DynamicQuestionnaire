@@ -214,13 +214,17 @@ var CheckAtLeastOneQuestionInputs = function () {
         return arrUserAnswer;
 }
 
-var ResetPage = function () {
+var ResetPage = function (strQuestionnaireID) {
     $.ajax({
         url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_PAGE",
-        method: "GET",
+        method: "POST",
+        data: { "questionnaireID": strQuestionnaireID },
         success: function (strMsg) {
-            if (strMsg === NULL + FAILED) {
-                window.location.href = window.location.href;
+            if (strMsg === FAILED) {
+                alert(errorMessageOfRetry);
+            }
+            else if (strMsg === NULL + FAILED) {
+                window.location.href = `QuestionnaireDetail.aspx?ID=${strQuestionnaireID}`;
             }
         },
         error: function (msg) {

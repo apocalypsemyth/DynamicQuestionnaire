@@ -2,6 +2,10 @@
 const MULTIPLE_SELECT = "複選方塊";
 const TEXT = "文字";
 
+const FAILED = "FAILED";
+const NULL = "NULL";
+const SUCCESSED = "SUCCESSED";
+
 let isInvalidClass = "is-invalid";
 
 let txtUserName = "input[id*=txtUserName]";

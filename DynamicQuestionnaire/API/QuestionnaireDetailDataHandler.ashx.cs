@@ -20,6 +20,7 @@ namespace DynamicQuestionnaire.API
         private string _textResponse = "text/plain";
         private string _nullResponse = "NULL";
         private string _failedResponse = "FAILED";
+        private string _successedResponse = "SUCCESSED";
 
         // Session name
         private string _isEnable = "IsEnable";
@@ -28,6 +29,41 @@ namespace DynamicQuestionnaire.API
 
         public void ProcessRequest(HttpContext context)
         {
+            if (string.Compare("GET", context.Request.HttpMethod, true) == 0 
+                && string.Compare("RESET_SESSION", context.Request.QueryString["Action"], true) == 0)
+            {
+                context.Session.Remove(_isEnable);
+                context.Session.Remove(_user);
+                context.Session.Remove(_userAnswer);
+
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_successedResponse);
+                return;
+            }
+            
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("RESET_PAGE", context.Request.QueryString["Action"], true) == 0)
+            {
+                string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_failedResponse);
+                    return;
+                }
+
+                if (context.Session[_isEnable] == null 
+                    && (context.Session[_user] == null 
+                    || context.Session[_userAnswer] == null))
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse + _failedResponse);
+                    return;
+                }
+
+                return;
+            }
+            
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
                 && string.Compare("CREATE_USER", context.Request.QueryString["Action"], true) == 0)
             {
@@ -48,19 +84,6 @@ namespace DynamicQuestionnaire.API
                 string userAnswerStr = context.Request.Form["userAnswer"];
                 List<string> userAnswerList = userAnswerStr.Split(';').ToList();
                 CreateUserAnswerInSession(userAnswerList, context);
-
-                return;
-            }
-            
-            if (string.Compare("GET", context.Request.HttpMethod, true) == 0 
-                && string.Compare("RESET_PAGE", context.Request.QueryString["Action"], true) == 0)
-            {
-                if (context.Session[_isEnable] == null)
-                {
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_nullResponse + _failedResponse);
-                    return;
-                }
 
                 return;
             }

@@ -19,24 +19,10 @@ namespace DynamicQuestionnaire
         // Session name of QuestionnaireList
         private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
 
-        // Session name of QuestionnaireDetail
-        private string _isEnable = "IsEnable";
-
-        // Session name of CheckingQuestionnaireDetail
-        private string _user = "User";
-        private string _userAnswer = "UserAnswer";
-
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Session name of QuestionnaireDetail
-            this.Session.Remove(_isEnable);
-
-            // Session name of CheckingQuestionnaireDetail
-            this.Session.Remove(_user);
-            this.Session.Remove(_userAnswer);
-
             string pageIndexStr = this.Request.QueryString["Index"];
             int pageIndex =
                 (string.IsNullOrWhiteSpace(pageIndexStr))

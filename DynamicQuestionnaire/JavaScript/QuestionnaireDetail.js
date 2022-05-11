@@ -1,6 +1,31 @@
 ﻿$(document).ready(function () {
-    if (window.location.href.indexOf("QuestionnaireDetail.aspx") !== -1) {
-        ResetPage();
+    if (window.location.href.indexOf("QuestionnaireDetail.aspx") === -1) {
+        $.ajax({
+            async: false,
+            url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_SESSION",
+            method: "GET",
+            success: function (strMsg) {
+                if (strMsg === SUCCESSED) {
+                }
+            },
+            error: function (msg) {
+                console.log(msg);
+                alert(errorMessageOfAjax);
+            }
+        });
+    }
+    else {
+        let queryString = window.location.search;
+        let isExistQueryString = queryString.indexOf("?ID=") !== -1;
+        let currentUrl = window.location.href;
+        let isQuestionnaireDetail =
+            currentUrl.indexOf("QuestionnaireDetail.aspx") !== -1
+            && currentUrl.indexOf("Checking") === -1
+        let strQuestionnaireID =
+            isExistQueryString && isQuestionnaireDetail
+                ? queryString.split("?ID=")[1]
+                : "";
+        ResetPage(strQuestionnaireID);
 
         $("a[id*=aLinkCheckingQuestionnaireDetail]").click(function () {
             ResetUserInputsIsInvalidClass();
