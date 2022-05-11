@@ -213,3 +213,19 @@ var CheckAtLeastOneQuestionInputs = function () {
     else
         return arrUserAnswer;
 }
+
+var ResetPage = function () {
+    $.ajax({
+        url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_PAGE",
+        method: "GET",
+        success: function (strMsg) {
+            if (strMsg === NULL + FAILED) {
+                window.location.href = window.location.href;
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
+        }
+    });
+}

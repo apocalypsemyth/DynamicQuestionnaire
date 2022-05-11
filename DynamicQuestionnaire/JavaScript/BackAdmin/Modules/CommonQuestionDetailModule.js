@@ -200,7 +200,7 @@ var GetQuestionListOfCommonQuestion = function (strCommonQuestionID) {
             $(divQuestionListOfCommonQuestionContainer).empty();
 
             if (strOrObjArrQuestionOfCommonQuestion === NULL + FAILED) {
-                window.location.replace(document.referrer);
+                window.location.href = "CommonQuestionDetail.aspx";
             }
             else if (strOrObjArrQuestionOfCommonQuestion === FAILED) {
                 alert(errorMessageOfRetry);

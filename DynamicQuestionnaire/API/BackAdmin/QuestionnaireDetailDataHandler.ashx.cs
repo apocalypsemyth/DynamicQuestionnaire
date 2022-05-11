@@ -96,8 +96,7 @@ namespace DynamicQuestionnaire.API
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_QUESTIONLIST", context.Request.QueryString["Action"], true) == 0)
             {
-                if (context.Session[_isUpdateMode] == null 
-                    || context.Session[_isSetCommonQuestionOnQuestionnaire] == null)
+                if (context.Session[_isUpdateMode] == null)
                 {
                     context.Response.ContentType = _textResponse;
                     context.Response.Write(_nullResponse + _failedResponse);

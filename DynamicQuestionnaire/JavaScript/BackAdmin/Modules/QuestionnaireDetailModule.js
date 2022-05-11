@@ -250,7 +250,7 @@ var GetQuestionList = function (strQuestionnaireID) {
             $(divQuestionListContainer).empty();
 
             if (strOrObjArrQuestion === NULL + FAILED) {
-                window.location.replace(document.referrer);
+                window.location.href = "QuestionnaireDetail.aspx";
             }
             else if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);

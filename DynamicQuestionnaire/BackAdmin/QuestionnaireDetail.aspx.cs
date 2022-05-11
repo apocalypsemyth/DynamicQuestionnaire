@@ -61,113 +61,6 @@ namespace DynamicQuestionnaire.BackAdmin
             this.ucSubmitButtonInQuestionnaireTab.OnSubmitClick += UcInQuestionnaireTab_OnSubmitClick;
             this.ucSubmitButtonInQuestionTab.OnSubmitClick += UcInQuestionTab_OnSubmitClick;
         }
-
-        private void InitCreateMode()
-        {
-            var categoryList = this._categoryMgr.GetCategoryList();
-            var typingList = this._typingMgr.GetTypingList();
-
-            // 問卷控制項繫結
-            this.txtStartDate.Text = DateTime.Now.ToShortDateString();
-            this.ckbIsEnable.Checked = true;
-
-            // 問題控制項繫結
-            this.ddlCategoryList.DataTextField = "CategoryName";
-            this.ddlCategoryList.DataValueField = "CategoryID";
-            this.ddlCategoryList.DataSource = categoryList;
-            this.ddlCategoryList.DataBind();
-            this.ddlCategoryList.ClearSelection();
-            this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
-
-            this.ddlTypingList.DataTextField = "TypingName";
-            this.ddlTypingList.DataValueField = "TypingName";
-            this.ddlTypingList.DataSource = typingList;
-            this.ddlTypingList.DataBind();
-            this.ddlTypingList.ClearSelection();
-            this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
-
-            this.ckbQuestionRequired.Checked = false;
-            this.btnExportAndDownloadDataToCSV.Visible = false;
-        }
-
-        private void InitEditMode(Guid questionnaireID)
-        {
-            var questionnaire = this._questionnaireMgr.GetQuestionnaire(questionnaireID);
-
-            if (questionnaire == null)
-            {
-                this.AlertMessage("查無此問卷");
-                this.Response.Redirect("QuestionnaireList.aspx", true);
-            }
-            else
-            {
-                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
-                var categoryList = this._categoryMgr.GetCategoryList();
-                var typingList = this._typingMgr.GetTypingList();
-                var userList = this._userMgr.GetUserList(questionnaireID);
-
-                // 問卷控制項繫結
-                this.txtCaption.Text = questionnaire.Caption;
-                this.txtDescription.Text = questionnaire.Description;
-                this.ckbIsEnable.Checked = questionnaire.IsEnable;
-                this.txtStartDate.Text = questionnaire.StartDate.ToShortDateString();
-
-                if (questionnaire.EndDate == null)
-                    this.txtEndDate.Text = "";
-                else
-                    this.txtEndDate.Text = questionnaire.EndDate?.ToShortDateString();
-
-                // 問題控制項繫結
-                this.ddlCategoryList.DataTextField = "CategoryName";
-                this.ddlCategoryList.DataValueField = "CategoryID";
-                this.ddlCategoryList.DataSource = categoryList;
-                this.ddlCategoryList.DataBind();
-                this.ddlCategoryList.ClearSelection();
-                if (questionList.Where(item => item.QuestionCategory == "常用問題").Any())
-                {
-                    ClientScript.RegisterStartupScript(
-                        this.GetType(), 
-                        "SetCommonQuestionOnQuestionnaireStateSession", 
-                        "SetCommonQuestionOnQuestionnaireStateSession('set')", 
-                        true
-                        );
-                    this.ddlCategoryList.Items.FindByText("常用問題").Selected = true;
-                }
-                else
-                {
-                    ClientScript.RegisterStartupScript(
-                        this.GetType(),
-                        "SetCommonQuestionOnQuestionnaireStateSession",
-                        "SetCommonQuestionOnQuestionnaireStateSession('notSet')",
-                        true
-                        );
-                    this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
-                }
-
-                this.ddlTypingList.DataTextField = "TypingName";
-                this.ddlTypingList.DataValueField = "TypingName";
-                this.ddlTypingList.DataSource = typingList;
-                this.ddlTypingList.DataBind();
-                this.ddlTypingList.ClearSelection();
-                this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
-
-                if (userList == null || userList.Count == 0)
-                    this.btnExportAndDownloadDataToCSV.Visible = false;
-                else
-                    this.btnExportAndDownloadDataToCSV.Visible = true;
-            }
-        }
-        
-        protected Guid GetQuestionnaireIDOrBackToList()
-        {
-            string questionnaireIDStr = this.Request.QueryString["ID"];
-
-            bool isValidQuestionnaireID = Guid.TryParse(questionnaireIDStr, out Guid questionnaireID);
-            if (!isValidQuestionnaireID)
-                this.Response.Redirect("QuestionnaireList.aspx", true);
-
-            return questionnaireID;
-        }        
         
         protected void UcInQuestionnaireTab_OnCancelClick(object sender, EventArgs e)
         {
@@ -277,7 +170,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
-
+        
         protected void btnExportAndDownloadDataToCSV_Click(object sender, EventArgs e)
         {
             Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
@@ -296,6 +189,113 @@ namespace DynamicQuestionnaire.BackAdmin
             this.Response.Output.Write(csv);
             this.Response.Flush();
             this.Response.End();
+        }
+        
+        protected Guid GetQuestionnaireIDOrBackToList()
+        {
+            string questionnaireIDStr = this.Request.QueryString["ID"];
+
+            bool isValidQuestionnaireID = Guid.TryParse(questionnaireIDStr, out Guid questionnaireID);
+            if (!isValidQuestionnaireID)
+                this.Response.Redirect("QuestionnaireList.aspx", true);
+
+            return questionnaireID;
+        }        
+        
+        private void InitCreateMode()
+        {
+            var categoryList = this._categoryMgr.GetCategoryList();
+            var typingList = this._typingMgr.GetTypingList();
+
+            // 問卷控制項繫結
+            this.txtStartDate.Text = DateTime.Now.ToShortDateString();
+            this.ckbIsEnable.Checked = true;
+
+            // 問題控制項繫結
+            this.ddlCategoryList.DataTextField = "CategoryName";
+            this.ddlCategoryList.DataValueField = "CategoryID";
+            this.ddlCategoryList.DataSource = categoryList;
+            this.ddlCategoryList.DataBind();
+            this.ddlCategoryList.ClearSelection();
+            this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
+
+            this.ddlTypingList.DataTextField = "TypingName";
+            this.ddlTypingList.DataValueField = "TypingName";
+            this.ddlTypingList.DataSource = typingList;
+            this.ddlTypingList.DataBind();
+            this.ddlTypingList.ClearSelection();
+            this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
+
+            this.ckbQuestionRequired.Checked = false;
+            this.btnExportAndDownloadDataToCSV.Visible = false;
+        }
+
+        private void InitEditMode(Guid questionnaireID)
+        {
+            var questionnaire = this._questionnaireMgr.GetQuestionnaire(questionnaireID);
+
+            if (questionnaire == null)
+            {
+                this.AlertMessage("查無此問卷");
+                this.Response.Redirect("QuestionnaireList.aspx", true);
+            }
+            else
+            {
+                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
+                var categoryList = this._categoryMgr.GetCategoryList();
+                var typingList = this._typingMgr.GetTypingList();
+                var userList = this._userMgr.GetUserList(questionnaireID);
+
+                // 問卷控制項繫結
+                this.txtCaption.Text = questionnaire.Caption;
+                this.txtDescription.Text = questionnaire.Description;
+                this.ckbIsEnable.Checked = questionnaire.IsEnable;
+                this.txtStartDate.Text = questionnaire.StartDate.ToShortDateString();
+
+                if (questionnaire.EndDate == null)
+                    this.txtEndDate.Text = "";
+                else
+                    this.txtEndDate.Text = questionnaire.EndDate?.ToShortDateString();
+
+                // 問題控制項繫結
+                this.ddlCategoryList.DataTextField = "CategoryName";
+                this.ddlCategoryList.DataValueField = "CategoryID";
+                this.ddlCategoryList.DataSource = categoryList;
+                this.ddlCategoryList.DataBind();
+                this.ddlCategoryList.ClearSelection();
+                if (questionList.Where(item => item.QuestionCategory == "常用問題").Any())
+                {
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(), 
+                        "SetCommonQuestionOnQuestionnaireStateSession", 
+                        "SetCommonQuestionOnQuestionnaireStateSession('set')", 
+                        true
+                        );
+                    this.ddlCategoryList.Items.FindByText("常用問題").Selected = true;
+                }
+                else
+                {
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "SetCommonQuestionOnQuestionnaireStateSession",
+                        "SetCommonQuestionOnQuestionnaireStateSession('notSet')",
+                        true
+                        );
+                    this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
+                }
+
+                this.ddlTypingList.DataTextField = "TypingName";
+                this.ddlTypingList.DataValueField = "TypingName";
+                this.ddlTypingList.DataSource = typingList;
+                this.ddlTypingList.DataBind();
+                this.ddlTypingList.ClearSelection();
+                this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
+
+                if (userList == null || userList.Count == 0)
+                    this.btnExportAndDownloadDataToCSV.Visible = false;
+                else
+                    this.btnExportAndDownloadDataToCSV.Visible = true;
+            }
         }
 
         private void AlertMessage(string errorMsg)

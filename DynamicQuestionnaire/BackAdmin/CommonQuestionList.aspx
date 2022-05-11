@@ -24,7 +24,7 @@
             </div>
 
             <div class="col-md-8">
-                <div class="d-flex gap-1 mt-3">
+                <div class="d-flex gap-1 mt-3 mt-md-5">
                     <asp:Button ID="btnDeleteCommonQuestion" CssClass="btn btn-danger" runat="server" Text="刪除" OnClick="btnDeleteCommonQuestion_Click" />
                     <asp:Button ID="btnCreateCommonQuestion" CssClass="btn btn-success" runat="server" Text="新增" OnClick="btnCreateCommonQuestion_Click" />
                 </div>

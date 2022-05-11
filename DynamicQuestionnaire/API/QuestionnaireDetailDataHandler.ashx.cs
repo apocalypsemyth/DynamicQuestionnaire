@@ -17,13 +17,19 @@ namespace DynamicQuestionnaire.API
         private const string MULTIPLE_SELECT = "複選方塊";
         private const string TEXT = "文字";
 
+        private string _textResponse = "text/plain";
+        private string _nullResponse = "NULL";
+        private string _failedResponse = "FAILED";
+
         // Session name
+        private string _isEnable = "IsEnable";
         private string _user = "User";
         private string _userAnswer = "UserAnswer";
 
         public void ProcessRequest(HttpContext context)
         {
-            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("CREATE_USER", context.Request.QueryString["Action"], true) == 0)
+            if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
+                && string.Compare("CREATE_USER", context.Request.QueryString["Action"], true) == 0)
             {
                 bool isFirstCreate = (bool)(context.Session[_user] == null);
 
@@ -42,6 +48,19 @@ namespace DynamicQuestionnaire.API
                 string userAnswerStr = context.Request.Form["userAnswer"];
                 List<string> userAnswerList = userAnswerStr.Split(';').ToList();
                 CreateUserAnswerInSession(userAnswerList, context);
+
+                return;
+            }
+            
+            if (string.Compare("GET", context.Request.HttpMethod, true) == 0 
+                && string.Compare("RESET_PAGE", context.Request.QueryString["Action"], true) == 0)
+            {
+                if (context.Session[_isEnable] == null)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse + _failedResponse);
+                    return;
+                }
 
                 return;
             }
