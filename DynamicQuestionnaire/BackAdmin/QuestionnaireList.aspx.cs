@@ -19,9 +19,6 @@ namespace DynamicQuestionnaire.BackAdmin
         // Session name of QuestionnaireList
         private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
 
-        // Session name of QuestionnaireDetail or CommonQuestionDetail
-        private string _isUpdateMode = "IsUpdateMode";
-
         // Session name of QuestionnaireDetail
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
@@ -36,9 +33,6 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Session name of QuestionnaireDetail or CommonQuestionDetail
-            this.Session.Remove(_isUpdateMode);
-
             // Session name of QuestionnaireDetail
             this.Session.Remove(_questionnaire);
             this.Session.Remove(_questionList);
@@ -85,9 +79,9 @@ namespace DynamicQuestionnaire.BackAdmin
                     out int totalRows
                     );
 
-                bool hasAnyOverEndDate = this.CheckDateOfQuestionnaireList(questionnaireList);
+                bool hasAnyNotStartOrOverEndDate = this.CheckDateOfQuestionnaireList(questionnaireList);
                 var setOrNotSetQuestionnaireList = 
-                    hasAnyOverEndDate 
+                    hasAnyNotStartOrOverEndDate 
                     ? this.SetIsEnableOfQuestionnaireList(questionnaireList)                    
                     : questionnaireList;
 
@@ -115,7 +109,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     this.gvQuestionnaireList.DataBind();
                 }
 
-                if (hasAnyOverEndDate)
+                if (hasAnyNotStartOrOverEndDate)
                 {
                     this._questionnaireMgr.SetIsEnableOfQuestionnaireList(
                         (List<Questionnaire>)this.Session[_toSetIsEnableOfQuestionnaireList]
@@ -233,7 +227,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void btnCreateQuestionnaire_Click(object sender, EventArgs e)
         {
-            this.Response.Redirect("QuestionnaireDetail.aspx");
+            this.Response.Redirect("QuestionnaireDetail.aspx", true);
         }
 
         private bool CheckSearchDateTime(
@@ -275,14 +269,24 @@ namespace DynamicQuestionnaire.BackAdmin
         {
             bool hasAnyNotStartOrOverEndDate = false;
 
+            if (questionnaireList == null || questionnaireList.Count == 0)
+                return hasAnyNotStartOrOverEndDate;
+
             foreach (var questionnaire in questionnaireList)
             {
                 if (questionnaire.StartDate.Date == DateTime.Now.Date 
-                    || questionnaire.EndDate != null
-                    && questionnaire.EndDate?.Date < DateTime.Now.Date)
+                    && questionnaire.IsEnable == false)
                 {
                     hasAnyNotStartOrOverEndDate = true;
-                    continue;
+                    return hasAnyNotStartOrOverEndDate;
+                }
+                
+                else if (questionnaire.EndDate != null
+                    && questionnaire.EndDate?.Date < DateTime.Now.Date
+                    && questionnaire.IsEnable == true)
+                {
+                    hasAnyNotStartOrOverEndDate = true;
+                    return hasAnyNotStartOrOverEndDate;
                 }
             }
 

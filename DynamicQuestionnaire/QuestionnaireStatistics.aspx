@@ -5,7 +5,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="questionnaireStatisticsContainer">
-        <div class="row align-items-center justify-content-center gy-3">
+        <div class="row align-items-center justify-content-center gy-3 gy-md-5">
             <div class="col-md-10">
                 <div class="d-flex align-items-center justify-content-center">
                     <h1>

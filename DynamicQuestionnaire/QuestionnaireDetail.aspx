@@ -5,11 +5,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="questionnaireDetailContainer">
-        <div class="row align-items-center justify-content-center gy-3">
+        <div class="row align-items-center justify-content-center gy-3 gy-md-5">
             <div class="col-md-10">
                 <asp:Repeater ID="rptQuestionnaireDetail" runat="server">
                     <ItemTemplate>
-                        <div class="d-flex flex-column align-items-end justify-content-center">
+                        <div class="d-flex flex-column align-items-end justify-content-center mb-3 mb-md-5">
                             <h4>
                                 <asp:Literal
                                     ID="ltlIsEnable"
@@ -31,7 +31,7 @@
                             </h4>
                         </div>
 
-                        <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center mb-3 mb-md-5">
                             <h1>
                                 <asp:Literal ID="ltlCaption" runat="server" Text='<%# Eval("Caption") %>' />
                             </h1>
@@ -44,7 +44,7 @@
                 </asp:Repeater>
             </div>
 
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <div id="questionnaireUserForm" runat="server">
                     <div class="row mb-3">
                         <label for='<%= this.txtUserName.ClientID %>' class="col-sm-2 col-form-label">
@@ -88,11 +88,11 @@
                 </div>
             </div>
 
-            <div class="col-md-10">
-                <div class="row align-items-center justify-content-center gy-3">
+            <div class="col-md-9">
+                <div class="row align-items-center justify-content-center gy-3 gy-md-5">
                     <asp:Repeater ID="rptQuestionList" runat="server" OnPreRender="rptQuestionList_PreRender">
                         <ItemTemplate>
-                            <div class="col-11 col-md-10">
+                            <div class="col-12">
                                 <div class="d-flex flex-column">
                                     <h3>
                                         <asp:Literal ID="ltlQuestionName" runat="server" Text='<%#(Container.ItemIndex + 1).ToString() + ". " + Eval("QuestionName") + ((bool)Eval("QuestionRequired") ? " (必填)" : null) %>' />

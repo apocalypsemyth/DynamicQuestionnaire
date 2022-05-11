@@ -73,9 +73,9 @@ namespace DynamicQuestionnaire
                     out int totalRows
                     );
 
-                bool hasAnyOverEndDate = this.CheckDateOfQuestionnaireList(questionnaireList);
+                bool hasAnyNotStartOrOverEndDate = this.CheckDateOfQuestionnaireList(questionnaireList);
                 var setOrNotSetQuestionnaireList =
-                    hasAnyOverEndDate
+                    hasAnyNotStartOrOverEndDate
                     ? this.SetIsEnableOfQuestionnaireList(questionnaireList)
                     : questionnaireList;
 
@@ -103,7 +103,7 @@ namespace DynamicQuestionnaire
                     this.gvQuestionnaireList.DataBind();
                 }
 
-                if (hasAnyOverEndDate)
+                if (hasAnyNotStartOrOverEndDate)
                 {
                     this._questionnaireMgr.SetIsEnableOfQuestionnaireList(
                         (List<Questionnaire>)this.Session[_toSetIsEnableOfQuestionnaireList]
@@ -232,14 +232,24 @@ namespace DynamicQuestionnaire
         {
             bool hasAnyNotStartOrOverEndDate = false;
 
+            if (questionnaireList == null || questionnaireList.Count == 0)
+                return hasAnyNotStartOrOverEndDate;
+
             foreach (var questionnaire in questionnaireList)
             {
                 if (questionnaire.StartDate.Date == DateTime.Now.Date
-                    || questionnaire.EndDate != null
-                    && questionnaire.EndDate?.Date < DateTime.Now.Date)
+                    && questionnaire.IsEnable == false)
                 {
                     hasAnyNotStartOrOverEndDate = true;
-                    continue;
+                    return hasAnyNotStartOrOverEndDate;
+                }
+
+                else if (questionnaire.EndDate != null
+                    && questionnaire.EndDate?.Date < DateTime.Now.Date
+                    && questionnaire.IsEnable == true)
+                {
+                    hasAnyNotStartOrOverEndDate = true;
+                    return hasAnyNotStartOrOverEndDate;
                 }
             }
 

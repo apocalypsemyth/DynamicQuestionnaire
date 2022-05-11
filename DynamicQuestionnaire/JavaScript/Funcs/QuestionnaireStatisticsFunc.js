@@ -78,10 +78,10 @@
 function CreateQuestionnaireStatistics(objArrQuestionModel, objArrUserAnswerModel) {
     $(divQuestionnaireStatisticsContainer).append(
         `
-            <div class="row align-items-center justify-content-center gy-3">
+            <div class="row align-items-center justify-content-center">
                 <div class="col-md-10">
                     <div id="divQuestionnaireStatisticsInnerContainer"
-                         class="row align-items-center justify-content-center gy-3"
+                         class="row align-items-center justify-content-center gy-3 gy-md-5"
                     >
                     </div>
                 </div>
