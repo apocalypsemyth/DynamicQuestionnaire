@@ -4,11 +4,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="checkingQuestionnaireDetailContainer">
-        <div class="row align-items-center justify-content-center gy-3">
+        <div class="row align-items-center justify-content-center gy-3 gy-md-5">
             <div class="col-md-10">
                 <asp:Repeater ID="rptCheckingQuestionnaireDetail" runat="server">
                     <ItemTemplate>
-                        <div class="d-flex flex-column align-items-end justify-content-center">
+                        <div class="d-flex flex-column align-items-end justify-content-center mb-3 mb-md-5">
                             <h4>
                                 <asp:Literal 
                                 ID="ltlIsEnable" 
@@ -32,7 +32,7 @@
                             </h4>
                         </div>
 
-                        <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center justify-content-center mb-3 mb-md-5">
                             <h1>
                                 <asp:Literal ID="ltlCaption" runat="server" Text='<%# Eval("Caption") %>' />
                             </h1>
@@ -41,7 +41,7 @@
                 </asp:Repeater>
             </div>
 
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <div id="checkingQuestionnaireUserForm">
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label">姓名</label>
@@ -73,11 +73,11 @@
                 </div>
             </div>
 
-            <div class="col-md-10">
-                <div id="divCheckingQuestionList" class="row align-items-center justify-content-center gy-3">
+            <div class="col-md-9">
+                <div id="divCheckingQuestionList" class="row align-items-center justify-content-center gy-3 gy-md-5">
                     <asp:Repeater ID="rptCheckingQuestionList" runat="server" OnPreRender="rptCheckingQuestionList_PreRender">
                         <ItemTemplate>
-                            <div class="col-11 col-md-10">
+                            <div class="col-12">
                                 <div class="d-flex flex-column">
                                     <h3>
                                         <asp:Literal ID="ltlQuestionName" runat="server" Text='<%#(Container.ItemIndex + 1).ToString() + ". " + Eval("QuestionName") %>' />
