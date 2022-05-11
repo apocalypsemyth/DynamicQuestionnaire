@@ -96,6 +96,14 @@ namespace DynamicQuestionnaire.API
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_QUESTIONLIST", context.Request.QueryString["Action"], true) == 0)
             {
+                if (context.Session[_isUpdateMode] == null 
+                    || context.Session[_isSetCommonQuestionOnQuestionnaire] == null)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse + _failedResponse);
+                    return;
+                }
+
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
                 bool isSetCommonQuestionOnQuestionnaire =
                     (bool)context.Session[_isSetCommonQuestionOnQuestionnaire];
@@ -182,18 +190,19 @@ namespace DynamicQuestionnaire.API
                             return;
                         }
 
-                        string jsonText =
+                        string jsonTextInIsSetCommonQuestionOnQuestionnaire =
                             Newtonsoft
                             .Json
                             .JsonConvert
                             .SerializeObject(questionModelList);
 
                         context.Response.ContentType = _jsonResponse;
-                        context.Response.Write(jsonText);
+                        context.Response.Write(jsonTextInIsSetCommonQuestionOnQuestionnaire);
                         return;
                     }
 
                     List<Question> questionList = context.Session[_questionList] as List<Question>;
+
                     if (questionList == null || questionList.Count == 0)
                     {
                         context.Session[_questionList] = new List<Question>();
@@ -202,6 +211,16 @@ namespace DynamicQuestionnaire.API
                         context.Response.Write(_nullResponse);
                         return;
                     }
+
+                    string jsonText = 
+                        Newtonsoft
+                        .Json
+                        .JsonConvert
+                        .SerializeObject(context.Session[_questionList]);
+
+                    context.Response.ContentType = _jsonResponse;
+                    context.Response.Write(jsonText);
+                    return;
                 }
             }
 

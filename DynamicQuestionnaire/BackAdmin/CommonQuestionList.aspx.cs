@@ -31,18 +31,22 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Session name of QuestionnaireDetail or CommonQuestionDetail
-            this.Session.Remove(_isUpdateMode);
+            if (this.Session[_isUpdateMode] != null 
+                && (bool)this.Session[_isUpdateMode] == false)
+            {
+                // Session name of QuestionnaireDetail or CommonQuestionDetail
+                this.Session.Remove(_isUpdateMode);
 
-            // Session name of QuestionnaireDetail
-            this.Session.Remove(_questionnaire);
-            this.Session.Remove(_questionList);
-            this.Session.Remove(_currentPagerIndex);
-            this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
+                // Session name of QuestionnaireDetail
+                this.Session.Remove(_questionnaire);
+                this.Session.Remove(_questionList);
+                this.Session.Remove(_currentPagerIndex);
+                this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
 
-            // Session name of CommonQuestionDetail
-            this.Session.Remove(_commonQuestion);
-            this.Session.Remove(_questionListOfCommonQuestion);
+                // Session name of CommonQuestionDetail
+                this.Session.Remove(_commonQuestion);
+                this.Session.Remove(_questionListOfCommonQuestion);
+            }
 
             string pageIndexStr = this.Request.QueryString["Index"];
             int pageIndex =

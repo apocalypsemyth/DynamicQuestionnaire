@@ -10,8 +10,12 @@
         let currentQueryString = window.location.search;
         let isExistQueryString = currentQueryString.indexOf("?ID=") !== -1;
         let strCommonQuestionID = isExistQueryString ? currentQueryString.split("?ID=")[1] : "";
-        if (isExistQueryString) 
+        if (isExistQueryString)
             GetCommonQuestion(strCommonQuestionID);
+        else {
+            $(btnDeleteQuestionOfCommonQuestion).hide();
+            $(divQuestionListOfCommonQuestionContainer).html(emptyMessageOfQuestionList);
+        }
         GetQuestionListOfCommonQuestion(strCommonQuestionID);
 
         $(btnAddQuestionOfCommonQuestion).click(function (e) {

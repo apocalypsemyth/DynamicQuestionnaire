@@ -102,6 +102,13 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 && string.Compare("GET_QUESTIONLIST_OF_COMMONQUESTION", 
                 context.Request.QueryString["Action"], true) == 0)
             {
+                if (context.Session[_isUpdateMode] == null)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse + _failedResponse);
+                    return;
+                }
+
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
 
                 if (isUpdateMode)
@@ -137,11 +144,6 @@ namespace DynamicQuestionnaire.API.BackAdmin
                         context.Response.ContentType = _jsonResponse;
                         context.Response.Write(jsonTextInUpdateMode);
                     }
-                    else if (questionModelListOfCommonQuestion.Count == 0)
-                    {
-                        context.Response.ContentType = _textResponse;
-                        context.Response.Write(_nullResponse);
-                    }
                     else
                     {
                         string jsonTextInUpdateMode =
@@ -169,7 +171,7 @@ namespace DynamicQuestionnaire.API.BackAdmin
                         return;
                     }
 
-                    string jsonText = 
+                    string jsonText =
                         Newtonsoft
                         .Json
                         .JsonConvert

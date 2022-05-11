@@ -19,7 +19,7 @@ function CheckCommonQuestionInputsForServerSubmit(objCommonQuestion) {
         return true;
 }
 
-function SubmitCommonQuestionAndItsQuestionList(strOperate) {
+function SubmitCommonQuestion(strOperate) {
     let objCommonQuestionForServerSubmit = GetCommonQuestionInputsForServerSubmit();
     let isValidCommonQuestionForServerSubmit =
         CheckCommonQuestionInputsForServerSubmit(objCommonQuestionForServerSubmit);

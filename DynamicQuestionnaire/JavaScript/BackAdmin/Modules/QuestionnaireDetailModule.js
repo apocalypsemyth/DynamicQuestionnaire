@@ -249,7 +249,10 @@ var GetQuestionList = function (strQuestionnaireID) {
             $(btnDeleteQuestion).hide();
             $(divQuestionListContainer).empty();
 
-            if (strOrObjArrQuestion === FAILED) {
+            if (strOrObjArrQuestion === NULL + FAILED) {
+                window.location.replace(document.referrer);
+            }
+            else if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);

@@ -37,22 +37,25 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.Session[_isUpdateMode] = _isEditMode;
             }
 
-            if (_isEditMode)
+            if (!this.IsPostBack)
             {
-                Guid commonQuestionID = this.GetCommonQuestionIDOrBackToList();
-                this.InitEditMode(commonQuestionID);
-                this.btnSubmit.Attributes.Add(
-                    "onClick", 
-                    "return SubmitCommonQuestionAndItsQuestionList('UPDATE');"
-                    );
-            }
-            else
-            {
-                this.InitCreateMode();
-                this.btnSubmit.Attributes.Add(
-                    "onClick",
-                    "return SubmitCommonQuestionAndItsQuestionList('CREATE');"
-                    );
+                if (_isEditMode)
+                {
+                    Guid commonQuestionID = this.GetCommonQuestionIDOrBackToList();
+                    this.InitEditMode(commonQuestionID);
+                    this.btnSubmit.Attributes.Add(
+                        "onClick", 
+                        "return SubmitCommonQuestion('UPDATE');"
+                        );
+                }
+                else
+                {
+                    this.InitCreateMode();
+                    this.btnSubmit.Attributes.Add(
+                        "onClick",
+                        "return SubmitCommonQuestion('CREATE');"
+                        );
+                }
             }
         }
 

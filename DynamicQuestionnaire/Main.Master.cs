@@ -17,7 +17,7 @@ namespace DynamicQuestionnaire
             if (isQuestionnaireList)
             {
                 this.plcToggleFormSidebar.Visible = true;
-                this.formMain.Attributes["class"] = "col-md-8 offset-md-2";
+                this.formMain.Attributes["class"] = "col-md-8 offset-md-3";
             }
             else
             {

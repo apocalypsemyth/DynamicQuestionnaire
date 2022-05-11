@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <main class="col-md-8 offset-md-2">
+            <main class="col-md-8 offset-md-3">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>
             </main>
