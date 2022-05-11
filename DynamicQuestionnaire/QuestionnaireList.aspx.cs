@@ -3,6 +3,7 @@ using DynamicQuestionnaire.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -132,7 +133,10 @@ namespace DynamicQuestionnaire
             string startDateStr = this.txtStartDate.Text.Trim();
             string endDateStr = this.txtEndDate.Text.Trim();
 
-            if (!string.IsNullOrWhiteSpace(keyword) && (!string.IsNullOrWhiteSpace(startDateStr) || !string.IsNullOrWhiteSpace(endDateStr)))
+            Regex dateRegex = new Regex(@"^[0-9]{4}\/(0[1-9]|1[0-9])\/(0[1-9]|[1-2][0-9]|3[0-1])$");
+
+            if (!string.IsNullOrWhiteSpace(keyword) 
+                && (!string.IsNullOrWhiteSpace(startDateStr) || !string.IsNullOrWhiteSpace(endDateStr)))
             {
                 this.AlertMessage("一次只能搜尋關鍵字或始末日期。");
                 return;
@@ -147,10 +151,20 @@ namespace DynamicQuestionnaire
                     this.AlertMessage("請輸入要搜尋的開始日期。");
                     return;
                 }
+                else if (!dateRegex.IsMatch(startDateStr))
+                {
+                    this.AlertMessage(@"請輸入 ""yyyy/MM/dd"" 格式的開始時間。");
+                    return;
+                }
 
                 if (string.IsNullOrWhiteSpace(endDateStr))
                 {
                     this.AlertMessage("請輸入要搜尋的結束日期。");
+                    return;
+                }
+                else if (!dateRegex.IsMatch(endDateStr))
+                {
+                    this.AlertMessage(@"請輸入 ""yyyy/MM/dd"" 格式的結束時間。");
                     return;
                 }
 
@@ -190,10 +204,10 @@ namespace DynamicQuestionnaire
             errorMsgList = new List<string>();
 
             if (!DateTime.TryParse(startDateStr, out DateTime startDateMayContainHrMinSec))
-                errorMsgList.Add(@"請輸入 ""yyyy/MM/dd"" 格式的開始時間。");
+                errorMsgList.Add(@"請輸入合法的開始時間。");
 
             if (!DateTime.TryParse(endDateStr, out DateTime endDateMayContainHrMinSec))
-                errorMsgList.Add(@"請輸入 ""yyyy/MM/dd"" 格式的結束時間。");
+                errorMsgList.Add(@"請輸入合法的結束時間。");
             else
             {
                 if (startDateMayContainHrMinSec.Date > endDateMayContainHrMinSec.Date)
