@@ -24,14 +24,14 @@
             $(divQuestionListContainer).empty();
 
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
+                $(btnExportAndDownloadDataToCSVContainer).show();
                 $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
                 $(divUserListPagerContainer).show();
                 $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
+                $(btnExportAndDownloadDataToCSVContainer).hide();
                 $(divUserListContainer).empty();
                 $(divUserListContainer).hide();
                 $(divUserListPagerContainer).empty();
@@ -40,14 +40,14 @@
         }
         else if (strUserListHtml) {
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
+                $(btnExportAndDownloadDataToCSVContainer).show();
                 $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
                 $(divUserListPagerContainer).show();
                 $(divUserListPagerContainer).html(strUserListPagerHtml);
             }
             else {
-                $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
+                $(btnExportAndDownloadDataToCSVContainer).hide();
                 $(divUserListContainer).empty();
                 $(divUserListContainer).hide();
                 $(divUserListPagerContainer).empty();
@@ -89,6 +89,7 @@
                 GetUserList(strQuestionnaireID);
         }
         else {
+            $(btnExportAndDownloadDataToCSVContainer).hide();
             $(divUserListContainer).show();
             $(divUserListContainer).html(emptyMessageOfUserListOrStatistics);
             $(divUserListPagerContainer).empty();
@@ -309,7 +310,7 @@
 
             $(divUserAnswerContainer).empty();
 
-            $(btnExportAndDownloadDataToCSV).parent("div.w-auto").show();
+            $(btnExportAndDownloadDataToCSVContainer).show();
             let strUserListHtml = sessionStorage.getItem(currentUserList);
             let strUserListPagerHtml = sessionStorage.getItem(currentUserListPager);
             $(divUserListContainer).show();

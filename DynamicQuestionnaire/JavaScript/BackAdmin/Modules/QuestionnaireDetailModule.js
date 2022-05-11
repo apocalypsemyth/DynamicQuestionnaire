@@ -882,7 +882,7 @@ var GetUserAnswer = function (objQuestionnaireAndUserID) {
         method: "POST",
         data: objQuestionnaireAndUserID,
         success: function (strOrObjArrUserAnswerDetail) {
-            $(btnExportAndDownloadDataToCSV).parent("div.w-auto").hide();
+            $(btnExportAndDownloadDataToCSVContainer).hide();
             $(divUserListContainer).empty();
             $(divUserListContainer).hide();
             $(divUserListPagerContainer).empty();

@@ -32,7 +32,7 @@ let selectCategoryList = "select[id*=ddlCategoryList]";
 let btnAddQuestion = "button[id=btnAddQuestion]";
 let btnDeleteQuestion = "button[id=btnDeleteQuestion]";
 let divQuestionListContainer = "#divQuestionListContainer";
-let btnExportAndDownloadDataToCSV = "input[id*=btnExportAndDownloadDataToCSV]";
+let btnExportAndDownloadDataToCSVContainer = "#btnExportAndDownloadDataToCSVContainer";
 let divUserListContainer = "#divUserListContainer";
 let divUserListPagerContainer = "#divUserListPagerContainer";
 let divUserAnswerContainer = "#divUserAnswerContainer";
