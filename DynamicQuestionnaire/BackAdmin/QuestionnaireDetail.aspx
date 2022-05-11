@@ -1,6 +1,8 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BackAdmin/QuestionnaireDetailMaster.master" AutoEventWireup="true" CodeBehind="QuestionnaireDetail.aspx.cs" Inherits="DynamicQuestionnaire.BackAdmin.QuestionnaireDetail1" %>
 
 <%@ Register Src="~/Components/ucCancelButton.ascx" TagPrefix="uc1" TagName="ucCancelButton" %>
+<%@ Register Src="~/Components/ucSubmitButton.ascx" TagPrefix="uc1" TagName="ucSubmitButton" %>
+
 
 
 
@@ -64,7 +66,7 @@
             <div class="col-md-8">
                 <div class="d-flex align-items-center justify-content-end gap-1">
                     <uc1:ucCancelButton ID="ucCancelButtonInQuestionnaireTab" runat="server" />
-                    <asp:Button ID="btnSubmitInQuestionnaireTab" CssClass="btn btn-primary" runat="server" Text="送出" OnClick="btnSubmitInQuestionnaireTab_Click" />
+                    <uc1:ucSubmitButton runat="server" id="ucSubmitButtonInQuestionnaireTab" />
                 </div>
             </div>
         </div>
@@ -133,7 +135,7 @@
             <div class="col-md-8">
                 <div class="d-flex align-items-center justify-content-end gap-1">
                     <uc1:ucCancelButton ID="ucCancelButtonInQuestionTab" runat="server" />
-                    <asp:Button ID="btnSubmitInQuestionTab" CssClass="btn btn-primary" runat="server" Text="送出" OnClick="btnSubmitInQuestionTab_Click" />
+                    <uc1:ucSubmitButton runat="server" id="ucSubmitButtonInQuestionTab" />
                 </div>
             </div>
         </div>

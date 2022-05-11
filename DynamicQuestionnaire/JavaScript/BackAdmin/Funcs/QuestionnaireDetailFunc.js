@@ -75,7 +75,9 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
         return true;
 }
 
-function SubmitQuestionnaire(strOperate) {
+function SubmitQuestionnaire() {
+    let strOperate = window.location.search.indexOf("?ID=") === -1 ? "CREATE" : "UPDATE";
+
     let objQuestionnaireForServerSubmit = GetQuestionnaireInputsForServerSubmit();
     let isValidQuestionnaireForServerSubmit =
         CheckQuestionnaireInputsForServerSubmit(objQuestionnaireForServerSubmit);

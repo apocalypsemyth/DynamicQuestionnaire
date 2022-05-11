@@ -86,6 +86,7 @@
     <Content Include="CheckingQuestionnaireDetail.aspx" />
     <Content Include="Components\ucCancelButton.ascx" />
     <Content Include="Components\ucPager.ascx" />
+    <Content Include="Components\ucSubmitButton.ascx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -226,6 +227,13 @@
     </Compile>
     <Compile Include="Components\ucPager.ascx.designer.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ucSubmitButton.ascx.cs">
+      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\ucSubmitButton.ascx.designer.cs">
+      <DependentUpon>ucSubmitButton.ascx</DependentUpon>
     </Compile>
     <Compile Include="DynamicQuestionnaire.ORM\Category.cs" />
     <Compile Include="DynamicQuestionnaire.ORM\CommonQuestion.cs" />

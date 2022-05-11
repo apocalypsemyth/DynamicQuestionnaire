@@ -19,7 +19,7 @@ namespace DynamicQuestionnaire.BackAdmin
         // Session name of QuestionnaireList
         private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
 
-        // Session name of QuestionnaireDetail and CommonQuestionDetail
+        // Session name of QuestionnaireDetail or CommonQuestionDetail
         private string _isUpdateMode = "IsUpdateMode";
 
         // Session name of QuestionnaireDetail
@@ -36,7 +36,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Session name of QuestionnaireDetail and CommonQuestionDetail
+            // Session name of QuestionnaireDetail or CommonQuestionDetail
             this.Session.Remove(_isUpdateMode);
 
             // Session name of QuestionnaireDetail

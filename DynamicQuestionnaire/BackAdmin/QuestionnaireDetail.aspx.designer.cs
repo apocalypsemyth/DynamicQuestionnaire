@@ -69,13 +69,13 @@ namespace DynamicQuestionnaire.BackAdmin
         protected global::DynamicQuestionnaire.Components.ucCancelButton ucCancelButtonInQuestionnaireTab;
 
         /// <summary>
-        /// btnSubmitInQuestionnaireTab control.
+        /// ucSubmitButtonInQuestionnaireTab control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitInQuestionnaireTab;
+        protected global::DynamicQuestionnaire.Components.ucSubmitButton ucSubmitButtonInQuestionnaireTab;
 
         /// <summary>
         /// ddlCategoryList control.
@@ -132,13 +132,13 @@ namespace DynamicQuestionnaire.BackAdmin
         protected global::DynamicQuestionnaire.Components.ucCancelButton ucCancelButtonInQuestionTab;
 
         /// <summary>
-        /// btnSubmitInQuestionTab control.
+        /// ucSubmitButtonInQuestionTab control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitInQuestionTab;
+        protected global::DynamicQuestionnaire.Components.ucSubmitButton ucSubmitButtonInQuestionTab;
 
         /// <summary>
         /// btnExportAndDownloadDataToCSV control.
