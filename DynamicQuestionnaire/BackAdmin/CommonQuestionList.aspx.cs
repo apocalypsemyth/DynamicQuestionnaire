@@ -69,15 +69,19 @@ namespace DynamicQuestionnaire.BackAdmin
 
                 if (commonQuestionList.Count == 0)
                 {
+                    this.btnSearchCommonQuestion.Enabled = false;
+                    this.btnDeleteCommonQuestion.Enabled = false;
                     this.gvCommonQuestionList.Visible = false;
-                    this.ucPager.Visible = false;
                     this.plcEmptyCommonQuestion.Visible = true;
+                    this.ucPager.Visible = false;
                 }
                 else
                 {
+                    this.btnSearchCommonQuestion.Enabled = true;
+                    this.btnDeleteCommonQuestion.Enabled = true;
                     this.gvCommonQuestionList.Visible = true;
-                    this.ucPager.Visible = true;
                     this.plcEmptyCommonQuestion.Visible = false;
+                    this.ucPager.Visible = true;
 
                     this.gvCommonQuestionList.DataSource = commonQuestionList;
                     this.gvCommonQuestionList.DataBind();

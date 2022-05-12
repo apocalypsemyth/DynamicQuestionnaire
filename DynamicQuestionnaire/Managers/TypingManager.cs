@@ -24,5 +24,28 @@ namespace DynamicQuestionnaire.Managers
                 throw;
             }
         }
+
+        public void CreateTyping(string typingName)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    Typing newTyping = new Typing()
+                    {
+                        TypingID = Guid.NewGuid(),
+                        TypingName = typingName,
+                    };
+
+                    contextModel.Typings.Add(newTyping);
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("TypingManager.CreateTyping", ex);
+                throw;
+            }
+        }
     }
 }

@@ -75,13 +75,17 @@ namespace DynamicQuestionnaire
 
                 if (setOrNotSetQuestionnaireList.Count == 0)
                 {
+                    this.btnSearchQuestionnaire.Enabled = false;
                     this.gvQuestionnaireList.Visible = false;
                     this.plcEmpty.Visible = true;
+                    this.ucPager.Visible = false;
                 }
                 else
                 {
+                    this.btnSearchQuestionnaire.Enabled = true;
                     this.gvQuestionnaireList.Visible = true;
                     this.plcEmpty.Visible = false;
+                    this.ucPager.Visible = true;
 
                     this._questionListAmount = totalRows;
                     this._questionListPageIndex = pageIndex;

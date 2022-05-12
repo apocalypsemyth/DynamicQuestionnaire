@@ -147,10 +147,19 @@ namespace DynamicQuestionnaire.BackAdmin
         private void InitCreateMode()
         {
             var categoryList = this._categoryMgr.GetCategoryList();
-            var onlyCommonQuestionCategoryList = categoryList
-                    .Where(category => category.CategoryName == "常用問題" 
-                    && category.CommonQuestionID == null);
+            var resultCategoryList =
+                this.CheckCategoryExist(categoryList)
+                ? categoryList
+                : this._categoryMgr.GetCategoryList();
+            var onlyCommonQuestionCategoryList = 
+                resultCategoryList
+                .Where(category => category.CategoryName == "常用問題" 
+                && category.CommonQuestionID == null);
             var typingList = this._typingMgr.GetTypingList();
+            var resultTypingList =
+                this.CheckTypingExist(typingList)
+                ? typingList
+                : this._typingMgr.GetTypingList();
 
             // 問題控制項繫結
             this.ddlCategoryList.DataTextField = "CategoryName";
@@ -162,7 +171,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
             this.ddlTypingList.DataTextField = "TypingName";
             this.ddlTypingList.DataValueField = "TypingName";
-            this.ddlTypingList.DataSource = typingList;
+            this.ddlTypingList.DataSource = resultTypingList;
             this.ddlTypingList.DataBind();
             this.ddlTypingList.ClearSelection();
             this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
@@ -182,14 +191,22 @@ namespace DynamicQuestionnaire.BackAdmin
             else
             {
                 var categoryList = this._categoryMgr.GetCategoryList();
-                var excludeCustomizedQuestionCategoryList = categoryList
+                var resultCategoryList =
+                    this.CheckCategoryExist(categoryList)
+                    ? categoryList
+                    : this._categoryMgr.GetCategoryList();
+                var onlyCommonQuestionCategoryList = 
+                    resultCategoryList
                     .Where(category => category.CategoryName == "常用問題" 
                     && category.CommonQuestionID == null);
                 var currentCommonQuestionItsCategoryName =
-                    excludeCustomizedQuestionCategoryList
+                    onlyCommonQuestionCategoryList
                     .SingleOrDefault().CategoryName;
-
                 var typingList = this._typingMgr.GetTypingList();
+                var resultTypingList =
+                    this.CheckTypingExist(typingList)
+                    ? typingList
+                    : this._typingMgr.GetTypingList();
                 var questionListOfCommonQuestion = 
                     this._questionMgr.GetQuestionListOfCommonQuestion(commonQuestionID);
 
@@ -198,18 +215,81 @@ namespace DynamicQuestionnaire.BackAdmin
                 // 問題控制項繫結
                 this.ddlCategoryList.DataTextField = "CategoryName";
                 this.ddlCategoryList.DataValueField = "CategoryName";
-                this.ddlCategoryList.DataSource = excludeCustomizedQuestionCategoryList;
+                this.ddlCategoryList.DataSource = onlyCommonQuestionCategoryList;
                 this.ddlCategoryList.DataBind();
                 this.ddlCategoryList.ClearSelection();
                 this.ddlCategoryList.Items.FindByValue(currentCommonQuestionItsCategoryName).Selected = true;
 
                 this.ddlTypingList.DataTextField = "TypingName";
                 this.ddlTypingList.DataValueField = "TypingName";
-                this.ddlTypingList.DataSource = typingList;
+                this.ddlTypingList.DataSource = resultTypingList;
                 this.ddlTypingList.DataBind();
                 this.ddlTypingList.ClearSelection();
                 this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
             }
+        }
+
+        private bool CheckCategoryExist(List<Category> categoryList)
+        {
+            bool areAllCategoryExist = true;
+
+            if (categoryList == null || categoryList.Count == 0)
+            {
+                this._categoryMgr.CreateCategory("自訂問題");
+                this._categoryMgr.CreateCategory("常用問題");
+                areAllCategoryExist = false;
+
+                return areAllCategoryExist;
+            }
+
+            if (!categoryList.Where(item => item.CategoryName == "自訂問題").Any())
+            {
+                this._categoryMgr.CreateCategory("自訂問題");
+                areAllCategoryExist = false;
+            }
+
+            if (!categoryList.Where(item => item.CategoryName == "自訂問題").Any())
+            {
+                this._categoryMgr.CreateCategory("常用問題");
+                areAllCategoryExist = false;
+            }
+
+            return areAllCategoryExist;
+        }
+
+        private bool CheckTypingExist(List<Typing> typingList)
+        {
+            bool areAllTypingExist = true;
+
+            if (typingList == null || typingList.Count == 0)
+            {
+                this._typingMgr.CreateTyping("單選方塊");
+                this._typingMgr.CreateTyping("複選方塊");
+                this._typingMgr.CreateTyping("文字");
+                areAllTypingExist = false;
+
+                return areAllTypingExist;
+            }
+
+            if (!typingList.Where(item => item.TypingName == "單選方塊").Any())
+            {
+                this._typingMgr.CreateTyping("單選方塊");
+                areAllTypingExist = false;
+            }
+
+            if (!typingList.Where(item => item.TypingName == "複選方塊").Any())
+            {
+                this._typingMgr.CreateTyping("複選方塊");
+                areAllTypingExist = false;
+            }
+
+            if (!typingList.Where(item => item.TypingName == "文字").Any())
+            {
+                this._typingMgr.CreateTyping("文字");
+                areAllTypingExist = false;
+            }
+
+            return areAllTypingExist;
         }
 
         private void AlertMessage(string errorMsg)

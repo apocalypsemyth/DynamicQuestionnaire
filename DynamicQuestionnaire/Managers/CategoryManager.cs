@@ -42,6 +42,29 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
+        public void CreateCategory(string categoryName)
+        {
+            try
+            {
+                using (ContextModel contextModel = new ContextModel())
+                {
+                    Category newCategory = new Category()
+                    {
+                        CategoryID = Guid.NewGuid(),
+                        CategoryName = categoryName,
+                    };
+
+                    contextModel.Categories.Add(newCategory);
+                    contextModel.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("CategoryManager.CreateCategory", ex);
+                throw;
+            }
+        }
+
         public void CreateCategoryOfCommonQuestion(CommonQuestion commonQuestion)
         {
             try
