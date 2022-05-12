@@ -51,19 +51,25 @@ var CheckQuestionOfCommonQuestionInputs = function (objQuestionOfCommonQuestion)
         arrErrorMsg.push("請填入問題回答。");
     else {
         let questionAnswer = objQuestionOfCommonQuestion.questionAnswer;
-        let strArrChecking =
-            questionAnswer.indexOf(";") !== -1
-                ? questionAnswer.trim().split(";")
-                : questionAnswer.trim();
+        let hasSemicolon = questionAnswer.indexOf(";") !== -1;
 
-        if (Array.isArray(strArrChecking)) {
-            let hasWhiteSpace = strArrChecking.some(item => /\s/.test(item));
-            let hasTrailingWhiteSpace = strArrChecking.some(strChecking => !strChecking);
+        if (!hasSemicolon)
+            arrErrorMsg.push(`請以 ";" 分隔多個答案。`);
+        else {
+            let strArrChecking =
+                hasSemicolon
+                    ? questionAnswer.trim().split(";")
+                    : questionAnswer;
 
-            if (hasWhiteSpace)
-                arrErrorMsg.push("請不要留空於分號之間。");
-            if (hasTrailingWhiteSpace)
-                arrErrorMsg.push("請不要分號於結尾。");
+            if (Array.isArray(strArrChecking)) {
+                let hasWhiteSpace = strArrChecking.some(item => /\s/.test(item));
+                let hasStartOrEndWhiteSpace = strArrChecking.some(strChecking => !strChecking);
+
+                if (hasWhiteSpace)
+                    arrErrorMsg.push("請不要留空於分號之間。");
+                if (hasStartOrEndWhiteSpace)
+                    arrErrorMsg.push("請不要分號於開頭或結尾。");
+            }
         }
     }
 
