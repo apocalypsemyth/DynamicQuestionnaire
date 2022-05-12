@@ -57,9 +57,13 @@
                     <div class="col-sm-5">
                         <asp:TextBox ID="txtQuestionAnswerOfCommonQuestion" CssClass="form-control" runat="server" />
                     </div>
-
-                    <div class="col-sm-5">
-                        <button id="btnAddQuestionOfCommonQuestion" class="btn btn-success">加入</button>
+                    <div class="col-sm-5 align-self-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <h5>(多個答案以 <b>;</b> 分隔)</h5>
+                            </div>
+                            <button id="btnAddQuestionOfCommonQuestion" class="btn btn-success">加入</button>
+                        </div>
                     </div>
                 </div>
             </div>

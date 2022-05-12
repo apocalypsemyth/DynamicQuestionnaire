@@ -27,11 +27,11 @@ var GetQuestionnaireInputs = function () {
     return objQuestionnaire;
 }
 var GetQuestionInputs = function () {
-    let strQuestionName = $("input[id*=txtQuestionName]").val();
-    let strQuestionAnswer = $("input[id*=txtQuestionAnswer]").val();
-    let strCategoryName = $("select[id*=ddlCategoryList]").find(":selected").text();
-    let strTypingName = $("select[id*=ddlTypingList]").val();
-    let boolQuestionRequired = $("input[id*=ckbQuestionRequired]").is(":checked");
+    let strQuestionName = $(txtQuestionName).val();
+    let strQuestionAnswer = $(txtQuestionAnswer).val();
+    let strCategoryName = $(selectCategoryList).find(":selected").text();
+    let strTypingName = $(selectTypingList).val();
+    let boolQuestionRequired = $(ckbQuestionRequired).is(":checked");
 
     let objQuestion = {
         "questionName": strQuestionName,
@@ -105,15 +105,20 @@ var CheckQuestionInputs = function (objQuestion) {
     if (!objQuestion.questionAnswer)
         arrErrorMsg.push("請填入問題回答。");
     else {
-        let checkingStrArr = objQuestion.questionAnswer.indexOf(";") !== -1
-            ? objQuestion.questionAnswer.trim().split(";").map(str => str.trim())
-            : objQuestion.questionAnswer.trim();
-        
-        if (Array.isArray(checkingStrArr)) {
-            let isExitWhiteSpace = checkingStrArr.some(checkingStr => !checkingStr);
-            let result = isExitWhiteSpace ? false : checkingStrArr;
-            if (!result)
-                arrErrorMsg.push(`請不要留空於分號之間。`);
+        let questionAnswer = objQuestion.questionAnswer;
+        let strArrChecking =
+            questionAnswer.indexOf(";") !== -1
+                ? questionAnswer.trim().split(";")
+                : questionAnswer.trim();
+
+        if (Array.isArray(strArrChecking)) {
+            let hasWhiteSpace = strArrChecking.some(item => /\s/.test(item));
+            let hasTrailingWhiteSpace = strArrChecking.some(strChecking => !strChecking);
+
+            if (hasWhiteSpace)
+                arrErrorMsg.push("請不要留空於分號之間。");
+            if (hasTrailingWhiteSpace)
+                arrErrorMsg.push("請不要分號於結尾。");
         }
     }
 
@@ -170,13 +175,13 @@ var UpdateQuestionnaire = function (objQuestionnaire) {
 }
 
 var ResetQuestionInputs = function (strCategoryName) {
-    $("select[id*=ddlCategoryList] option").filter(function () {
+    $(selectCategoryList + " option").filter(function () {
         return $(this).text() == strCategoryName;
     }).prop('selected', true);
-    $("select[id*=ddlTypingList]").val("單選方塊").change();
-    $("input[id*=txtQuestionName]").val("");
-    $("input[id*=txtQuestionAnswer]").val("");
-    $("input[id*=ckbQuestionRequired]").prop("checked", false);
+    $(selectTypingList).val("單選方塊").change();
+    $(txtQuestionName).val("");
+    $(txtQuestionAnswer).val("");
+    $(ckbQuestionRequired).prop("checked", false);
 }
 var CreateQuestionListTable = function (objArrQuestion) {
     $(divQuestionListContainer).append(
@@ -395,13 +400,13 @@ var ShowToUpdateQuestion = function (strQuestionID) {
             if (objQuestion === FAILED || objQuestion === NULL) 
                 alert(errorMessageOfRetry);
             else {
-                $("select[id*=ddlCategoryList] option").filter(function () {
+                $(selectCategoryList + " option").filter(function () {
                     return $(this).text() == objQuestion.QuestionCategory;
                 }).prop('selected', true);
-                $("select[id*=ddlTypingList]").val(objQuestion.QuestionTyping).change();
-                $("input[id*=txtQuestionName]").val(objQuestion.QuestionName);
-                $("input[id*=txtQuestionAnswer]").val(objQuestion.QuestionAnswer);
-                $("input[id*=ckbQuestionRequired]").prop("checked", objQuestion.QuestionRequired);
+                $(selectTypingList).val(objQuestion.QuestionTyping).change();
+                $(txtQuestionName).val(objQuestion.QuestionName);
+                $(txtQuestionAnswer).val(objQuestion.QuestionAnswer);
+                $(ckbQuestionRequired).prop("checked", objQuestion.QuestionRequired);
             }
         },
         error: function (msg) {

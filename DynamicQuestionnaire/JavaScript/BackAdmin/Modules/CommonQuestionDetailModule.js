@@ -50,15 +50,20 @@ var CheckQuestionOfCommonQuestionInputs = function (objQuestionOfCommonQuestion)
     if (!objQuestionOfCommonQuestion.questionAnswer)
         arrErrorMsg.push("請填入問題回答。");
     else {
-        let checkingStrArr = objQuestionOfCommonQuestion.questionAnswer.indexOf(";") !== -1
-            ? objQuestionOfCommonQuestion.questionAnswer.trim().split(";").map(str => str.trim())
-            : objQuestionOfCommonQuestion.questionAnswer.trim();
+        let questionAnswer = objQuestionOfCommonQuestion.questionAnswer;
+        let strArrChecking =
+            questionAnswer.indexOf(";") !== -1
+                ? questionAnswer.trim().split(";")
+                : questionAnswer.trim();
 
-        if (Array.isArray(checkingStrArr)) {
-            let isExitWhiteSpace = checkingStrArr.some(checkingStr => !checkingStr);
-            let result = isExitWhiteSpace ? false : checkingStrArr;
-            if (!result)
-                arrErrorMsg.push(`請不要留空於分號之間。`);
+        if (Array.isArray(strArrChecking)) {
+            let hasWhiteSpace = strArrChecking.some(item => /\s/.test(item));
+            let hasTrailingWhiteSpace = strArrChecking.some(strChecking => !strChecking);
+
+            if (hasWhiteSpace)
+                arrErrorMsg.push("請不要留空於分號之間。");
+            if (hasTrailingWhiteSpace)
+                arrErrorMsg.push("請不要分號於結尾。");
         }
     }
 

@@ -102,9 +102,8 @@
             sessionStorage.setItem(activeTab, $(this).attr("href"));
         });
         let strActiveTab = sessionStorage.getItem(activeTab);
-        if (strActiveTab) {
+        if (strActiveTab) 
             $("#ulQuestionnaireDetailTabs a[href='" + strActiveTab + "']").tab("show");
-        }
         if (strActiveTab === "#question") {
             let strQuestionListHtml = sessionStorage.getItem(currentQuestionListTable);
             if (strQuestionListHtml)
@@ -113,10 +112,22 @@
 
         let strCurrentSetCommonQuestionOnQuestionnaireState =
             sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+        $(selectCategoryList + " option").each(function () {
+            if ($(this).text() === commonQuestionOfCategoryName) 
+                sessionStorage.setItem(currentCommonQuestionOfCategoryNameValue, $(this).val());
+        });
+        let strCurrentCommonQuestionOfCategoryNameValue =
+            sessionStorage.getItem(currentCommonQuestionOfCategoryNameValue);
         if (strCurrentSetCommonQuestionOnQuestionnaireState === setState)
-            $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").show();
+            $(selectCategoryList +
+                " option[value='" +
+                strCurrentCommonQuestionOfCategoryNameValue +
+                "']").show();
         else
-            $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']").hide();
+            $(selectCategoryList +
+                " option[value='" +
+                strCurrentCommonQuestionOfCategoryNameValue +
+                "']").hide();
 
         $(selectCategoryList).click(function (e) {
             e.preventDefault();
@@ -128,14 +139,18 @@
             let isUpdateMode = window.location.search.indexOf("?ID=") !== -1;
             let strCurrentSetCommonQuestionOnQuestionnaireState =
                 sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState);
+            let strCurrentCommonQuestionOfCategoryNameValue =
+                sessionStorage.getItem(currentCommonQuestionOfCategoryNameValue);
 
             if (strCurrentSetCommonQuestionOnQuestionnaireState === setState) {
                 if (strSelectedCategoryText === customizedQuestionOfCategoryName) {
                     let isSetCustomizedQuestion =
                         confirm("選擇常用問題後，\n再次選擇自訂問題，\n會將先前的常用問題全部移除，\n請問仍要繼續嗎？");
                     if (isSetCustomizedQuestion) {
-                        $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                            .hide();
+                        $(selectCategoryList +
+                            " option[value='" +
+                            strCurrentCommonQuestionOfCategoryNameValue +
+                            "']").hide();
                         $(selectCategoryList + " option").filter(function () {
                             return $(this).text() == customizedQuestionOfCategoryName;
                         }).prop('selected', true);
@@ -203,8 +218,10 @@
                 if (!isToModifyCommonQuestion)
                     return;
                 else {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .hide();
+                    $(selectCategoryList + 
+                        " option[value='" + 
+                        strCurrentCommonQuestionOfCategoryNameValue +
+                        "']").hide();
                     $(selectCategoryList + " option").filter(function () {
                         return $(this).text() == customizedQuestionOfCategoryName;
                     }).prop('selected', true);
@@ -254,8 +271,10 @@
                 if (!isToModifyCommonQuestion)
                     return;
                 else {
-                    $(selectCategoryList + " option[value='" + commonQuestionOfCategoryNameValue + "']")
-                        .hide();
+                    $(selectCategoryList + 
+                        " option[value='" + 
+                        strCurrentCommonQuestionOfCategoryNameValue +
+                        "']").hide();
                     $(selectCategoryList + " option").filter(function () {
                         return $(this).text() == customizedQuestionOfCategoryName;
                     }).prop('selected', true);

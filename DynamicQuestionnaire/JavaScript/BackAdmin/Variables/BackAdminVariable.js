@@ -6,8 +6,7 @@ const PAGESIZE = 4;
 let errorMessageOfRetry = "發生錯誤，請再嘗試。";
 let errorMessageOfAjax = "通訊失敗，請聯絡管理員。";
 let emptyMessageOfQuestionList = "<p>尚未有資料</p>";
-let emptyMessageOfUserListOrStatistics = "<p>目前尚未有使用者的回答。</p>";
-let commonQuestionOfCategoryNameValue = "b25a79c7-1b96-4ec6-9887-4f215b61c675";
+let emptyMessageOfUserListOrStatistics = "<p>尚未有使用者的回答。</p>";
 let commonQuestionOfCategoryName = "常用問題";
 let customizedQuestionOfCategoryName = "自訂問題";
 let showState = "show";
@@ -17,6 +16,7 @@ let notSetState = "notSet";
 
 // Session name of QuestionnaireDetail
 let activeTab = "activeTab";
+let currentCommonQuestionOfCategoryNameValue = "currentCommonQuestionOfCategoryNameValue";
 let currentCommonQuestionOfCategoryNameShowState = "currentCommonQuestionOfCategoryNameShowState";
 let currentSetCommonQuestionOnQuestionnaireState = "currentSetCommonQuestionOnQuestionnaire";
 let currentQuestionListTable = "currentQuestionListTable";
@@ -29,6 +29,10 @@ let currentStatistics = "currentStatistics";
 
 // Controls of QuestionnaireDetail
 let selectCategoryList = "select[id*=ddlCategoryList]";
+let selectTypingList = "select[id*=ddlTypingList]";
+let txtQuestionName = "input[id*=txtQuestionName]";
+let txtQuestionAnswer = "input[id*=txtQuestionAnswer]";
+let ckbQuestionRequired = "input[id*=ckbQuestionRequired]";
 let btnAddQuestion = "button[id=btnAddQuestion]";
 let btnDeleteQuestion = "button[id=btnDeleteQuestion]";
 let divQuestionListContainer = "#divQuestionListContainer";
