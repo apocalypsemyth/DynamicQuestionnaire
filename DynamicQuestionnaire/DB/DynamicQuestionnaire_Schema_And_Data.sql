@@ -1,12 +1,12 @@
 USE [master]
 GO
-/****** Object:  Database [DynamicQuestionnaire]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Database [DynamicQuestionnaire]    Script Date: 2022/05/12 11:47:43 ******/
 CREATE DATABASE [DynamicQuestionnaire]
  CONTAINMENT = NONE
  ON  PRIMARY 
 ( NAME = N'DynamicQuestionnaire', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\DynamicQuestionnaire.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'DynamicQuestionnaire_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\DynamicQuestionnaire_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'DynamicQuestionnaire_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\DynamicQuestionnaire_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
@@ -73,7 +73,7 @@ EXEC sys.sp_db_vardecimal_storage_format N'DynamicQuestionnaire', N'ON'
 GO
 USE [DynamicQuestionnaire]
 GO
-/****** Object:  Table [dbo].[Categories]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[Categories]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -88,7 +88,7 @@ CREATE TABLE [dbo].[Categories](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[CommonQuestions]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[CommonQuestions]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -104,7 +104,7 @@ CREATE TABLE [dbo].[CommonQuestions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[Questionnaires]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -124,7 +124,7 @@ CREATE TABLE [dbo].[Questionnaires](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -132,8 +132,8 @@ GO
 CREATE TABLE [dbo].[Questions](
 	[QuestionID] [uniqueidentifier] NOT NULL,
 	[QuestionnaireID] [uniqueidentifier] NOT NULL,
-	[QuestionCategory] [varchar](50) NOT NULL,
-	[QuestionTyping] [varchar](50) NOT NULL,
+	[QuestionCategory] [nvarchar](50) NOT NULL,
+	[QuestionTyping] [nvarchar](50) NOT NULL,
 	[QuestionName] [nvarchar](50) NOT NULL,
 	[QuestionRequired] [bit] NOT NULL,
 	[QuestionAnswer] [nvarchar](500) NOT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE [dbo].[Questions](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Typings]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[Typings]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -160,7 +160,7 @@ CREATE TABLE [dbo].[Typings](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserAnswers]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[UserAnswers]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -174,7 +174,7 @@ CREATE TABLE [dbo].[UserAnswers](
 	[Answer] [nvarchar](500) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 2022/05/08 16:15:30 ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 2022/05/12 11:47:43 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,13 +217,13 @@ INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsE
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'b32a91af-e4ca-48c9-a2e2-3301fa81d5a6', N'questionnaire9', N'questionnaire9Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T20:29:52.337' AS DateTime), CAST(N'2022-04-12T20:29:52.337' AS DateTime))
 GO
-INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'88a86fe6-c3de-46c4-950f-4f8239aaa6e7', N'questionnaire13', N'questionnaire13Des', 1, CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T00:52:54.847' AS DateTime), CAST(N'2022-04-15T00:52:54.847' AS DateTime))
+INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'88a86fe6-c3de-46c4-950f-4f8239aaa6e7', N'questionnaire13', N'questionnaire13Des', 0, CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T00:52:54.847' AS DateTime), CAST(N'2022-04-15T00:52:54.847' AS DateTime))
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'6efbd6d5-165d-485d-9cc0-53eea3dd1f4c', N'questionnaire1', N'questionnaire1Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T20:23:42.450' AS DateTime), CAST(N'2022-04-12T20:23:42.450' AS DateTime))
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'c0b5bb38-3eb6-43f5-a527-5756682e672b', N'questionnaire6', N'questionnaire6Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T20:28:40.633' AS DateTime), CAST(N'2022-04-12T20:28:40.633' AS DateTime))
 GO
-INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'baf455b3-6663-4031-aec4-5a4635e34c36', N'questionnaire16', N'questionnaire16Des', 0, CAST(N'2022-05-05T00:00:00.000' AS DateTime), CAST(N'2022-05-05T00:00:00.000' AS DateTime), CAST(N'2022-05-05T09:58:03.547' AS DateTime), CAST(N'2022-05-06T15:59:13.307' AS DateTime))
+INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'baf455b3-6663-4031-aec4-5a4635e34c36', N'questionnaire16', N'questionnaire16Des', 0, CAST(N'2022-05-05T00:00:00.000' AS DateTime), CAST(N'2022-05-11T00:00:00.000' AS DateTime), CAST(N'2022-05-05T09:58:03.547' AS DateTime), CAST(N'2022-05-11T12:42:22.397' AS DateTime))
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'e2604ecb-8690-4132-95df-5cd47580eb15', N'questionnaire10', N'questionnaire10Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T21:56:54.190' AS DateTime), CAST(N'2022-04-12T21:56:54.190' AS DateTime))
 GO
@@ -245,7 +245,7 @@ INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsE
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'45a7ade8-5928-483e-a1ec-e399dca9d950', N'questionnaire14', N'questionnaire14Des', 0, CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T00:00:00.000' AS DateTime), CAST(N'2022-04-15T22:09:51.513' AS DateTime), CAST(N'2022-04-15T22:09:51.513' AS DateTime))
 GO
-INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'8cb0a0c2-e863-439e-b7e5-f86ac0af153b', N'questionnaire17', N'questionnaire17Des', 1, CAST(N'2022-05-08T00:00:00.000' AS DateTime), CAST(N'2022-05-08T00:00:00.000' AS DateTime), CAST(N'2022-05-08T03:30:14.927' AS DateTime), CAST(N'2022-05-08T12:18:16.340' AS DateTime))
+INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'8cb0a0c2-e863-439e-b7e5-f86ac0af153b', N'questionnaire17', N'questionnaire17Des', 0, CAST(N'2022-05-08T00:00:00.000' AS DateTime), CAST(N'2022-05-08T00:00:00.000' AS DateTime), CAST(N'2022-05-08T03:30:14.927' AS DateTime), CAST(N'2022-05-09T12:44:02.123' AS DateTime))
 GO
 INSERT [dbo].[Questionnaires] ([QuestionnaireID], [Caption], [Description], [IsEnable], [StartDate], [EndDate], [CreateDate], [UpdateDate]) VALUES (N'932bdea4-899a-490d-a585-fa8a47785981', N'questionnaire2', N'questionnaire2Des', 1, CAST(N'2022-04-12T00:00:00.000' AS DateTime), NULL, CAST(N'2022-04-12T20:26:31.593' AS DateTime), CAST(N'2022-04-12T20:26:31.593' AS DateTime))
 GO
@@ -338,6 +338,8 @@ GO
 INSERT [dbo].[Questions] ([QuestionID], [QuestionnaireID], [QuestionCategory], [QuestionTyping], [QuestionName], [QuestionRequired], [QuestionAnswer], [CreateDate], [UpdateDate], [CommonQuestionID]) VALUES (N'6b2ab15d-85ac-4650-97ea-e22c550f39c0', N'd9a7c5d5-41c2-4d0b-8266-56887ea101e0', N'自訂問題', N'單選方塊', N'question1', 0, N'question1-answer1;question1-answer2;question1-answer3', CAST(N'2022-04-30T03:52:10.133' AS DateTime), CAST(N'2022-04-30T03:52:10.133' AS DateTime), NULL)
 GO
 INSERT [dbo].[Questions] ([QuestionID], [QuestionnaireID], [QuestionCategory], [QuestionTyping], [QuestionName], [QuestionRequired], [QuestionAnswer], [CreateDate], [UpdateDate], [CommonQuestionID]) VALUES (N'94d802df-18ac-4e5d-a65a-ec65ca41dec9', N'8cb0a0c2-e863-439e-b7e5-f86ac0af153b', N'自訂問題', N'單選方塊', N'question4', 1, N'question4-answer1', CAST(N'2022-05-08T12:18:12.883' AS DateTime), CAST(N'2022-05-08T12:18:12.883' AS DateTime), NULL)
+GO
+INSERT [dbo].[Questions] ([QuestionID], [QuestionnaireID], [QuestionCategory], [QuestionTyping], [QuestionName], [QuestionRequired], [QuestionAnswer], [CreateDate], [UpdateDate], [CommonQuestionID]) VALUES (N'bf5aa0ed-b870-4702-bd0c-edf749bc6569', N'8b975e5d-40ea-4670-b7b9-b5c4df3d6913', N'常用問題', N'單選方塊', N'cQuestion1', 0, N'cQuestion1-answer1;cQuestion1-answer2;cQuestion1-answer3', CAST(N'2022-05-11T17:28:51.957' AS DateTime), CAST(N'2022-05-11T17:28:51.957' AS DateTime), N'a5468859-53b8-446a-beec-68c8a8e30b17')
 GO
 INSERT [dbo].[Questions] ([QuestionID], [QuestionnaireID], [QuestionCategory], [QuestionTyping], [QuestionName], [QuestionRequired], [QuestionAnswer], [CreateDate], [UpdateDate], [CommonQuestionID]) VALUES (N'4c8592a6-996f-4697-a0ce-f4165bec24df', N'f25adc80-5352-4977-aaee-74b3ab7cde28', N'自訂問題', N'複選方塊', N'question4', 0, N'question4-answer1;question4-answer2;question4-answer3', CAST(N'2022-04-20T16:43:01.280' AS DateTime), CAST(N'2022-04-20T16:43:01.280' AS DateTime), NULL)
 GO

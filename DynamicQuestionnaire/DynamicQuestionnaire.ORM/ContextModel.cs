@@ -26,14 +26,6 @@ namespace DynamicQuestionnaire.DynamicQuestionnaire.ORM
                 .HasMany(e => e.Users)
                 .WithRequired(e => e.Questionnaire)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<Question>()
-                .Property(e => e.QuestionCategory)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Question>()
-                .Property(e => e.QuestionTyping)
-                .IsUnicode(false);
         }
     }
 }
