@@ -1,8 +1,4 @@
-﻿var SetContainerSession = function (strSelector, strSessionName) {
-    let strHtml = $(strSelector).html();
-    sessionStorage.setItem(strSessionName, strHtml);
-}
-var SetContainerShowStateSession = function (strSessionName, strShowState) {
+﻿var SetContainerShowStateSession = function (strSessionName, strShowState) {
     sessionStorage.setItem(strSessionName, strShowState);
 }
 var SetElementCurrentStateSession = function (strSessionName, strCurrentState) {
@@ -196,7 +192,7 @@ var ResetQuestionInputs = function (strCategoryName) {
     $(selectCategoryList + " option").filter(function () {
         return $(this).text() == strCategoryName;
     }).prop('selected', true);
-    $(selectTypingList).val("單選方塊").change();
+    $(selectTypingList).val(SINGLE_SELECT).change();
     $(txtQuestionName).val("");
     $(txtQuestionAnswer).val("");
     $(ckbQuestionRequired).prop("checked", false);
@@ -269,11 +265,10 @@ var GetQuestionList = function (strQuestionnaireID) {
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         beforeSend: function () {
-            $("#loadingProgressBarContainer").show();
-            $("#loadingProgressBar").animate({ width: "30%" }, 1);
+            $(loadingProgressBarContainer).show();
+            $(loadingProgressBar).animate({ width: startPercent }, 1);
         },
         success: function (strOrObjArrQuestion) {
-            $("#loadingProgressBar").animate({ width: "100%" }, 1);
             $(btnDeleteQuestion).hide();
             $(divQuestionListContainer).empty();
 
@@ -322,7 +317,8 @@ var GetQuestionList = function (strQuestionnaireID) {
             alert(errorMessageOfAjax);
         },
         complete: function () {
-            $("#loadingProgressBarContainer").fadeOut(100);
+            $(loadingProgressBar).animate({ width: endPercent }, 1);
+            $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
         }
     });
 }
@@ -854,7 +850,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
             let anothorJ = j;
             let jPlus1 = anothorJ + 1;
 
-            if (questionTyping === "單選方塊") {
+            if (questionTyping === SINGLE_SELECT) {
                 $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column`).append(
                     `
                         <div class="form-check">
@@ -867,7 +863,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
                 );
             }
 
-            if (questionTyping == "複選方塊") {
+            if (questionTyping == MULTIPLE_SELECT) {
                 $(`#divUserAnswerDetailInnerContainer #${questionID} div.d-flex.flex-column`).append(
                     `
                         <div class="form-check">
@@ -880,7 +876,7 @@ var CreateUserAnswerDetail = function (objArrQuestionModel, objArrUserAnswerMode
                 );
             }
 
-            if (questionTyping == "文字") {
+            if (questionTyping == TEXT) {
                 let isExitValue = arrUserAnswerNum.indexOf(jPlus1) === -1
                     ? false
                     : arrQuestionItsUserAnswer.filter(item => item.AnswerNum === jPlus1)[0].Answer;
@@ -1013,7 +1009,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
                     ? 0
                     : arrEachUserAnswerNum[jPlus1];
 
-            if (questionTyping === "單選方塊") {
+            if (questionTyping === SINGLE_SELECT) {
                 $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
@@ -1027,7 +1023,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
                 );
             }
 
-            if (questionTyping == "複選方塊") {
+            if (questionTyping == MULTIPLE_SELECT) {
                 $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">
@@ -1041,7 +1037,7 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
                 );
             }
 
-            if (questionTyping == "文字") {
+            if (questionTyping == TEXT) {
                 $(`#divStatisticsInnerContainer #${questionID} div.d-flex.flex-column h3`).after(
                     `
                         <div class="form-check">

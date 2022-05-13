@@ -1,10 +1,5 @@
-﻿var SetContainerSession = function (strSelector, strSessionName) {
-    let strHtml = $(strSelector).html();
-    sessionStorage.setItem(strSessionName, strHtml);
-}
-
-var GetCommonQuestionInputs = function () {
-    let strCommonQuestionName = $("input[id*=txtCommonQuestionName]").val();
+﻿var GetCommonQuestionInputs = function () {
+    let strCommonQuestionName = $(txtCommonQuestionName).val();
 
     let objCommonQuestion = {
         "commonQuestionName": strCommonQuestionName,
@@ -13,12 +8,12 @@ var GetCommonQuestionInputs = function () {
     return objCommonQuestion;
 }
 var GetQuestionOfCommonQuestionInputs = function () {
-    let strQuestionNameOfCommonQuestion = $("input[id*=txtQuestionNameOfCommonQuestion]").val();
-    let strQuestionAnswerOfCommonQuestion = $("input[id*=txtQuestionAnswerOfCommonQuestion]").val();
-    let strCategoryName = $("select[id*=ddlCategoryList]").val();
-    let strTypingName = $("select[id*=ddlTypingList]").val();
+    let strQuestionNameOfCommonQuestion = $(txtQuestionNameOfCommonQuestion).val();
+    let strQuestionAnswerOfCommonQuestion = $(txtQuestionAnswerOfCommonQuestion).val();
+    let strCategoryName = $(selectCategoryList).val();
+    let strTypingName = $(selectTypingList).val();
     let boolQuestionRequiredOfCommonQuestion =
-        $("input[id*=ckbQuestionRequiredOfCommonQuestion]").is(":checked");
+        $(ckbQuestionRequiredOfCommonQuestion).is(":checked");
 
     let objQuestionOfCommonQuestion = {
         "questionName": strQuestionNameOfCommonQuestion,
@@ -79,6 +74,9 @@ var CheckQuestionOfCommonQuestionInputs = function (objQuestionOfCommonQuestion)
         return true;
 }
 
+var ResetCommonQuestionInputs = function () {
+    $(txtCommonQuestionName).val("");
+}
 var GetCommonQuestion = function (strCommonQuestionID) {
     $.ajax({
         url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=GET_COMMONQUESTION",
@@ -86,7 +84,7 @@ var GetCommonQuestion = function (strCommonQuestionID) {
         data: { "commonQuestionID": strCommonQuestionID },
         success: function (strErrorMsg) {
             if (strErrorMsg === FAILED)
-                alert("發生錯誤，請再嘗試");
+                alert(errorMessageOfRetry);
         },
         error: function (msg) {
             console.log(msg);
@@ -122,7 +120,7 @@ var UpdateCommonQuestion = function (objCommonQuestion) {
         method: "POST",
         data: objCommonQuestion,
         success: function (updatedOrNotUpdatedObjCommonQuestion) {
-            $("input[id*=txtCommonQuestionName]")
+            $(txtCommonQuestionName)
                 .val(updatedOrNotUpdatedObjCommonQuestion.CommonQuestionName);
         },
         error: function (msg) {
@@ -133,11 +131,11 @@ var UpdateCommonQuestion = function (objCommonQuestion) {
 }
 
 var ResetQuestionOfCommonQuestionInputs = function () {
-    $("select[id*=ddlCategoryList]").val("常用問題").change();
-    $("select[id*=ddlTypingList]").val("單選方塊").change();
-    $("input[id*=txtQuestionNameOfCommonQuestion]").val("");
-    $("input[id*=txtQuestionAnswerOfCommonQuestion]").val("");
-    $("input[id*=ckbQuestionRequiredOfCommonQuestion]").prop("checked", false);
+    $(selectCategoryList).val(commonQuestionOfCategoryName).change();
+    $(selectTypingList).val(SINGLE_SELECT).change();
+    $(txtQuestionNameOfCommonQuestion).val("");
+    $(txtQuestionAnswerOfCommonQuestion).val("");
+    $(ckbQuestionRequiredOfCommonQuestion).prop("checked", false);
 }
 var CreateQuestionListOfCommonQuestionTable = function (objArrQuestionOfCommonQuestion) {
     $("#divQuestionListOfCommonQuestionContainer").append(
@@ -206,12 +204,22 @@ var GetQuestionListOfCommonQuestion = function (strCommonQuestionID) {
         url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=GET_QUESTIONLIST_OF_COMMONQUESTION",
         method: "POST",
         data: { "commonQuestionID": strCommonQuestionID },
+        beforeSend: function () {
+            $(loadingProgressBarContainer).show();
+            $(loadingProgressBar).animate({ width: startPercent }, 1);
+        },
         success: function (strOrObjArrQuestionOfCommonQuestion) {
             $(btnDeleteQuestionOfCommonQuestion).hide();
             $(divQuestionListOfCommonQuestionContainer).empty();
 
             if (strOrObjArrQuestionOfCommonQuestion === NULL + FAILED) {
-                window.location.href = "CommonQuestionDetail.aspx";
+                ResetCommonQuestionInputs();
+                ResetQuestionOfCommonQuestionInputs();
+                $(divQuestionListOfCommonQuestionContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(
+                    divQuestionListOfCommonQuestionContainer,
+                    currentQuestionListOfCommonQuestionTable
+                );
             }
             else if (strOrObjArrQuestionOfCommonQuestion === FAILED) {
                 alert(errorMessageOfRetry);
@@ -269,6 +277,10 @@ var GetQuestionListOfCommonQuestion = function (strCommonQuestionID) {
         error: function (msg) {
             console.log(msg);
             alert(errorMessageOfAjax);
+        },
+        complete: function () {
+            $(loadingProgressBar).animate({ width: endPercent }, 1);
+            $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
         }
     });
 }
@@ -394,17 +406,17 @@ var ShowToUpdateQuestionOfCommonQuestion = function (strQuestionIDOfCommonQuesti
                 || strOrObjQuestionOfCommonQuestion === NULL)
                 alert(errorMessageOfRetry);
             else {
-                $("select[id*=ddlCategoryList]")
+                $(selectCategoryList)
                     .val(strOrObjQuestionOfCommonQuestion.QuestionCategory)
                     .change();
-                $("select[id*=ddlTypingList]")
+                $(selectTypingList)
                     .val(strOrObjQuestionOfCommonQuestion.QuestionTyping)
                     .change();
-                $("input[id*=txtQuestionNameOfCommonQuestion]")
+                $(txtQuestionNameOfCommonQuestion)
                     .val(strOrObjQuestionOfCommonQuestion.QuestionName);
-                $("input[id*=txtQuestionAnswerOfCommonQuestion]")
+                $(txtQuestionAnswerOfCommonQuestion)
                     .val(strOrObjQuestionOfCommonQuestion.QuestionAnswer);
-                $("input[id*=ckbQuestionRequiredOfCommonQuestion]")
+                $(ckbQuestionRequiredOfCommonQuestion)
                     .prop("checked", strOrObjQuestionOfCommonQuestion.QuestionRequired);
             }
         },
