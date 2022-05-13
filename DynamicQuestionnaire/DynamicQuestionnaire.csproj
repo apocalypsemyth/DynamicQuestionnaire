@@ -85,6 +85,7 @@
     <Content Include="BackAdmin\QuestionnaireList.aspx" />
     <Content Include="CheckingQuestionnaireDetail.aspx" />
     <Content Include="Components\ucCancelButton.ascx" />
+    <Content Include="Components\ucLoadingProgressBar.ascx" />
     <Content Include="Components\ucPager.ascx" />
     <Content Include="Components\ucSubmitButton.ascx" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -104,6 +105,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Css\BackAdmin\Admin.css" />
+    <Content Include="Css\LoadingProgressBar.css" />
     <Content Include="Css\Main.css" />
     <Content Include="DB\DynamicQuestionnaire_Schema_And_Data.sql" />
     <Content Include="Global.asax" />
@@ -220,6 +222,13 @@
     </Compile>
     <Compile Include="Components\ucCancelButton.ascx.designer.cs">
       <DependentUpon>ucCancelButton.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ucLoadingProgressBar.ascx.cs">
+      <DependentUpon>ucLoadingProgressBar.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\ucLoadingProgressBar.ascx.designer.cs">
+      <DependentUpon>ucLoadingProgressBar.ascx</DependentUpon>
     </Compile>
     <Compile Include="Components\ucPager.ascx.cs">
       <DependentUpon>ucPager.ascx</DependentUpon>

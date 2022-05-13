@@ -10,11 +10,11 @@ var SetElementCurrentStateSession = function (strSessionName, strCurrentState) {
 }
 
 var GetQuestionnaireInputs = function () {
-    let strCaption = $("input[id*=txtCaption]").val();
-    let strDescription = $("textarea[id*=txtDescription]").val();
-    let strStartDate = $("input[id*=txtStartDate]").val();
-    let strEndDate = $("input[id*=txtEndDate]").val();
-    let boolIsEnable = $("input[id*=ckbIsEnable]").is(":checked");
+    let strCaption = $(txtCaption).val();
+    let strDescription = $(txtDescription).val();
+    let strStartDate = $(txtStartDate).val();
+    let strEndDate = $(txtEndDate).val();
+    let boolIsEnable = $(ckbIsEnable).is(":checked");
 
     let objQuestionnaire = {
         "caption": strCaption,
@@ -134,6 +134,18 @@ var CheckQuestionInputs = function (objQuestion) {
         return true;
 }
 
+var ResetQuestionnaireInputs = function () {
+    let d = new Date();
+    let month = d.getMonth() < 9 ? `0${d.getMonth() + 1}` : d.getMonth() + 1;
+    let date = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
+    let result = d.getFullYear() + "/" + month + "/" + date;
+
+    $(txtCaption).val("");
+    $(txtDescription).val("");
+    $(txtStartDate).val(result);
+    $(txtEndDate).val("");
+    $(ckbIsEnable).is(":checked");
+}
 var GetQuestionnaire = function (strQuestionnaireID) {
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_QUESTIONNAIRE",
@@ -256,12 +268,20 @@ var GetQuestionList = function (strQuestionnaireID) {
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_QUESTIONLIST",
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
+        beforeSend: function () {
+            $("#loadingProgressBarContainer").show();
+            $("#loadingProgressBar").animate({ width: "30%" }, 1);
+        },
         success: function (strOrObjArrQuestion) {
+            $("#loadingProgressBar").animate({ width: "100%" }, 1);
             $(btnDeleteQuestion).hide();
             $(divQuestionListContainer).empty();
 
             if (strOrObjArrQuestion === NULL + FAILED) {
-                window.location.href = "QuestionnaireDetail.aspx";
+                ResetQuestionnaireInputs();
+                ResetQuestionInputs(customizedQuestionOfCategoryName);
+                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
+                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
             else if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);
@@ -300,6 +320,9 @@ var GetQuestionList = function (strQuestionnaireID) {
         error: function (msg) {
             console.log(msg);
             alert(errorMessageOfAjax);
+        },
+        complete: function () {
+            $("#loadingProgressBarContainer").fadeOut(100);
         }
     });
 }

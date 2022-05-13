@@ -28,6 +28,11 @@ let currentUserAnswerShowState = "currentUserAnswerShowState";
 let currentStatistics = "currentStatistics";
 
 // Controls of QuestionnaireDetail
+let txtCaption = "input[id*=txtCaption]";
+let txtDescription = "textarea[id*=txtDescription]";
+let txtStartDate = "input[id*=txtStartDate]";
+let txtEndDate = "input[id*=txtEndDate]";
+let ckbIsEnable = "input[id*=ckbIsEnable]";
 let selectCategoryList = "select[id*=ddlCategoryList]";
 let selectTypingList = "select[id*=ddlTypingList]";
 let txtQuestionName = "input[id*=txtQuestionName]";
