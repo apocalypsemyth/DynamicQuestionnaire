@@ -115,6 +115,7 @@
     <Content Include="JavaScript\BackAdmin\Funcs\QuestionnaireListFunc.js" />
     <Content Include="JavaScript\BackAdmin\Modules\CommonQuestionDetailModule.js" />
     <Content Include="JavaScript\BackAdmin\Modules\QuestionnaireDetailModule.js" />
+    <Content Include="JavaScript\BackAdmin\QuestionnaireAndCommonQuestionDetail.js" />
     <Content Include="JavaScript\BackAdmin\QuestionnaireDetail.js" />
     <Content Include="JavaScript\BackAdmin\CommonQuestionDetail.js" />
     <Content Include="JavaScript\BackAdmin\Variables\BackAdminVariable.js" />
@@ -139,6 +140,7 @@
     <Content Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx" />
     <Content Include="API\QuestionnaireStatisticsDataHandler.ashx" />
     <Content Include="DB\DynamicQuestionnaire.bak" />
+    <Content Include="API\BackAdmin\QuestionnaireAndCommonQuestionDetailDataHandler.ashx" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery.min.js" />
@@ -150,6 +152,9 @@
   <ItemGroup>
     <Compile Include="API\BackAdmin\CommonQuestionDetailDataHandler.ashx.cs">
       <DependentUpon>CommonQuestionDetailDataHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="API\BackAdmin\QuestionnaireAndCommonQuestionDetailDataHandler.ashx.cs">
+      <DependentUpon>QuestionnaireAndCommonQuestionDetailDataHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="API\BackAdmin\QuestionnaireDetailDataHandler.ashx.cs">
       <DependentUpon>QuestionnaireDetailDataHandler.ashx</DependentUpon>

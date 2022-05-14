@@ -1,5 +1,8 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Main.master.cs" Inherits="DynamicQuestionnaire.Main" %>
 
+<%@ Register Src="~/Components/ucLoadingProgressBar.ascx" TagPrefix="uc1" TagName="ucLoadingProgressBar" %>
+
+
 <!DOCTYPE html>
 
 <html>
@@ -16,6 +19,7 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
+    <uc1:ucLoadingProgressBar runat="server" ID="ucLoadingProgressBar" />
     <form id="form1" runat="server">
         <div id="formContainer" class="row align-items-center justify-content-center g-0 gy-3 p-3">
             <div class="col-md-11">

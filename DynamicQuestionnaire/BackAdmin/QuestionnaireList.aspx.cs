@@ -19,40 +19,10 @@ namespace DynamicQuestionnaire.BackAdmin
         // Session name of QuestionnaireList
         private string _toSetIsEnableOfQuestionnaireList = "ToSetIsEnableOfQuestionnaireList";
 
-        // Session name of QuestionnaireDetail or CommonQuestionDetail
-        private string _isUpdateMode = "IsUpdateMode";
-
-        // Session name of QuestionnaireDetail
-        private string _questionnaire = "Questionnaire";
-        private string _questionList = "QuestionList";
-        private string _currentPagerIndex = "CurrentPagerIndex";
-        private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
-
-        // Session name of CommonQuestionDetail
-        private string _commonQuestion = "CommonQuestion";
-        private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
-
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (this.Session[_isUpdateMode] != null
-                && (bool)this.Session[_isUpdateMode] == false)
-            {
-                // Session name of QuestionnaireDetail or CommonQuestionDetail
-                this.Session.Remove(_isUpdateMode);
-
-                // Session name of QuestionnaireDetail
-                this.Session.Remove(_questionnaire);
-                this.Session.Remove(_questionList);
-                this.Session.Remove(_currentPagerIndex);
-                this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
-
-                // Session name of CommonQuestionDetail
-                this.Session.Remove(_commonQuestion);
-                this.Session.Remove(_questionListOfCommonQuestion);
-            }
-
             string pageIndexStr = this.Request.QueryString["Index"];
             int pageIndex =
                 (string.IsNullOrWhiteSpace(pageIndexStr))

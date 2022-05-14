@@ -127,14 +127,14 @@ function CreateQuestionnaireStatistics(objArrQuestionModel, objArrUserAnswerMode
                                 ${resultQuestionName}
                             </h2>
                             <p>
-                                目前尚未有使用者的回答
+                                ${emptyMessageOfUserListOrStatistics}
                             </p>
                         </div>
                     </div>
                 `
             );
         }
-        else if (questionTyping === "文字") {
+        else if (questionTyping === TEXT) {
             $("#divQuestionnaireStatisticsInnerContainer").append(
                 `
                     <div class="col-12">
@@ -184,7 +184,7 @@ function GetQuestionnaireStatistics(strQuestionnaireID) {
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrStatistics) {
             if (strOrObjArrStatistics === FAILED)
-                alert("發生錯誤，請再嘗試");
+                alert(errorMessageOfRetry);
             else {
                 let [objArrQuestionModel, objArrUserAnswerModel] = strOrObjArrStatistics;
                 
@@ -193,7 +193,7 @@ function GetQuestionnaireStatistics(strQuestionnaireID) {
         },
         error: function (msg) {
             console.log(msg);
-            alert("通訊失敗，請聯絡管理員。");
+            alert(errorMessageOfAjax);
         }
     });
 }

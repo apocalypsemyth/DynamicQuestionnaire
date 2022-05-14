@@ -93,7 +93,7 @@
             </div>
 
             <div class="col-md-10">
-                <div class="d-flex align-item-center justify-content-end">
+                <div class="d-flex align-item-center justify-content-end gap-1">
                     <asp:Button ID="btnEdit" CssClass="btn btn-secondary" runat="server" Text="修改" />
                     <asp:Button ID="btnSubmit" CssClass="btn btn-success" runat="server" Text="送出" OnClick="btnSubmit_Click" />
                 </div>

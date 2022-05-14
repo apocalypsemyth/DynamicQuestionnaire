@@ -20,8 +20,8 @@ namespace DynamicQuestionnaire.API
         private string _textResponse = "text/plain";
         private string _jsonResponse = "application/json";
         private string _nullResponse = "NULL";
-        private string _successedResponse = "SUCCESSED";
         private string _failedResponse = "FAILED";
+        private string _successedResponse = "SUCCESSED";
 
         // Session name
         private string _isUpdateMode = "IsUpdateMode";
@@ -221,6 +221,8 @@ namespace DynamicQuestionnaire.API
                     context.Response.Write(jsonText);
                     return;
                 }
+
+                return;
             }
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("CREATE_QUESTION", context.Request.QueryString["Action"], true) == 0)

@@ -1,40 +1,28 @@
 ﻿$(document).ready(function () {
     if (window.location.href.indexOf("QuestionnaireDetail.aspx") === -1) {
-        $.ajax({
-            async: false,
-            url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_SESSION",
-            method: "GET",
-            success: function (strMsg) {
-                if (strMsg === SUCCESSED) {
-                }
-            },
-            error: function (msg) {
-                console.log(msg);
-                alert(errorMessageOfAjax);
-            }
-        });
+        ResetCheckingOrNotQuestionnaireDetailSession();
     }
     else {
         let queryString = window.location.search;
         let isExistQueryString = queryString.indexOf("?ID=") !== -1;
-        let currentUrl = window.location.href;
-        let isQuestionnaireDetail =
-            currentUrl.indexOf("QuestionnaireDetail.aspx") !== -1
-            && currentUrl.indexOf("Checking") === -1
+        let isCheckingQuestionnaireDetail =
+            window.location.href.indexOf("CheckingQuestionnaireDetail.aspx") !== -1
         let strQuestionnaireID =
-            isExistQueryString && isQuestionnaireDetail
-                ? queryString.split("?ID=")[1]
-                : "";
-        ResetPage(strQuestionnaireID);
+            isExistQueryString
+                ? !isCheckingQuestionnaireDetail
+                    ? queryString.split("?ID=")[1]
+                    : NULL
+                : FAILED;
+        ResetQuestionnaireDetailInputs(strQuestionnaireID);
 
         $("a[id*=aLinkCheckingQuestionnaireDetail]").click(function () {
-            ResetUserInputsIsInvalidClass();
-            ResetUserInputs();
+            ResetUserInputsItsIsInvalidClass();
+            ResetUserInputsItsValidMessage();
 
             let objUser = GetUserInputs();
             let isValidUserInputs = CheckUserInputs(objUser);
             if (!isValidUserInputs) {
-                alert("填寫的資訊有錯，請您再檢查。");
+                alert("填寫的個資有錯，請再檢查。");
                 return false;
             }
 
@@ -59,7 +47,7 @@
                 data: objUser,
                 error: function (msg) {
                     console.log(msg);
-                    alert("通訊失敗，請聯絡管理員。");
+                    alert(errorMessageOfAjax);
                 }
             });
 
@@ -70,7 +58,7 @@
                 data: { "userAnswer": isValidAtLeastOneQuestionInputs.join(";") },
                 error: function (msg) {
                     console.log(msg);
-                    alert("通訊失敗，請聯絡管理員。");
+                    alert(errorMessageOfAjax);
                 }
             });
         });

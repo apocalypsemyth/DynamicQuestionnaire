@@ -30,7 +30,7 @@ namespace DynamicQuestionnaire.API
         public void ProcessRequest(HttpContext context)
         {
             if (string.Compare("GET", context.Request.HttpMethod, true) == 0 
-                && string.Compare("RESET_SESSION", context.Request.QueryString["Action"], true) == 0)
+                && string.Compare("RESET_CHECKING_OR_NOT_QUESTIONNAIREDETAIL_SESSION", context.Request.QueryString["Action"], true) == 0)
             {
                 context.Session.Remove(_isEnable);
                 context.Session.Remove(_user);
@@ -42,9 +42,18 @@ namespace DynamicQuestionnaire.API
             }
             
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 
-                && string.Compare("RESET_PAGE", context.Request.QueryString["Action"], true) == 0)
+                && string.Compare("RESET_QUESTIONNAIREDETAIL_INPUTS", 
+                context.Request.QueryString["Action"], true) == 0)
             {
                 string questionnaireIDStr = context.Request.Form["questionnaireID"];
+
+                if (questionnaireIDStr == _nullResponse)
+                {
+                    context.Response.ContentType = _textResponse;
+                    context.Response.Write(_nullResponse);
+                    return;
+                }
+
                 if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
                 {
                     context.Response.ContentType = _textResponse;

@@ -2,6 +2,7 @@
     if (window.location.href.indexOf("QuestionnaireDetail.aspx") === -1) {
         sessionStorage.removeItem(activeTab);
         sessionStorage.removeItem(currentSetCommonQuestionOnQuestionnaireState);
+        sessionStorage.removeItem(currentCommonQuestionOfCategoryNameValue);
         sessionStorage.removeItem(currentQuestionListTable);
         sessionStorage.removeItem(currentUserList);
         sessionStorage.removeItem(currentUserListShowState);
@@ -24,7 +25,9 @@
             $(divQuestionListContainer).empty();
 
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSVContainer).show();
+                strUserListHtml === emptyMessageOfUserListOrStatistics
+                    ? $(btnExportAndDownloadDataToCSVContainer).hide()
+                    : $(btnExportAndDownloadDataToCSVContainer).show();
                 $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
                 $(divUserListPagerContainer).show();
@@ -40,7 +43,9 @@
         }
         else if (strUserListHtml) {
             if (strUserListShowState === showState) {
-                $(btnExportAndDownloadDataToCSVContainer).show();
+                strUserListHtml === emptyMessageOfUserListOrStatistics
+                    ? $(btnExportAndDownloadDataToCSVContainer).hide()
+                    : $(btnExportAndDownloadDataToCSVContainer).show();
                 $(divUserListContainer).show();
                 $(divUserListContainer).html(strUserListHtml);
                 $(divUserListPagerContainer).show();

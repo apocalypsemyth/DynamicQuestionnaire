@@ -658,6 +658,7 @@ var GetUserList = function (strQuestionnaireID) {
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         success: function (strOrObjArrUserModel) {
+            $(btnExportAndDownloadDataToCSVContainer).hide();
             $(divUserListContainer).show();
             $(divUserListContainer).empty();
             $(divUserListPagerContainer).empty();
@@ -679,6 +680,7 @@ var GetUserList = function (strQuestionnaireID) {
             else {
                 let [objArrUserModel, totalRows, currentPagerIndex] = strOrObjArrUserModel;
 
+                $(btnExportAndDownloadDataToCSVContainer).show();
                 CreateUserListTable(objArrUserModel, totalRows, currentPagerIndex);
                 SetContainerSession(divUserListContainer, currentUserList);
                 SetContainerShowStateSession(currentUserListShowState, showState);

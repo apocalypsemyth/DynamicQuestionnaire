@@ -23,7 +23,7 @@ namespace DynamicQuestionnaire
         {
             this.btnCancel.Attributes.Add("onClick", "return BackToList();");
 
-            _isPostBack = this.IsPostBack;
+            this._isPostBack = this.IsPostBack;
 
             if (!this.IsPostBack)
             {

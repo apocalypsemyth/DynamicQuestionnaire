@@ -102,8 +102,6 @@ namespace DynamicQuestionnaire.BackAdmin
 
                 this._commonQuestionMgr.UpdateCommonQuestion(newOrToUpdateCommonQuestion);
                 this._categoryMgr.UpdateCategoryByCommonQuestion(newOrToUpdateCommonQuestion);
-
-                this.SameLogicOfRemoveSessionAndBackToList();
             }
             else
             {
@@ -119,18 +117,14 @@ namespace DynamicQuestionnaire.BackAdmin
                 this._commonQuestionMgr.CreateCommonQuestion(newOrToUpdateCommonQuestion);
                 this._questionMgr.CreateQuestionList(newQuestionListOfCommonQuestion);
                 this._categoryMgr.CreateCategoryOfCommonQuestion(newOrToUpdateCommonQuestion);
-
-                this.SameLogicOfRemoveSessionAndBackToList();
             }
+
+            this.SameLogicOfRemoveSessionAndBackToList();
         }
 
         private void SameLogicOfRemoveSessionAndBackToList()
         {
-            this.Session.Remove(_isUpdateMode);
-            this.Session.Remove(_commonQuestion);
-            this.Session.Remove(_questionListOfCommonQuestion);
-
-            this.Response.Redirect("CommonQuestionList.aspx", true);
+            this.Response.Redirect("CommonQuestionList.aspx");
         }
 
         protected Guid GetCommonQuestionIDOrBackToList()

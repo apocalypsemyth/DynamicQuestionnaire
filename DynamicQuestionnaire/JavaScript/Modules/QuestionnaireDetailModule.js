@@ -1,16 +1,22 @@
-﻿var ResetUserInputsIsInvalidClass = function () {
+﻿var ResetUserInputs = function () {
+    $(txtUserName).val("");
+    $(txtUserPhone).val("");
+    $(txtUserEmail).val("");
+    $(txtUserAge).val("");
+}
+var ResetUserInputsItsIsInvalidClass = function () {
     $(txtUserName).removeClass(isInvalidClass);
     $(txtUserPhone).removeClass(isInvalidClass);
     $(txtUserEmail).removeClass(isInvalidClass);
     $(txtUserAge).removeClass(isInvalidClass);
 }
-var ResetUserInputs = function () {
+var ResetUserInputsItsValidMessage = function () {
     $(divValidateUserName).text("");
     $(divValidateUserPhone).text("");
     $(divValidateUserEmail).text("");
     $(divValidateUserAge).text("");
 }
-var SetUserInputsIsInvalidClass = function (strInputSelector, strDivSelector, strDivErrMsg) {
+var SetUserInputsItsIsInvalidClass = function (strInputSelector, strDivSelector, strDivErrMsg) {
     $(strInputSelector).addClass(isInvalidClass);
     $(strDivSelector).text(strDivErrMsg);
 }
@@ -36,7 +42,7 @@ var CheckUserInputs = function (objUser) {
 
     if (!objUser.userName) {
         resultChecked = false;
-        SetUserInputsIsInvalidClass(
+        SetUserInputsItsIsInvalidClass(
             txtUserName,
             divValidateUserName,
             "請填入您的姓名。"
@@ -45,7 +51,7 @@ var CheckUserInputs = function (objUser) {
 
     if (!objUser.phone) {
         resultChecked = false;
-        SetUserInputsIsInvalidClass(
+        SetUserInputsItsIsInvalidClass(
             txtUserPhone,
             divValidateUserPhone,
             "請填入您的手機。"
@@ -55,7 +61,7 @@ var CheckUserInputs = function (objUser) {
     {
         if (!phoneRx.test(objUser.phone)) {
             resultChecked = false;
-            SetUserInputsIsInvalidClass(
+            SetUserInputsItsIsInvalidClass(
                 txtUserPhone,
                 divValidateUserPhone,
                 `請以 "0123456789" 開頭零後九碼的格式填寫。`
@@ -66,7 +72,7 @@ var CheckUserInputs = function (objUser) {
     if (!objUser.email)
     {
         resultChecked = false;
-        SetUserInputsIsInvalidClass(
+        SetUserInputsItsIsInvalidClass(
             txtUserEmail,
             divValidateUserEmail,
             "請填入您的信箱。"
@@ -76,7 +82,7 @@ var CheckUserInputs = function (objUser) {
     {
         if (!emailRx.test(objUser.email)) {
             resultChecked = false;
-            SetUserInputsIsInvalidClass(
+            SetUserInputsItsIsInvalidClass(
                 txtUserEmail,
                 divValidateUserEmail,
                 "請填入合法的信箱格式。"
@@ -87,7 +93,7 @@ var CheckUserInputs = function (objUser) {
     if (!objUser.age)
     {
         resultChecked = false;
-        SetUserInputsIsInvalidClass(
+        SetUserInputsItsIsInvalidClass(
             txtUserAge,
             divValidateUserAge,
             "請填入您的年齡。"
@@ -97,7 +103,7 @@ var CheckUserInputs = function (objUser) {
     {
         if (isNaN(objUser.age)) {
             resultChecked = false;
-            SetUserInputsIsInvalidClass(
+            SetUserInputsItsIsInvalidClass(
                 txtUserAge,
                 divValidateUserAge,
                 "請填寫數字。"
@@ -105,7 +111,7 @@ var CheckUserInputs = function (objUser) {
         }
         else if (objUser.age <= 0) {
             resultChecked = false;
-            SetUserInputsIsInvalidClass(
+            SetUserInputsItsIsInvalidClass(
                 txtUserAge,
                 divValidateUserAge,
                 "請填寫大於零的年齡。"
@@ -113,7 +119,7 @@ var CheckUserInputs = function (objUser) {
         }
         else if (objUser.age > 150) {
             resultChecked = false;
-            SetUserInputsIsInvalidClass(
+            SetUserInputsItsIsInvalidClass(
                 txtUserAge,
                 divValidateUserAge,
                 "請填寫小於150的年齡。"
@@ -124,6 +130,11 @@ var CheckUserInputs = function (objUser) {
     return resultChecked;
 }
 
+var ResetUserAnswerInputs = function () {
+    $(rdoQuestionAnswer).prop("checked", false);
+    $(ckbQuestionAnswer).prop("checked", false);
+    $(txtQuestionAnswer).val("");
+}
 var GetAnsweredTextInputs = function (strInputSelector) {
     let textEl = $(strInputSelector);
     let arrAnsweredText = [];
@@ -214,22 +225,49 @@ var CheckAtLeastOneQuestionInputs = function () {
         return arrUserAnswer;
 }
 
-var ResetPage = function (strQuestionnaireID) {
+var ResetCheckingOrNotQuestionnaireDetailSession = function () {
     $.ajax({
-        url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_PAGE",
-        method: "POST",
-        data: { "questionnaireID": strQuestionnaireID },
+        url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_CHECKING_OR_NOT_QUESTIONNAIREDETAIL_SESSION",
+        method: "GET",
         success: function (strMsg) {
-            if (strMsg === FAILED) {
-                alert(errorMessageOfRetry);
-            }
-            else if (strMsg === NULL + FAILED) {
-                window.location.href = `QuestionnaireDetail.aspx?ID=${strQuestionnaireID}`;
+            if (strMsg === SUCCESSED) {
             }
         },
         error: function (msg) {
             console.log(msg);
             alert(errorMessageOfAjax);
+        }
+    });
+}
+var ResetQuestionnaireDetailInputs = function (strQuestionnaireID) {
+    $.ajax({
+        url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_QUESTIONNAIREDETAIL_INPUTS",
+        method: "POST",
+        data: { "questionnaireID": strQuestionnaireID },
+        beforeSend: function () {
+            $(loadingProgressBarContainer).show();
+            $(loadingProgressBar).animate({ width: startPercent }, 1);
+        },
+        success: function (strMsg) {
+            if (strMsg === FAILED) {
+                alert(errorMessageOfRetry);
+            }
+            else if (strMsg === NULL) {
+            }
+            else if (strMsg === NULL + FAILED) {
+                ResetUserInputs();
+                ResetUserInputsItsIsInvalidClass();
+                ResetUserInputsItsValidMessage();
+                ResetUserAnswerInputs();
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
+        },
+        complete: function () {
+            $(loadingProgressBar).animate({ width: endPercent }, 1);
+            $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
         }
     });
 }

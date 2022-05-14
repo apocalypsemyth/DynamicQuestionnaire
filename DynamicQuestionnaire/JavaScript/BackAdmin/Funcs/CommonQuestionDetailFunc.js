@@ -1,5 +1,5 @@
 ﻿function GetCommonQuestionInputsForServerSubmit() {
-    let strCommonQuestionName = $("input[id*=txtCommonQuestionName]").val();
+    let strCommonQuestionName = $(txtCommonQuestionName).val();
 
     let objCommonQuestion = {
         "commonQuestionName": strCommonQuestionName,
@@ -37,8 +37,7 @@ function SubmitCommonQuestion(strOperate) {
             if (strOrObjCommonQuestion === SUCCESSED) 
                 return true;
             else if (strOrObjCommonQuestion != null) {
-                $("input[id*=txtCommonQuestionName]")
-                    .val(strOrObjCommonQuestion.CommonQuestionName);
+                return true;
             }
             else {
                 alert(errorMessageOfRetry);

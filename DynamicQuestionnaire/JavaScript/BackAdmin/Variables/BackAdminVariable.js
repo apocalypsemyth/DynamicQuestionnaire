@@ -26,6 +26,20 @@ var SetContainerSession = function (strSelector, strSessionName) {
     let strHtml = $(strSelector).html();
     sessionStorage.setItem(strSessionName, strHtml);
 }
+var ResetQuestionnaireAndCommonQuestionDetailSession = function () {
+    $.ajax({
+        url: "/API/BackAdmin/QuestionnaireAndCommonQuestionDetailDataHandler.ashx?Action=RESET_QUESTIONNAIRE_AND_COMMONQUESTIONDETAIL_SESSION",
+        method: "GET",
+        success: function (strMsg) {
+            if (strMsg === SUCCESSED) {
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
+        }
+    });
+}
 
 // Controls of Components of ucLoadingProgressBar
 let loadingProgressBarContainer = "#loadingProgressBarContainer";

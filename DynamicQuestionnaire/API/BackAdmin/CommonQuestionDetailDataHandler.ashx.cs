@@ -102,7 +102,9 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 && string.Compare("GET_QUESTIONLIST_OF_COMMONQUESTION", 
                 context.Request.QueryString["Action"], true) == 0)
             {
-                if (context.Session[_isUpdateMode] == null)
+                if (context.Session[_isUpdateMode] == null 
+                    && (context.Session[_commonQuestion] == null 
+                    || context.Session[_questionListOfCommonQuestion] == null))
                 {
                     context.Response.ContentType = _textResponse;
                     context.Response.Write(_nullResponse + _failedResponse);
@@ -181,6 +183,8 @@ namespace DynamicQuestionnaire.API.BackAdmin
                     context.Response.Write(jsonText);
                     return;
                 }
+
+                return;
             }
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 

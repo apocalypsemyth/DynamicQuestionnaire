@@ -97,16 +97,18 @@ var CreateCommonQuestion = function (objCommonQuestion) {
         url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=CREATE_COMMONQUESTION",
         method: "POST",
         data: objCommonQuestion,
-        success: function () {
-            let objQuestionOfCommonQuestion = GetQuestionOfCommonQuestionInputs();
-            let isValidQuestionOfCommonQuestion =
-                CheckQuestionOfCommonQuestionInputs(objQuestionOfCommonQuestion);
-            if (typeof isValidQuestionOfCommonQuestion === "string") {
-                alert(isValidQuestionOfCommonQuestion);
-                return;
-            }
+        success: function (strMsg) {
+            if (strMsg === SUCCESSED) {
+                let objQuestionOfCommonQuestion = GetQuestionOfCommonQuestionInputs();
+                let isValidQuestionOfCommonQuestion =
+                    CheckQuestionOfCommonQuestionInputs(objQuestionOfCommonQuestion);
+                if (typeof isValidQuestionOfCommonQuestion === "string") {
+                    alert(isValidQuestionOfCommonQuestion);
+                    return;
+                }
 
-            CreateQuestionOfCommonQuestion(objQuestionOfCommonQuestion);
+                CreateQuestionOfCommonQuestion(objQuestionOfCommonQuestion);
+            }
         },
         error: function (msg) {
             console.log(msg);
