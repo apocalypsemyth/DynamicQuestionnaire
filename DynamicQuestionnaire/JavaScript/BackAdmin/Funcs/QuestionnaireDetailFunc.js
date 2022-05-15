@@ -1,15 +1,15 @@
-﻿function SetCommonQuestionOnQuestionnaireStateSession(strSettedOrNotState) {
+﻿function SetCommonQuestionOnQuestionnaireStateSessionForServer(strSettedOrNotState) {
     if (sessionStorage.getItem(currentSetCommonQuestionOnQuestionnaireState) == null) {
         sessionStorage.setItem(currentSetCommonQuestionOnQuestionnaireState, strSettedOrNotState);
     }
 }
 
-function GetQuestionnaireInputsForServerSubmit() {
-    let strCaption = $("input[id*=txtCaption]").val();
-    let strDescription = $("textarea[id*=txtDescription]").val();
-    let strStartDate = $("input[id*=txtStartDate]").val();
-    let strEndDate = $("input[id*=txtEndDate]").val();
-    let boolIsEnable = $("input[id*=ckbIsEnable]").is(":checked");
+function GetQuestionnaireInputsForServer() {
+    let strCaption = $(txtCaption).val();
+    let strDescription = $(txtDescription).val();
+    let strStartDate = $(txtStartDate).val();
+    let strEndDate = $(txtEndDate).val();
+    let boolIsEnable = $(ckbIsEnable).is(":checked");
 
     let objQuestionnaire = {
         "caption": strCaption,
@@ -21,7 +21,7 @@ function GetQuestionnaireInputsForServerSubmit() {
 
     return objQuestionnaire;
 }
-function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
+function CheckQuestionnaireInputsForServer(objQuestionnaire) {
     let arrErrorMsg = [];
     let regex = /^[0-9]{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[0-1])$/;
 
@@ -75,14 +75,14 @@ function CheckQuestionnaireInputsForServerSubmit(objQuestionnaire) {
         return true;
 }
 
-function SubmitQuestionnaire() {
+function SubmitQuestionnaireForServer() {
     let strOperate = window.location.search.indexOf("?ID=") === -1 ? "CREATE" : "UPDATE";
 
-    let objQuestionnaireForServerSubmit = GetQuestionnaireInputsForServerSubmit();
-    let isValidQuestionnaireForServerSubmit =
-        CheckQuestionnaireInputsForServerSubmit(objQuestionnaireForServerSubmit);
-    if (typeof isValidQuestionnaireForServerSubmit === "string") {
-        alert(isValidQuestionnaireForServerSubmit);
+    let objQuestionnaireForServer = GetQuestionnaireInputsForServer();
+    let isValidQuestionnaireForServer =
+        CheckQuestionnaireInputsForServer(objQuestionnaireForServer);
+    if (typeof isValidQuestionnaireForServer === "string") {
+        alert(isValidQuestionnaireForServer);
         return false;
     }
 
@@ -90,7 +90,7 @@ function SubmitQuestionnaire() {
         async: false,
         url: `/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=${strOperate}_QUESTIONNAIRE`,
         method: "POST",
-        data: objQuestionnaireForServerSubmit,
+        data: objQuestionnaireForServer,
         success: function (strMsg) {
             if (strMsg === FAILED) {
                 alert(errorMessageOfRetry);

@@ -272,18 +272,14 @@ var GetQuestionList = function (strQuestionnaireID) {
             $(btnDeleteQuestion).hide();
             $(divQuestionListContainer).empty();
 
-            if (strOrObjArrQuestion === NULL + FAILED) {
-                ResetQuestionnaireInputs();
-                ResetQuestionInputs(customizedQuestionOfCategoryName);
-                $(divQuestionListContainer).append(emptyMessageOfQuestionList);
-                SetContainerSession(divQuestionListContainer, currentQuestionListTable);
-            }
-            else if (strOrObjArrQuestion === FAILED) {
+            if (strOrObjArrQuestion === FAILED) {
                 alert(errorMessageOfRetry);
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }
             else if (strOrObjArrQuestion === NULL) {
+                ResetQuestionnaireInputs();
+                ResetQuestionInputs(customizedQuestionOfCategoryName);
                 $(divQuestionListContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(divQuestionListContainer, currentQuestionListTable);
             }

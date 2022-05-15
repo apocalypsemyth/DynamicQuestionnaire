@@ -96,11 +96,16 @@ namespace DynamicQuestionnaire.API
 
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_QUESTIONLIST", context.Request.QueryString["Action"], true) == 0)
             {
-                if (context.Session[_isUpdateMode] == null)
+                if (context.Session[_isUpdateMode] == null 
+                    || context.Session[_isSetCommonQuestionOnQuestionnaire] == null)
                 {
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_nullResponse + _failedResponse);
-                    return;
+                    context.Session[_isSetCommonQuestionOnQuestionnaire] = false;
+
+                    string questionnaireIDStr = context.Request.Form["questionnaireID"];
+                    if (!Guid.TryParse(questionnaireIDStr, out Guid questionnaireID))
+                        context.Session[_isUpdateMode] = false;
+                    else
+                        context.Session[_isUpdateMode] = true;
                 }
 
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
@@ -202,7 +207,7 @@ namespace DynamicQuestionnaire.API
 
                     List<Question> questionList = context.Session[_questionList] as List<Question>;
 
-                    if (questionList == null || questionList.Count == 0)
+                    if (questionList == null)
                     {
                         context.Session[_questionList] = new List<Question>();
 

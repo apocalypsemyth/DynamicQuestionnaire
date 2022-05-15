@@ -13,7 +13,7 @@ namespace DynamicQuestionnaire.Components
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            this.btnSubmit.Attributes.Add("onClick", "return SubmitQuestionnaire();");
+            this.btnSubmit.Attributes.Add("onClick", "return SubmitQuestionnaireForServer();");
         }
 
         protected void btnSubmit_Click(object sender, EventArgs e)

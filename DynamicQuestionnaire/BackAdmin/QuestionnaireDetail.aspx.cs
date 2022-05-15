@@ -19,7 +19,6 @@ namespace DynamicQuestionnaire.BackAdmin
         private string _isUpdateMode = "IsUpdateMode";
         private string _questionnaire = "Questionnaire";
         private string _questionList = "QuestionList";
-        private string _currentPagerIndex = "CurrentPagerIndex";
         private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
         
         private QuestionnaireManager _questionnaireMgr = new QuestionnaireManager();
@@ -30,7 +29,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!this.IsPostBack)
+            if (this.Session[_isUpdateMode] == null)
             {
                 if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
                 {
@@ -42,6 +41,19 @@ namespace DynamicQuestionnaire.BackAdmin
                     _isEditMode = false;
                     this.Session[_isUpdateMode] = _isEditMode;
                 }
+
+                if (_isEditMode)
+                {
+                    Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
+                    this.InitEditMode(questionnaireID);
+                }
+                else
+                    this.InitCreateMode();
+            }
+            else if (this.Session[_isUpdateMode] != null)
+            {
+                bool isUpdateMode = (bool)this.Session[_isUpdateMode];
+                _isEditMode = isUpdateMode;
 
                 if (_isEditMode)
                 {
@@ -64,12 +76,12 @@ namespace DynamicQuestionnaire.BackAdmin
         
         protected void UcInQuestionnaireTab_OnCancelClick(object sender, EventArgs e)
         {
-            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            this.SameLogicOfBackToList(sender, e);
         }
 
         protected void UcInQuestionTab_OnCancelClick(object sender, EventArgs e)
         {
-            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            this.SameLogicOfBackToList(sender, e);
         }
 
         protected void UcInQuestionnaireTab_OnSubmitClick(object sender, EventArgs e)
@@ -157,17 +169,11 @@ namespace DynamicQuestionnaire.BackAdmin
                 this._questionMgr.CreateQuestionList(newQuestionList);
             }
 
-            this.SameLogicOfRemoveSessionAndBackToList(sender, e);
+            this.SameLogicOfBackToList(sender, e);
         }
 
-        private void SameLogicOfRemoveSessionAndBackToList(object sender, EventArgs e)
+        private void SameLogicOfBackToList(object sender, EventArgs e)
         {
-            this.Session.Remove(_isUpdateMode);
-            this.Session.Remove(_questionnaire);
-            this.Session.Remove(_questionList);
-            this.Session.Remove(_currentPagerIndex);
-            this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
-
             this.Response.Redirect("QuestionnaireList.aspx", true);
         }
         
@@ -283,8 +289,8 @@ namespace DynamicQuestionnaire.BackAdmin
                 {
                     ClientScript.RegisterStartupScript(
                         this.GetType(), 
-                        "SetCommonQuestionOnQuestionnaireStateSession", 
-                        "SetCommonQuestionOnQuestionnaireStateSession('set')", 
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer", 
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('set')", 
                         true
                         );
                     this.ddlCategoryList.Items.FindByText("常用問題").Selected = true;
@@ -293,8 +299,8 @@ namespace DynamicQuestionnaire.BackAdmin
                 {
                     ClientScript.RegisterStartupScript(
                         this.GetType(),
-                        "SetCommonQuestionOnQuestionnaireStateSession",
-                        "SetCommonQuestionOnQuestionnaireStateSession('notSet')",
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer",
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('notSet')",
                         true
                         );
                     this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
