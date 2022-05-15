@@ -40,6 +40,9 @@ var ResetQuestionnaireAndCommonQuestionDetailSession = function () {
         }
     });
 }
+function ResetListCheckedForServer() {
+    $("input[type=checkbox]").prop("checked", false);
+}
 
 // Controls of Components of ucLoadingProgressBar
 let loadingProgressBarContainer = "#loadingProgressBarContainer";

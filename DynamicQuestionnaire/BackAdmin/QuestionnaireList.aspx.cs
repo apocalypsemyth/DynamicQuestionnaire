@@ -93,6 +93,12 @@ namespace DynamicQuestionnaire.BackAdmin
                     this._questionListPageIndex = pageIndex;
                     this.gvQuestionnaireList.DataSource = setOrNotSetQuestionnaireList;
                     this.gvQuestionnaireList.DataBind();
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "ResetListCheckedForServer",
+                        "ResetListCheckedForServer();",
+                        true
+                        );
                 }
 
                 if (hasAnyNotStartOrOverEndDate)

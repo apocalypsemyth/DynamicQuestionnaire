@@ -53,6 +53,12 @@ namespace DynamicQuestionnaire.BackAdmin
 
                     this.gvCommonQuestionList.DataSource = commonQuestionList;
                     this.gvCommonQuestionList.DataBind();
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "ResetListCheckedForServer",
+                        "ResetListCheckedForServer();",
+                        true
+                        );
                 }
             }
         }
