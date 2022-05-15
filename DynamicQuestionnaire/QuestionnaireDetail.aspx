@@ -23,11 +23,13 @@
                                 <asp:Literal
                                     ID="ltlStartAndEndDate"
                                     runat="server"
-                                    Text='<%# Eval("StartDate") + 
-                                        "~" + 
-                                        (!string.IsNullOrWhiteSpace(Eval("EndDate") as string) 
-                                        ? Eval("EndDate") 
-                                        : "未知") %>' />
+                                    Text='<%# DateTime.Parse(Eval("StartDate").ToString())
+                                        .ToShortDateString() + 
+                                        " ~ " + 
+                                        (!string.IsNullOrWhiteSpace(Eval("EndDate")?.ToString())
+                                        ? DateTime.Parse(Eval("EndDate").ToString()).ToShortDateString()
+                                        : "未知") %>' 
+                                />
                             </h4>
                         </div>
 
