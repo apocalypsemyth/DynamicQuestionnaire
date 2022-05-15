@@ -9,6 +9,7 @@
 <head runat="server">
     <title>後台 - 問卷管理</title>
     <link rel="stylesheet" href="../Css/BackAdmin/Admin.css" />
+    <link rel="stylesheet" href="../Css/BackAdmin/QuestionnaireDetail.css" />
     <link rel="stylesheet" href="../Content/bootstrap.min.css" />
     <script src="../Scripts/jquery.min.js"></script>
     <script src="../JavaScript/BackAdmin/Variables/BackAdminVariable.js"></script>

@@ -106,3 +106,7 @@ function SubmitQuestionnaireForServer() {
         }
     });
 }
+
+function SetQuestionListItsControlsDisabledStateSessionForServer(strDisabledState) {
+    sessionStorage.setItem(currentQuestionListItsControlsDisabledState, strDisabledState);
+}

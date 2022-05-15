@@ -282,7 +282,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     ClientScript.RegisterStartupScript(
                         this.GetType(), 
                         "SetCommonQuestionOnQuestionnaireStateSessionForServer", 
-                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('set')", 
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('set');", 
                         true
                         );
                     this.ddlCategoryList.Items.FindByText("常用問題").Selected = true;
@@ -292,7 +292,7 @@ namespace DynamicQuestionnaire.BackAdmin
                     ClientScript.RegisterStartupScript(
                         this.GetType(),
                         "SetCommonQuestionOnQuestionnaireStateSessionForServer",
-                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('notSet')",
+                        "SetCommonQuestionOnQuestionnaireStateSessionForServer('notSet');",
                         true
                         );
                     this.ddlCategoryList.Items.FindByText("自訂問題").Selected = true;
@@ -306,9 +306,67 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.ddlTypingList.Items.FindByValue("單選方塊").Selected = true;
 
                 if (userList == null || userList.Count == 0)
+                {
+                    this.txtCaption.Enabled = true;
+                    this.txtDescription.Enabled = true;
+                    this.txtStartDate.Enabled = true;
+                    this.txtEndDate.Enabled = true;
+                    this.ckbIsEnable.Enabled = true;
+
+                    this.ddlCategoryList.Enabled = true;
+                    this.ddlTypingList.Enabled = true;
+                    this.ckbQuestionRequired.Enabled = true;
+                    this.btnAddQuestion.Enabled = true;
+                    this.btnDeleteQuestion.Enabled = true;
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "SetQuestionListItsControlsDisabledStateSessionForServer",
+                        "SetQuestionListItsControlsDisabledStateSessionForServer('disabled');",
+                        true
+                        );
+
+                    Button btnSubmitInQuestionnaireTab = 
+                        this.ucSubmitButtonInQuestionnaireTab.FindControl("btnSubmit") as Button;
+                    if (btnSubmitInQuestionnaireTab != null)
+                        btnSubmitInQuestionnaireTab.Enabled = true;
+                    Button btnSubmitInQuestionTab = 
+                        this.ucSubmitButtonInQuestionTab.FindControl("btnSubmit") as Button;
+                    if (btnSubmitInQuestionTab != null)
+                        btnSubmitInQuestionTab.Enabled = true;
+
                     this.btnExportAndDownloadDataToCSV.Visible = false;
+                }
                 else
+                {
+                    this.txtCaption.Enabled = false;
+                    this.txtDescription.Enabled = false;
+                    this.txtStartDate.Enabled = false;
+                    this.txtEndDate.Enabled = false;
+                    this.ckbIsEnable.Enabled = false;
+
+                    this.ddlCategoryList.Enabled = false;
+                    this.ddlTypingList.Enabled = false;
+                    this.ckbQuestionRequired.Enabled = false;
+                    this.btnAddQuestion.Enabled = false;
+                    this.btnDeleteQuestion.Enabled = false;
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(),
+                        "SetQuestionListItsControlsDisabledStateSessionForServer",
+                        "SetQuestionListItsControlsDisabledStateSessionForServer('enabled');",
+                        true
+                        );
+
+                    Button btnSubmitInQuestionnaireTab =
+                        this.ucSubmitButtonInQuestionnaireTab.FindControl("btnSubmit") as Button;
+                    if (btnSubmitInQuestionnaireTab != null)
+                        btnSubmitInQuestionnaireTab.Enabled = false;
+                    Button btnSubmitInQuestionTab =
+                        this.ucSubmitButtonInQuestionTab.FindControl("btnSubmit") as Button;
+                    if (btnSubmitInQuestionTab != null)
+                        btnSubmitInQuestionTab.Enabled = false;
+
                     this.btnExportAndDownloadDataToCSV.Visible = true;
+                }
             }
         }
         

@@ -118,14 +118,14 @@
                             <div class="d-flex align-items-center justify-content-center">
                                 <h5>(多個答案以 <b>;</b> 分隔)</h5>
                             </div>
-                            <button id="btnAddQuestion" class="btn btn-success">加入</button>
+                            <asp:Button ID="btnAddQuestion" CssClass="btn btn-success" runat="server" Text="加入" />
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <button id="btnDeleteQuestion" class="btn btn-danger mt-md-5">刪除</button>
+                <asp:Button ID="btnDeleteQuestion" CssClass="btn btn-danger mt-md-5" runat="server" Text="刪除" />
             </div>
 
             <div class="col-md-8">

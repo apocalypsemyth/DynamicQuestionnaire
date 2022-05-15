@@ -123,6 +123,24 @@ namespace DynamicQuestionnaire.BackAdmin
         protected global::System.Web.UI.WebControls.TextBox txtQuestionAnswer;
 
         /// <summary>
+        /// btnAddQuestion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddQuestion;
+
+        /// <summary>
+        /// btnDeleteQuestion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDeleteQuestion;
+
+        /// <summary>
         /// ucCancelButtonInQuestionTab control.
         /// </summary>
         /// <remarks>

@@ -140,7 +140,7 @@ var ResetQuestionnaireInputs = function () {
     $(txtDescription).val("");
     $(txtStartDate).val(result);
     $(txtEndDate).val("");
-    $(ckbIsEnable).is(":checked");
+    $(ckbIsEnable).prop("checked", true);
 }
 var GetQuestionnaire = function (strQuestionnaireID) {
     $.ajax({

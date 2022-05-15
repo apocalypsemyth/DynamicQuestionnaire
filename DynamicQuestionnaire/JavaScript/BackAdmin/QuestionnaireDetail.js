@@ -4,6 +4,7 @@
         sessionStorage.removeItem(currentSetCommonQuestionOnQuestionnaireState);
         sessionStorage.removeItem(currentCommonQuestionOfCategoryNameValue);
         sessionStorage.removeItem(currentQuestionListTable);
+        sessionStorage.removeItem(currentQuestionListItsControlsDisabledState);
         sessionStorage.removeItem(currentUserList);
         sessionStorage.removeItem(currentUserListShowState);
         sessionStorage.removeItem(currentUserAnswer);
@@ -259,7 +260,7 @@
             e.preventDefault();
 
             let arrCheckedQuestionID = [];
-            $("#divQuestionListContainer table tbody tr td input[type='checkbox']:checked")
+            $(divQuestionListContainer + " table tbody tr td input[type='checkbox']:checked")
                 .each(function () {
                     arrCheckedQuestionID.push($(this).attr("id"));
                 });
@@ -293,13 +294,35 @@
             DeleteQuestionList(arrCheckedQuestionID.join());
         });
 
+        $(document).on("click", divQuestionListContainer + " input[id!=''][type='checkbox']", function () {
+            let strDisabledState = sessionStorage.getItem(currentQuestionListItsControlsDisabledState);
+            if (strDisabledState === enabledState) {
+                $(this).prop("disabled", true);
+                alert("此問卷已有使用者的回答，所以勾選無效。");
+                return false;
+            }
+            else 
+                $(this).removeProp("disabled");
+        });
         $(document).on("click", "a[id*=aLinkEditQuestion]", function (e) {
             e.preventDefault();
 
+            let strDisabledState = sessionStorage.getItem(currentQuestionListItsControlsDisabledState);
+            if (strDisabledState === enabledState) {
+                $(this).addClass("disabledClick");
+                alert("此問卷已有使用者的回答，所以不能修改。");
+                return;
+            }
+            else
+                $(this).removeClass("disabledClick");
+
             if (window.location.search.indexOf("?ID=") === -1) {
+                $(this).addClass("disabledClick");
                 alert("請先新增後，再編輯。");
                 return;
             }
+            else
+                $(this).removeClass("disabledClick");
 
             let aLinkHref = $(this).attr("href");
             let strQuestionID = aLinkHref.split("?QuestionID=")[1];
