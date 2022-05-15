@@ -102,13 +102,14 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 && string.Compare("GET_QUESTIONLIST_OF_COMMONQUESTION", 
                 context.Request.QueryString["Action"], true) == 0)
             {
-                if (context.Session[_isUpdateMode] == null 
-                    && (context.Session[_commonQuestion] == null 
-                    || context.Session[_questionListOfCommonQuestion] == null))
+                if (context.Session[_isUpdateMode] == null)
                 {
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_nullResponse + _failedResponse);
-                    return;
+                    string commonQuestionIDStr = context.Request.Form["commonQuestionID"];
+
+                    if (!Guid.TryParse(commonQuestionIDStr, out Guid commonQuestionID))
+                        context.Session[_isUpdateMode] = false;
+                    else
+                        context.Session[_isUpdateMode] = true;
                 }
 
                 bool isUpdateMode = (bool)context.Session[_isUpdateMode];
@@ -163,8 +164,7 @@ namespace DynamicQuestionnaire.API.BackAdmin
                     List<Question> questionListOfCommonQuestion = 
                         context.Session[_questionListOfCommonQuestion] as List<Question>;
 
-                    if (questionListOfCommonQuestion == null 
-                        || questionListOfCommonQuestion.Count == 0)
+                    if (questionListOfCommonQuestion == null)
                     {
                         context.Session[_questionListOfCommonQuestion] = new List<Question>();
 

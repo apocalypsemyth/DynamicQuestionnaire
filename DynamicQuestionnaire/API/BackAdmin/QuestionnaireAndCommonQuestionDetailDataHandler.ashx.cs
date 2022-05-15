@@ -32,27 +32,21 @@ namespace DynamicQuestionnaire.API.BackAdmin
             if (string.Compare("GET", context.Request.HttpMethod, true) == 0
                 && string.Compare("RESET_QUESTIONNAIRE_AND_COMMONQUESTIONDETAIL_SESSION", context.Request.QueryString["Action"], true) == 0)
             {
-                if (context.Session[_isUpdateMode] != null
-                && (bool)context.Session[_isUpdateMode] == false)
-                {
-                    // Session name of QuestionnaireDetail or CommonQuestionDetail
-                    context.Session.Remove(_isUpdateMode);
+                // Session name of QuestionnaireDetail or CommonQuestionDetail
+                context.Session.Remove(_isUpdateMode);
 
-                    // Session name of QuestionnaireDetail
-                    context.Session.Remove(_questionnaire);
-                    context.Session.Remove(_questionList);
-                    context.Session.Remove(_currentPagerIndex);
-                    context.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
+                // Session name of QuestionnaireDetail
+                context.Session.Remove(_questionnaire);
+                context.Session.Remove(_questionList);
+                context.Session.Remove(_currentPagerIndex);
+                context.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
 
-                    // Session name of CommonQuestionDetail
-                    context.Session.Remove(_commonQuestion);
-                    context.Session.Remove(_questionListOfCommonQuestion);
+                // Session name of CommonQuestionDetail
+                context.Session.Remove(_commonQuestion);
+                context.Session.Remove(_questionListOfCommonQuestion);
 
-                    context.Response.ContentType = _textResponse;
-                    context.Response.Write(_successedResponse);
-                    return;
-                }
-
+                context.Response.ContentType = _textResponse;
+                context.Response.Write(_successedResponse);
                 return;
             }
         }

@@ -30,19 +30,19 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
-            {
-                _isEditMode = true;
-                this.Session[_isUpdateMode] = _isEditMode;
-            }
-            else
-            {
-                _isEditMode = false;
-                this.Session[_isUpdateMode] = _isEditMode;
-            }
-
             if (!this.IsPostBack)
             {
+                if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
+                {
+                    _isEditMode = true;
+                    this.Session[_isUpdateMode] = _isEditMode;
+                }
+                else
+                {
+                    _isEditMode = false;
+                    this.Session[_isUpdateMode] = _isEditMode;
+                }
+
                 if (_isEditMode)
                 {
                     Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();

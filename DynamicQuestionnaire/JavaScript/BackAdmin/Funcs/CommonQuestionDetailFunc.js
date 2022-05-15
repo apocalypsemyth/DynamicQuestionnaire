@@ -1,4 +1,13 @@
-﻿function GetCommonQuestionInputsForServerSubmit() {
+﻿function ResetCommonQuestionDetailInputsForServer() {
+    $(txtCommonQuestionName).val("");
+
+    $(selectCategoryList).val(commonQuestionOfCategoryName).change();
+    $(selectTypingList).val(SINGLE_SELECT).change();
+    $(txtQuestionNameOfCommonQuestion).val("");
+    $(txtQuestionAnswerOfCommonQuestion).val("");
+    $(ckbQuestionRequiredOfCommonQuestion).prop("checked", false);
+}
+function GetCommonQuestionInputsForServer() {
     let strCommonQuestionName = $(txtCommonQuestionName).val();
 
     let objCommonQuestion = {
@@ -7,7 +16,7 @@
 
     return objCommonQuestion;
 }
-function CheckCommonQuestionInputsForServerSubmit(objCommonQuestion) {
+function CheckCommonQuestionInputsForServer(objCommonQuestion) {
     let arrErrorMsg = [];
 
     if (!objCommonQuestion.commonQuestionName)
@@ -19,12 +28,12 @@ function CheckCommonQuestionInputsForServerSubmit(objCommonQuestion) {
         return true;
 }
 
-function SubmitCommonQuestion(strOperate) {
-    let objCommonQuestionForServerSubmit = GetCommonQuestionInputsForServerSubmit();
-    let isValidCommonQuestionForServerSubmit =
-        CheckCommonQuestionInputsForServerSubmit(objCommonQuestionForServerSubmit);
-    if (typeof isValidCommonQuestionForServerSubmit === "string") {
-        alert(isValidCommonQuestionForServerSubmit);
+function SubmitCommonQuestionForServer(strOperate) {
+    let objCommonQuestionForServer = GetCommonQuestionInputsForServer();
+    let isValidCommonQuestionForServer =
+        CheckCommonQuestionInputsForServer(objCommonQuestionForServer);
+    if (typeof isValidCommonQuestionForServer === "string") {
+        alert(isValidCommonQuestionForServer);
         return false;
     }
 
@@ -32,7 +41,7 @@ function SubmitCommonQuestion(strOperate) {
         async: false,
         url: `/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=${strOperate}_COMMONQUESTION`,
         method: "POST",
-        data: objCommonQuestionForServerSubmit,
+        data: objCommonQuestionForServer,
         success: function (strOrObjCommonQuestion) {
             if (strOrObjCommonQuestion === SUCCESSED) 
                 return true;

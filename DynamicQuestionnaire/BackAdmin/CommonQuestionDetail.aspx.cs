@@ -26,42 +26,61 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
+            if (this.Session[_isUpdateMode] == null)
             {
-                _isEditMode = true;
-                this.Session[_isUpdateMode] = _isEditMode;
-            }
-            else
-            {
-                _isEditMode = false;
-                this.Session[_isUpdateMode] = _isEditMode;
-            }
+                if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
+                {
+                    _isEditMode = true;
+                    this.Session[_isUpdateMode] = _isEditMode;
+                }
+                else
+                {
+                    _isEditMode = false;
+                    this.Session[_isUpdateMode] = _isEditMode;
+                }
 
-            if (!this.IsPostBack)
-            {
                 if (_isEditMode)
                 {
                     Guid commonQuestionID = this.GetCommonQuestionIDOrBackToList();
                     this.InitEditMode(commonQuestionID);
                     this.btnSubmit.Attributes.Add(
                         "onClick", 
-                        "return SubmitCommonQuestion('UPDATE');"
+                        "return SubmitCommonQuestionForServer('UPDATE');"
                         );
                 }
                 else
                 {
                     this.InitCreateMode();
+                    ClientScript.RegisterStartupScript(
+                        this.GetType(), 
+                        "ResetCommonQuestionDetailInputsForServer", 
+                        "ResetCommonQuestionDetailInputsForServer();",
+                        true
+                        );
                     this.btnSubmit.Attributes.Add(
                         "onClick",
-                        "return SubmitCommonQuestion('CREATE');"
+                        "return SubmitCommonQuestionForServer('CREATE');"
                         );
                 }
+            }
+            else if (this.Session[_isUpdateMode] != null)
+            {
+                bool isUpdateMode = (bool)this.Session[_isUpdateMode];
+                _isEditMode = isUpdateMode;
+
+                if (_isEditMode)
+                {
+                    Guid commonQuestionID = this.GetCommonQuestionIDOrBackToList();
+                    this.InitEditMode(commonQuestionID);
+                }
+                else
+                    this.InitCreateMode();
             }
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            this.SameLogicOfRemoveSessionAndBackToList();
+            this.SameLogicOfBackToList();
         }
 
         protected void btnSubmit_Click(object sender, EventArgs e)
@@ -119,12 +138,12 @@ namespace DynamicQuestionnaire.BackAdmin
                 this._categoryMgr.CreateCategoryOfCommonQuestion(newOrToUpdateCommonQuestion);
             }
 
-            this.SameLogicOfRemoveSessionAndBackToList();
+            this.SameLogicOfBackToList();
         }
 
-        private void SameLogicOfRemoveSessionAndBackToList()
+        private void SameLogicOfBackToList()
         {
-            this.Response.Redirect("CommonQuestionList.aspx");
+            this.Response.Redirect("CommonQuestionList.aspx", true);
         }
 
         protected Guid GetCommonQuestionIDOrBackToList()
@@ -145,9 +164,9 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.CheckCategoryExist(categoryList)
                 ? categoryList
                 : this._categoryMgr.GetCategoryList();
-            var onlyCommonQuestionCategoryList = 
+            var onlyCommonQuestionCategoryList =
                 resultCategoryList
-                .Where(category => category.CategoryName == "常用問題" 
+                .Where(category => category.CategoryName == "常用問題"
                 && category.CommonQuestionID == null);
             var typingList = this._typingMgr.GetTypingList();
             var resultTypingList =

@@ -214,16 +214,7 @@ var GetQuestionListOfCommonQuestion = function (strCommonQuestionID) {
             $(btnDeleteQuestionOfCommonQuestion).hide();
             $(divQuestionListOfCommonQuestionContainer).empty();
 
-            if (strOrObjArrQuestionOfCommonQuestion === NULL + FAILED) {
-                ResetCommonQuestionInputs();
-                ResetQuestionOfCommonQuestionInputs();
-                $(divQuestionListOfCommonQuestionContainer).append(emptyMessageOfQuestionList);
-                SetContainerSession(
-                    divQuestionListOfCommonQuestionContainer,
-                    currentQuestionListOfCommonQuestionTable
-                );
-            }
-            else if (strOrObjArrQuestionOfCommonQuestion === FAILED) {
+            if (strOrObjArrQuestionOfCommonQuestion === FAILED) {
                 alert(errorMessageOfRetry);
                 $(divQuestionListOfCommonQuestionContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(
@@ -232,6 +223,8 @@ var GetQuestionListOfCommonQuestion = function (strCommonQuestionID) {
                 );
             }
             else if (strOrObjArrQuestionOfCommonQuestion === NULL) {
+                ResetCommonQuestionInputs();
+                ResetQuestionOfCommonQuestionInputs();
                 $(divQuestionListOfCommonQuestionContainer).append(emptyMessageOfQuestionList);
                 SetContainerSession(
                     divQuestionListOfCommonQuestionContainer,
