@@ -96,26 +96,56 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
-        public void DeleteCommonQuestionList(List<Guid> commonQuestionIDList)
+        public bool DeleteCommonQuestionListTransaction(
+            List<Guid> commonQuestionIDList, 
+            out List<string> errorMsgList
+            )
         {
             try
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
-                    var toDeleteCommonQuestionList = commonQuestionIDList
-                        .Select(commonQuestionID => contextModel.CommonQuestions
-                        .Where(commonQuestion => commonQuestion.CommonQuestionID 
-                        == commonQuestionID)
-                        .FirstOrDefault())
-                        .ToList();
+                    errorMsgList = new List<string>();
 
-                    contextModel.CommonQuestions.RemoveRange(toDeleteCommonQuestionList);
+                    foreach (var commonQuestionID in commonQuestionIDList)
+                    {
+                        var toDeleteCategoryOfCommonQuestion = 
+                            contextModel.Categories
+                            .SingleOrDefault(category => category.CommonQuestionID 
+                            == commonQuestionID);
+                        if (toDeleteCategoryOfCommonQuestion == null)
+                            errorMsgList.Add("發生錯誤，找不到應刪除的問題種類。");
+
+                        var toDeleteQuestionListOfCommonQuestion = 
+                            contextModel.Questions.Where(question => question.CommonQuestionID 
+                            == commonQuestionID)
+                            .ToList();
+                        if (toDeleteQuestionListOfCommonQuestion == null
+                            || toDeleteQuestionListOfCommonQuestion.Count == 0)
+                            errorMsgList.Add("發生錯誤，找不到應刪除的問題。");
+
+                        var toDeleteCommonQuestion = 
+                            contextModel.CommonQuestions
+                            .SingleOrDefault(commonQuestion => commonQuestion.CommonQuestionID 
+                            == commonQuestionID);
+                        if (toDeleteCommonQuestion == null)
+                            errorMsgList.Add("發生錯誤，找不到應刪除的常用問題。");
+
+                        if (errorMsgList.Count > 0)
+                            return false;
+
+                        contextModel.Categories.Remove(toDeleteCategoryOfCommonQuestion);
+                        contextModel.Questions.RemoveRange(toDeleteQuestionListOfCommonQuestion);
+                        contextModel.CommonQuestions.Remove(toDeleteCommonQuestion);
+                    }
+
                     contextModel.SaveChanges();
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("CommonQuestionManager.DeleteCommonQuestionList", ex);
+                Logger.WriteLog("CommonQuestionManager.DeleteCommonQuestionListTransaction", ex);
                 throw;
             }
         }

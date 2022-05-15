@@ -13,8 +13,6 @@ namespace DynamicQuestionnaire.BackAdmin
         private const int _pageSize = 10;
 
         private CommonQuestionManager _commonQuestionMgr = new CommonQuestionManager();
-        private QuestionManager _questionMgr = new QuestionManager();
-        private CategoryManager _categoryMgr = new CategoryManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -88,18 +86,43 @@ namespace DynamicQuestionnaire.BackAdmin
                 }
             }
 
-            if (commonQuestionIDList.Count > 0)
+            if (commonQuestionIDList.Count == 0)
             {
-                this._questionMgr.DeleteQuestionListOfCommonQuestionList(commonQuestionIDList);
-                this._categoryMgr.DeleteCategoryListOfCommonQuestionList(commonQuestionIDList);
-                this._commonQuestionMgr.DeleteCommonQuestionList(commonQuestionIDList);
-                this.Response.Redirect(this.Request.RawUrl);
+                this.AlertMessage("請選擇要刪除的常用問題。");
+                return;
             }
+
+            bool isSuccess = 
+                this._commonQuestionMgr
+                .DeleteCommonQuestionListTransaction(
+                commonQuestionIDList, 
+                out List<string> errorMsgList
+                );
+
+            if (!isSuccess)
+            {
+                string errorMsg = string.Join("\\n", errorMsgList);
+
+                this.AlertMessage(errorMsg);
+                return;
+            }
+
+            this.Response.Redirect(this.Request.RawUrl);
         }
 
         protected void btnCreateCommonQuestion_Click(object sender, EventArgs e)
         {
-            this.Response.Redirect("CommonQuestionDetail.aspx");
+            this.Response.Redirect("CommonQuestionDetail.aspx", true);
+        }
+
+        private void AlertMessage(string errorMsg)
+        {
+            ClientScript.RegisterStartupScript(
+                this.GetType(),
+                "alert",
+                "alert('" + errorMsg + "');",
+                true
+            );
         }
     }
 }
