@@ -139,32 +139,68 @@ namespace DynamicQuestionnaire.Managers
             }
         }
 
-        public void DeleteQuestionnaireList(List<Guid> questionnaireIDList)
+        public bool DeleteQuestionnaireListTransaction(
+            List<Guid> questionnaireIDList, 
+            out List<string> errorMsgList
+            )
         {
             try
             {
                 using (ContextModel contextModel = new ContextModel())
                 {
+                    errorMsgList = new List<string>();
+
                     foreach (var questionnaireID in questionnaireIDList)
                     {
                         var toDeleteQuestionListOfQuestionnaire = 
                             contextModel.Questions
-                            .Where(question => question.QuestionnaireID == questionnaireID);
-                        contextModel.Questions.RemoveRange(toDeleteQuestionListOfQuestionnaire);
+                            .Where(question => question.QuestionnaireID 
+                            == questionnaireID)
+                            .ToList();
+                        if (toDeleteQuestionListOfQuestionnaire == null
+                            || toDeleteQuestionListOfQuestionnaire.Count == 0)
+                            errorMsgList.Add("發生錯誤，找不到應刪除的問題。");
 
                         var toDeleteQuestionnaire = 
                             contextModel.Questionnaires
-                            .Where(questionnaire => questionnaire.QuestionnaireID == questionnaireID)
-                            .FirstOrDefault();
+                            .SingleOrDefault(questionnaire => questionnaire.QuestionnaireID 
+                            == questionnaireID);
+                        if (toDeleteQuestionnaire == null)
+                            errorMsgList.Add("發生錯誤，找不到應刪除的問卷。");
+
+                        if (errorMsgList.Count > 0)
+                            return false;
+
+                        var toDeleteUserListOfQuestionnaire =
+                            contextModel.Users
+                            .Where(user => user.QuestionnaireID 
+                            == questionnaireID)
+                            .ToList();
+
+                        var toDeleteUserAnswerListOfQuestionnaire =
+                            contextModel.UserAnswers
+                            .Where(userAnswer => userAnswer.QuestionnaireID 
+                            == questionnaireID)
+                            .ToList();
+
+                        if (toDeleteUserListOfQuestionnaire != null
+                            && toDeleteUserListOfQuestionnaire.Count > 0)
+                            contextModel.Users.RemoveRange(toDeleteUserListOfQuestionnaire);
+                        if (toDeleteUserAnswerListOfQuestionnaire != null
+                            && toDeleteUserAnswerListOfQuestionnaire.Count > 0)
+                            contextModel.UserAnswers.RemoveRange(toDeleteUserAnswerListOfQuestionnaire);
+
+                        contextModel.Questions.RemoveRange(toDeleteQuestionListOfQuestionnaire);
                         contextModel.Questionnaires.Remove(toDeleteQuestionnaire);
                     }
                     
                     contextModel.SaveChanges();
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                Logger.WriteLog("QuestionnaireManager.DeleteQuestionnaireList", ex);
+                Logger.WriteLog("QuestionnaireManager.DeleteQuestionnaireListTransaction", ex);
                 throw;
             }
         }

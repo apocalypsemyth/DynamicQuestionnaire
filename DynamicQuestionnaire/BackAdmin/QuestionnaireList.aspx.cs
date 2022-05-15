@@ -204,11 +204,28 @@ namespace DynamicQuestionnaire.BackAdmin
                 }
             }
 
-            if (questionnaireIDList.Count > 0)
+            if (questionnaireIDList.Count == 0)
             {
-                this._questionnaireMgr.DeleteQuestionnaireList(questionnaireIDList);
-                this.Response.Redirect(this.Request.RawUrl);
+                this.AlertMessage("請選擇要刪除的問卷。");
+                return;
             }
+
+            bool isSuccess = 
+                this._questionnaireMgr
+                .DeleteQuestionnaireListTransaction(
+                questionnaireIDList, 
+                out List<string> errorMsgList
+                );
+
+            if (!isSuccess)
+            {
+                string errorMsg = string.Join("\\n", errorMsgList);
+
+                this.AlertMessage(errorMsg);
+                return;
+            }
+
+            this.Response.Redirect(this.Request.RawUrl);
         }
 
         protected void btnCreateQuestionnaire_Click(object sender, EventArgs e)
