@@ -260,13 +260,17 @@ var CreateQuestionListTable = function (objArrQuestion) {
     }
 }
 var GetQuestionList = function (strQuestionnaireID) {
+    let currentActiveTab = sessionStorage.getItem(activeTab);
+
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_QUESTIONLIST",
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
         beforeSend: function () {
-            $(loadingProgressBarContainer).show();
-            $(loadingProgressBar).animate({ width: startPercent }, 1);
+            if (currentActiveTab !== "#statistics") {
+                $(loadingProgressBarContainer).show();
+                $(loadingProgressBar).animate({ width: startPercent }, 1);
+            }
         },
         success: function (strOrObjArrQuestion) {
             $(btnDeleteQuestion).hide();
@@ -313,8 +317,10 @@ var GetQuestionList = function (strQuestionnaireID) {
             alert(errorMessageOfAjax);
         },
         complete: function () {
-            $(loadingProgressBar).animate({ width: endPercent }, 1);
-            $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
+            if (currentActiveTab !== "#statistics") {
+                $(loadingProgressBar).animate({ width: endPercent }, 1);
+                $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
+            }
         }
     });
 }
@@ -1052,10 +1058,18 @@ var CreateStatistics = function (objArrQuestionModel, objArrUserAnswerModel) {
     }
 }
 var GetStatistics = function (strQuestionnaireID) {
+    let currentActiveTab = sessionStorage.getItem(activeTab);
+
     $.ajax({
         url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=GET_STATISTICS",
         method: "POST",
         data: { "questionnaireID": strQuestionnaireID },
+        beforeSend: function () {
+            if (currentActiveTab === "#statistics") {
+                $(loadingProgressBarContainer).show();
+                $(loadingProgressBar).animate({ width: startPercent }, 1);
+            }
+        },
         success: function (strOrObjArrStatistics) {
             if (strOrObjArrStatistics === FAILED)
                 alert(errorMessageOfRetry);
@@ -1073,6 +1087,12 @@ var GetStatistics = function (strQuestionnaireID) {
         error: function (msg) {
             console.log(msg);
             alert(errorMessageOfAjax);
+        },
+        complete: function () {
+            if (currentActiveTab === "#statistics") {
+                $(loadingProgressBar).animate({ width: endPercent }, 1);
+                $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
+            }
         }
     });
 }

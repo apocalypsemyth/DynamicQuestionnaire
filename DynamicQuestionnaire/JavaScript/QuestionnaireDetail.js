@@ -3,18 +3,6 @@
         ResetCheckingOrNotQuestionnaireDetailSession();
     }
     else {
-        let queryString = window.location.search;
-        let isExistQueryString = queryString.indexOf("?ID=") !== -1;
-        let isCheckingQuestionnaireDetail =
-            window.location.href.indexOf("CheckingQuestionnaireDetail.aspx") !== -1
-        let strQuestionnaireID =
-            isExistQueryString
-                ? !isCheckingQuestionnaireDetail
-                    ? queryString.split("?ID=")[1]
-                    : NULL
-                : FAILED;
-        ResetQuestionnaireDetailInputs(strQuestionnaireID);
-
         $("a[id*=aLinkCheckingQuestionnaireDetail]").click(function () {
             ResetUserInputsItsIsInvalidClass();
             ResetUserInputsItsValidMessage();

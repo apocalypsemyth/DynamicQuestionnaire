@@ -21,9 +21,19 @@ namespace DynamicQuestionnaire
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            this.btnCancel.Attributes.Add("onClick", "return BackToList();");
+            this.btnCancel.Attributes.Add("onClick", "return BackToListForServer();");
 
             this._isPostBack = this.IsPostBack;
+
+            if (this.Session[_isEnable] == null)
+            {
+                ClientScript.RegisterStartupScript(
+                    this.GetType(), 
+                    "ResetQuestionnaireDetailInputsForServer", 
+                    "ResetQuestionnaireDetailInputsForServer();", 
+                    true
+                    );
+            }
 
             if (!this.IsPostBack)
             {
@@ -37,31 +47,33 @@ namespace DynamicQuestionnaire
                 }
 
                 this.Session[_isEnable] = questionnaire.IsEnable;
-                if (questionnaire.IsEnable)
-                {
-                    this.questionnaireUserForm.Visible = true;
-                    this.btnCancel.Visible = true;
-                    this.aLinkCheckingQuestionnaireDetail.Visible = true;
-                }
-                else
+
+                if (!questionnaire.IsEnable)
                 {
                     this.questionnaireUserForm.Visible = false;
                     this.btnCancel.Visible = false;
                     this.aLinkCheckingQuestionnaireDetail.Visible = false;
                 }
+                else
+                {
+                    this.questionnaireUserForm.Visible = true;
+                    this.btnCancel.Visible = true;
+                    this.aLinkCheckingQuestionnaireDetail.Visible = true;
 
-                // 為使用Repeater創建的List
-                List<Questionnaire> questionnaireList = new List<Questionnaire>();
-                questionnaireList.Add(questionnaire);
-                var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
+                    // 為使用Repeater創建的List
+                    List<Questionnaire> questionnaireList = new List<Questionnaire>();
+                    questionnaireList.Add(questionnaire);
+                    var questionList = this._questionMgr.GetQuestionListOfQuestionnaire(questionnaireID);
                     
-                this.rptQuestionnaireDetail.DataSource = questionnaireList;
-                this.rptQuestionnaireDetail.DataBind();
+                    this.rptQuestionnaireDetail.DataSource = questionnaireList;
+                    this.rptQuestionnaireDetail.DataBind();
 
-                this.rptQuestionList.DataSource = questionList;
-                this.rptQuestionList.DataBind();
+                    this.rptQuestionList.DataSource = questionList;
+                    this.rptQuestionList.DataBind();
 
-                this.aLinkCheckingQuestionnaireDetail.HRef = "CheckingQuestionnaireDetail.aspx?ID=" + questionnaireID;
+                    this.aLinkCheckingQuestionnaireDetail.HRef = 
+                        "CheckingQuestionnaireDetail.aspx?ID=" + questionnaireID;
+                }
             }
         }
 

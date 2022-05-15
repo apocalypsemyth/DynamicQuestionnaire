@@ -41,28 +41,20 @@ namespace DynamicQuestionnaire.BackAdmin
                     _isEditMode = false;
                     this.Session[_isUpdateMode] = _isEditMode;
                 }
-
-                if (_isEditMode)
-                {
-                    Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
-                    this.InitEditMode(questionnaireID);
-                }
-                else
-                    this.InitCreateMode();
             }
             else if (this.Session[_isUpdateMode] != null)
             {
                 bool isUpdateMode = (bool)this.Session[_isUpdateMode];
                 _isEditMode = isUpdateMode;
-
-                if (_isEditMode)
-                {
-                    Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
-                    this.InitEditMode(questionnaireID);
-                }
-                else
-                    this.InitCreateMode();
             }
+
+            if (_isEditMode)
+            {
+                Guid questionnaireID = this.GetQuestionnaireIDOrBackToList();
+                this.InitEditMode(questionnaireID);
+            }
+            else
+                this.InitCreateMode();
 
             if (this.Session[_isSetCommonQuestionOnQuestionnaire] == null)
                 this.Session[_isSetCommonQuestionOnQuestionnaire] = false;

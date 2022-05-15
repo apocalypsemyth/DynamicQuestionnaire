@@ -1,10 +1,4 @@
-﻿var ResetUserInputs = function () {
-    $(txtUserName).val("");
-    $(txtUserPhone).val("");
-    $(txtUserEmail).val("");
-    $(txtUserAge).val("");
-}
-var ResetUserInputsItsIsInvalidClass = function () {
+﻿var ResetUserInputsItsIsInvalidClass = function () {
     $(txtUserName).removeClass(isInvalidClass);
     $(txtUserPhone).removeClass(isInvalidClass);
     $(txtUserEmail).removeClass(isInvalidClass);
@@ -130,11 +124,6 @@ var CheckUserInputs = function (objUser) {
     return resultChecked;
 }
 
-var ResetUserAnswerInputs = function () {
-    $(rdoQuestionAnswer).prop("checked", false);
-    $(ckbQuestionAnswer).prop("checked", false);
-    $(txtQuestionAnswer).val("");
-}
 var GetAnsweredTextInputs = function (strInputSelector) {
     let textEl = $(strInputSelector);
     let arrAnsweredText = [];
@@ -151,12 +140,14 @@ var CheckRequiredQuestionInputs = function () {
     let resultChecked = true;
     let arrResult = [];
 
-    if (!$(rdoQuestionAnswer + "[required=True]:checked").length) {
+    if ($(rdoQuestionAnswer + "[required=True]").length
+        && !$(rdoQuestionAnswer + "[required=True]:checked").length) {
         resultChecked = false;
         arrResult.push("請勾選必填單選方塊。");
     }
 
-    if (!$(ckbQuestionAnswer + "[required=True]:checked").length) {
+    if ($(ckbQuestionAnswer + "[required=True]").length
+        && !$(ckbQuestionAnswer + "[required=True]:checked").length) {
         resultChecked = false;
         arrResult.push("請勾選必填複選方塊。");
     }
@@ -236,38 +227,6 @@ var ResetCheckingOrNotQuestionnaireDetailSession = function () {
         error: function (msg) {
             console.log(msg);
             alert(errorMessageOfAjax);
-        }
-    });
-}
-var ResetQuestionnaireDetailInputs = function (strQuestionnaireID) {
-    $.ajax({
-        url: "/API/QuestionnaireDetailDataHandler.ashx?Action=RESET_QUESTIONNAIREDETAIL_INPUTS",
-        method: "POST",
-        data: { "questionnaireID": strQuestionnaireID },
-        beforeSend: function () {
-            $(loadingProgressBarContainer).show();
-            $(loadingProgressBar).animate({ width: startPercent }, 1);
-        },
-        success: function (strMsg) {
-            if (strMsg === FAILED) {
-                alert(errorMessageOfRetry);
-            }
-            else if (strMsg === NULL) {
-            }
-            else if (strMsg === NULL + FAILED) {
-                ResetUserInputs();
-                ResetUserInputsItsIsInvalidClass();
-                ResetUserInputsItsValidMessage();
-                ResetUserAnswerInputs();
-            }
-        },
-        error: function (msg) {
-            console.log(msg);
-            alert(errorMessageOfAjax);
-        },
-        complete: function () {
-            $(loadingProgressBar).animate({ width: endPercent }, 1);
-            $(loadingProgressBarContainer).fadeOut(fadeOutDuration);
         }
     });
 }
