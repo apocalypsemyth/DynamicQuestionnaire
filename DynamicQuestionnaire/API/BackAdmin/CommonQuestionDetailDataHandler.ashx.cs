@@ -21,6 +21,7 @@ namespace DynamicQuestionnaire.API.BackAdmin
         private string _successedResponse = "SUCCESSED";
 
         // Session name
+        private string _isPostBack = "IsPostBack";
         private string _isUpdateMode = "IsUpdateMode";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
@@ -30,6 +31,18 @@ namespace DynamicQuestionnaire.API.BackAdmin
 
         public void ProcessRequest(HttpContext context)
         {
+            if (string.Compare("GET", context.Request.HttpMethod, true) == 0 && string.Compare("TOGGLE_ISPOSTBACK_OF_BTNSUBMIT", context.Request.QueryString["Action"], true) == 0)
+            {
+                if (context.Session[_isPostBack] == null)
+                {
+                    context.Session[_isPostBack] = false;
+                    return;
+                }
+
+                context.Session[_isPostBack] = !(bool)context.Session[_isPostBack];
+                return;
+            }
+
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_COMMONQUESTION", context.Request.QueryString["Action"], true) == 0)
             {
                 string commonQuestionIDStr = context.Request.Form["commonQuestionID"];

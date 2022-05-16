@@ -39,6 +39,20 @@ function SubmitCommonQuestionForServer(strOperate) {
 
     $.ajax({
         async: false,
+        url: "/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=TOGGLE_ISPOSTBACK_OF_BTNSUBMIT",
+        method: "GET",
+        success: function () {
+            return true;
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
+            return false;
+        }
+    });
+
+    $.ajax({
+        async: false,
         url: `/API/BackAdmin/CommonQuestionDetailDataHandler.ashx?Action=${strOperate}_COMMONQUESTION`,
         method: "POST",
         data: objCommonQuestionForServer,
