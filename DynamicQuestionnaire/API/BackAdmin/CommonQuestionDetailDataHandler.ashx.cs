@@ -20,8 +20,10 @@ namespace DynamicQuestionnaire.API.BackAdmin
         private string _failedResponse = "FAILED";
         private string _successedResponse = "SUCCESSED";
 
-        // Session name
+        // Session for handling postBack
         private string _isPostBack = "IsPostBack";
+
+        // Session name
         private string _isUpdateMode = "IsUpdateMode";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";

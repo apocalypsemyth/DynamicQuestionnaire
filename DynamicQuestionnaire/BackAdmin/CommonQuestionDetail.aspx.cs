@@ -14,9 +14,11 @@ namespace DynamicQuestionnaire.BackAdmin
     {
         private bool _isEditMode = false;
 
-        // Session name
+        // Session for handling postBack
         private string _isPostBack = "IsPostBack";
         private string _isPostBackUpdate = "IsPostBackUpdate";
+
+        // Session name
         private string _isUpdateMode = "IsUpdateMode";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";

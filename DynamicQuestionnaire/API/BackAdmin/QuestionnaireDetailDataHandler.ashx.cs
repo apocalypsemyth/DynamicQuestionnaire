@@ -23,6 +23,9 @@ namespace DynamicQuestionnaire.API
         private string _failedResponse = "FAILED";
         private string _successedResponse = "SUCCESSED";
 
+        // Session for handling postBack
+        private string _isPostBack = "IsPostBack";
+
         // Session name
         private string _isUpdateMode = "IsUpdateMode";
         private string _questionnaire = "Questionnaire";
@@ -39,6 +42,18 @@ namespace DynamicQuestionnaire.API
 
         public void ProcessRequest(HttpContext context)
         {
+            if (string.Compare("GET", context.Request.HttpMethod, true) == 0 && string.Compare("TOGGLE_ISPOSTBACK_OF_BTNSUBMIT", context.Request.QueryString["Action"], true) == 0)
+            {
+                if (context.Session[_isPostBack] == null)
+                {
+                    context.Session[_isPostBack] = false;
+                    return;
+                }
+
+                context.Session[_isPostBack] = !(bool)context.Session[_isPostBack];
+                return;
+            }
+
             if (string.Compare("POST", context.Request.HttpMethod, true) == 0 && string.Compare("GET_QUESTIONNAIRE", context.Request.QueryString["Action"], true) == 0)
             {
                 string questionnaireIDStr = context.Request.Form["questionnaireID"];

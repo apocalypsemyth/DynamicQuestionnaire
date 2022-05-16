@@ -9,6 +9,10 @@ namespace DynamicQuestionnaire.BackAdmin
 {
     public partial class Admin : System.Web.UI.MasterPage
     {
+        // Session for handling postBack
+        private string _isPostBack = "IsPostBack";
+        private string _isPostBackUpdate = "IsPostBackUpdate";
+
         // Session name of QuestionnaireDetail or CommonQuestionDetail
         private string _isUpdateMode = "IsUpdateMode";
 
@@ -19,8 +23,6 @@ namespace DynamicQuestionnaire.BackAdmin
         private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
 
         // Session name of CommonQuestionDetail
-        private string _isPostBack = "IsPostBack";
-        private string _isPostBackUpdate = "IsPostBackUpdate";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
 
@@ -32,6 +34,10 @@ namespace DynamicQuestionnaire.BackAdmin
 
             if (isQuestionnaireList || isCommonQuestionList)
             {
+                // Session for handling postBack
+                this.Session.Remove(_isPostBack);
+                this.Session.Remove(_isPostBackUpdate);
+
                 // Session name of QuestionnaireDetail or CommonQuestionDetail
                 this.Session.Remove(_isUpdateMode);
 
@@ -42,8 +48,6 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
 
                 // Session name of CommonQuestionDetail
-                this.Session.Remove(_isPostBack);
-                this.Session.Remove(_isPostBackUpdate);
                 this.Session.Remove(_commonQuestion);
                 this.Session.Remove(_questionListOfCommonQuestion);
             }

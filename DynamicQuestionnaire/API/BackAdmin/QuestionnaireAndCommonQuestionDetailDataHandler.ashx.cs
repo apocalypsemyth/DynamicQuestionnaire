@@ -14,6 +14,10 @@ namespace DynamicQuestionnaire.API.BackAdmin
         private string _textResponse = "text/plain";
         private string _successedResponse = "SUCCESSED";
 
+        // Session for handling postBack
+        private string _isPostBack = "IsPostBack";
+        private string _isPostBackUpdate = "IsPostBackUpdate";
+
         // Session name of QuestionnaireDetail or CommonQuestionDetail
         private string _isUpdateMode = "IsUpdateMode";
 
@@ -24,8 +28,6 @@ namespace DynamicQuestionnaire.API.BackAdmin
         private string _isSetCommonQuestionOnQuestionnaire = "IsSetCommonQuestionOnQuestionnaire";
 
         // Session name of CommonQuestionDetail
-        private string _isPostBack = "IsPostBack";
-        private string _isPostBackUpdate = "IsPostBackUpdate";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
 
@@ -34,6 +36,10 @@ namespace DynamicQuestionnaire.API.BackAdmin
             if (string.Compare("GET", context.Request.HttpMethod, true) == 0
                 && string.Compare("RESET_QUESTIONNAIRE_AND_COMMONQUESTIONDETAIL_SESSION", context.Request.QueryString["Action"], true) == 0)
             {
+                // Session for handling postBack
+                context.Session.Remove(_isPostBack);
+                context.Session.Remove(_isPostBackUpdate);
+
                 // Session name of QuestionnaireDetail or CommonQuestionDetail
                 context.Session.Remove(_isUpdateMode);
 
@@ -44,8 +50,6 @@ namespace DynamicQuestionnaire.API.BackAdmin
                 context.Session.Remove(_isSetCommonQuestionOnQuestionnaire);
 
                 // Session name of CommonQuestionDetail
-                context.Session.Remove(_isPostBack);
-                context.Session.Remove(_isPostBackUpdate);
                 context.Session.Remove(_commonQuestion);
                 context.Session.Remove(_questionListOfCommonQuestion);
 

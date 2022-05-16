@@ -88,6 +88,20 @@ function SubmitQuestionnaireForServer() {
 
     $.ajax({
         async: false,
+        url: "/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=TOGGLE_ISPOSTBACK_OF_BTNSUBMIT",
+        method: "GET",
+        success: function () {
+            return true;
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert(errorMessageOfAjax);
+            return false;
+        }
+    });
+
+    $.ajax({
+        async: false,
         url: `/API/BackAdmin/QuestionnaireDetailDataHandler.ashx?Action=${strOperate}_QUESTIONNAIRE`,
         method: "POST",
         data: objQuestionnaireForServer,

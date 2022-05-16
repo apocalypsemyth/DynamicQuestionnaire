@@ -14,7 +14,11 @@ namespace DynamicQuestionnaire.BackAdmin
     public partial class QuestionnaireDetail1 : System.Web.UI.Page
     {
         private bool _isEditMode = false;
-        
+
+        // Session for handling postBack
+        private string _isPostBack = "IsPostBack";
+        private string _isPostBackUpdate = "IsPostBackUpdate";
+
         // Session name
         private string _isUpdateMode = "IsUpdateMode";
         private string _questionnaire = "Questionnaire";
@@ -29,6 +33,12 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (this.Session[_isPostBack] == null)
+                this.Session[_isPostBack] = false;
+
+            if (!(bool)this.Session[_isPostBack])
+                this.Session[_isPostBackUpdate] = this.Server.UrlEncode(DateTime.Now.ToString());
+
             if (this.Session[_isUpdateMode] == null)
             {
                 if (!string.IsNullOrWhiteSpace(this.Request.QueryString["ID"]))
@@ -85,9 +95,18 @@ namespace DynamicQuestionnaire.BackAdmin
         {
             this.SameLogicOfBtnSubmit_Click(sender, e);
         }
+        
+        protected override void OnPreRender(EventArgs e)
+        {
+            this.ViewState[_isPostBackUpdate] = this.Session[_isPostBackUpdate];
+        }
 
         private void SameLogicOfBtnSubmit_Click(object sender, EventArgs e)
         {
+            if (this.Session[_isPostBackUpdate].ToString()
+                != this.ViewState[_isPostBackUpdate].ToString())
+                return;
+
             bool isSetCommonQuestionOnQuestionnaire = 
                 (bool)(this.Session[_isSetCommonQuestionOnQuestionnaire]);
             Questionnaire newOrToUpdateQuestionnaire = this.Session[_questionnaire] as Questionnaire;
@@ -99,7 +118,8 @@ namespace DynamicQuestionnaire.BackAdmin
                 if (toUpdateQuestionModelList == null 
                     || toUpdateQuestionModelList.Count == 0)
                 {
-                   this.AlertMessage("請填寫至少一個問題。");
+                    this.AlertMessage("請填寫至少一個問題。");
+                    this.Session[_isPostBackUpdate] = false;
                     return;
                 }
 
@@ -118,6 +138,7 @@ namespace DynamicQuestionnaire.BackAdmin
                         this.Session[_questionList] = toUpdateQuestionModelList;
                     }
 
+                    this.Session[_isPostBackUpdate] = false;
                     return;
                 }
 
@@ -154,6 +175,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 if (newQuestionList == null || newQuestionList.Count == 0)
                 {
                     this.AlertMessage("請填寫至少一個問題。");
+                    this.Session[_isPostBackUpdate] = false;
                     return;
                 }
 
