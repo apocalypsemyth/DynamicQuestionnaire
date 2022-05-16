@@ -16,6 +16,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
         // Session name
         private string _isPostBack = "IsPostBack";
+        private string _isPostBackUpdate = "IsPostBackUpdate";
         private string _isUpdateMode = "IsUpdateMode";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
@@ -31,7 +32,7 @@ namespace DynamicQuestionnaire.BackAdmin
                 this.Session[_isPostBack] = false;
 
             if (!(bool)this.Session[_isPostBack])
-                Session["update"] = Server.UrlEncode(DateTime.Now.ToString());
+                this.Session[_isPostBackUpdate] = this.Server.UrlEncode(DateTime.Now.ToString());
 
             if (this.Session[_isUpdateMode] == null)
             {
@@ -92,75 +93,72 @@ namespace DynamicQuestionnaire.BackAdmin
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            if (Session["update"].ToString() == ViewState["update"].ToString())
+            if (this.Session[_isPostBackUpdate].ToString() 
+                != this.ViewState[_isPostBackUpdate].ToString())
+                return;
+            
+            CommonQuestion newOrToUpdateCommonQuestion =
+            this.Session[_commonQuestion] as CommonQuestion;
+
+            if (_isEditMode)
             {
-                CommonQuestion newOrToUpdateCommonQuestion =
-                this.Session[_commonQuestion] as CommonQuestion;
+                List<QuestionModel> toUpdateQuestionModelListOfCommonQuestion =
+                    this.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
 
-                if (_isEditMode)
+                if (toUpdateQuestionModelListOfCommonQuestion == null
+                    || toUpdateQuestionModelListOfCommonQuestion.Count == 0)
                 {
-                    List<QuestionModel> toUpdateQuestionModelListOfCommonQuestion =
-                        this.Session[_questionListOfCommonQuestion] as List<QuestionModel>;
-
-                    if (toUpdateQuestionModelListOfCommonQuestion == null
-                        || toUpdateQuestionModelListOfCommonQuestion.Count == 0)
-                    {
-                        this.AlertMessage("請填寫至少一個問題。");
-                        this.Session[_isPostBack] = false;
-                        return;
-                    }
-
-                    if (toUpdateQuestionModelListOfCommonQuestion.All(item => item.IsDeleted))
-                    {
-                        this.AlertMessage("問題不能全空，請填寫或留下至少一個問題。");
-
-                        foreach (var toUpdateQuestionModel in toUpdateQuestionModelListOfCommonQuestion)
-                            toUpdateQuestionModel.IsDeleted = false;
-
-                        this.Session[_questionListOfCommonQuestion] = toUpdateQuestionModelListOfCommonQuestion;
-                        this.Session[_isPostBack] = false;
-                        return;
-                    }
-
-                    this._questionMgr.UpdateQuestionList(
-                        toUpdateQuestionModelListOfCommonQuestion,
-                        out bool hasAnyUpdated
-                        );
-
-                    if (hasAnyUpdated)
-                        newOrToUpdateCommonQuestion.UpdateDate = DateTime.Now;
-
-                    this._commonQuestionMgr.UpdateCommonQuestion(newOrToUpdateCommonQuestion);
-                    this._categoryMgr.UpdateCategoryByCommonQuestion(newOrToUpdateCommonQuestion);
-                }
-                else
-                {
-                    List<Question> newQuestionListOfCommonQuestion =
-                        this.Session[_questionListOfCommonQuestion] as List<Question>;
-                    if (newQuestionListOfCommonQuestion == null
-                        || newQuestionListOfCommonQuestion.Count == 0)
-                    {
-                        this.AlertMessage("請填寫至少一個問題。");
-                        this.Session[_isPostBack] = false;
-                        return;
-                    }
-
-                    this._commonQuestionMgr.CreateCommonQuestion(newOrToUpdateCommonQuestion);
-                    this._questionMgr.CreateQuestionList(newQuestionListOfCommonQuestion);
-                    this._categoryMgr.CreateCategoryOfCommonQuestion(newOrToUpdateCommonQuestion);
+                    this.AlertMessage("請填寫至少一個問題。");
+                    this.Session[_isPostBack] = false;
+                    return;
                 }
 
-                this.SameLogicOfBackToList();
+                if (toUpdateQuestionModelListOfCommonQuestion.All(item => item.IsDeleted))
+                {
+                    this.AlertMessage("問題不能全空，請填寫或留下至少一個問題。");
 
-                Session["update"] = Server.UrlEncode(DateTime.Now.ToString());
+                    foreach (var toUpdateQuestionModel in toUpdateQuestionModelListOfCommonQuestion)
+                        toUpdateQuestionModel.IsDeleted = false;
+
+                    this.Session[_questionListOfCommonQuestion] = toUpdateQuestionModelListOfCommonQuestion;
+                    this.Session[_isPostBack] = false;
+                    return;
+                }
+
+                this._questionMgr.UpdateQuestionList(
+                    toUpdateQuestionModelListOfCommonQuestion,
+                    out bool hasAnyUpdated
+                    );
+
+                if (hasAnyUpdated)
+                    newOrToUpdateCommonQuestion.UpdateDate = DateTime.Now;
+
+                this._commonQuestionMgr.UpdateCommonQuestion(newOrToUpdateCommonQuestion);
+                this._categoryMgr.UpdateCategoryByCommonQuestion(newOrToUpdateCommonQuestion);
             }
             else
-                return;
+            {
+                List<Question> newQuestionListOfCommonQuestion =
+                    this.Session[_questionListOfCommonQuestion] as List<Question>;
+                if (newQuestionListOfCommonQuestion == null
+                    || newQuestionListOfCommonQuestion.Count == 0)
+                {
+                    this.AlertMessage("請填寫至少一個問題。");
+                    this.Session[_isPostBack] = false;
+                    return;
+                }
+
+                this._commonQuestionMgr.CreateCommonQuestion(newOrToUpdateCommonQuestion);
+                this._questionMgr.CreateQuestionList(newQuestionListOfCommonQuestion);
+                this._categoryMgr.CreateCategoryOfCommonQuestion(newOrToUpdateCommonQuestion);
+            }
+
+            this.SameLogicOfBackToList();
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            ViewState["update"] = Session["update"];
+            this.ViewState[_isPostBackUpdate] = this.Session[_isPostBackUpdate];
         }
 
         private void SameLogicOfBackToList()

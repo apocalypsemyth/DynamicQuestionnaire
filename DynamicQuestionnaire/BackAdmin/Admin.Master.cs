@@ -20,6 +20,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
         // Session name of CommonQuestionDetail
         private string _isPostBack = "IsPostBack";
+        private string _isPostBackUpdate = "IsPostBackUpdate";
         private string _commonQuestion = "CommonQuestion";
         private string _questionListOfCommonQuestion = "QuestionListOfCommonQuestion";
 
@@ -42,6 +43,7 @@ namespace DynamicQuestionnaire.BackAdmin
 
                 // Session name of CommonQuestionDetail
                 this.Session.Remove(_isPostBack);
+                this.Session.Remove(_isPostBackUpdate);
                 this.Session.Remove(_commonQuestion);
                 this.Session.Remove(_questionListOfCommonQuestion);
             }
