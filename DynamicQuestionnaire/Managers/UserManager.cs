@@ -19,10 +19,9 @@ namespace DynamicQuestionnaire.Managers
                 using (ContextModel contextModel = new ContextModel())
                 {
                     return contextModel.Users
-                        .Where(user => user.QuestionnaireID == questionnaireID 
-                        && user.UserID == userID)
-                        .OrderByDescending(user2 => user2.AnswerDate)
-                        .FirstOrDefault();
+                        .SingleOrDefault(user =>
+                        user.QuestionnaireID == questionnaireID
+                        && user.UserID == userID);
                 }
             }
             catch (Exception ex)
